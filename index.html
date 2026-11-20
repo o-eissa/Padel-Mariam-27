@@ -1540,7 +1540,7 @@
         <button class="btn btn-sm btn-lime" id="seedDemoBtn" type="button">⚡ Demo 32/33</button>
       </div>
 
-      <div class="handicap-explainer">
+      <div id="handicapExplainer" class="handicap-explainer">
         ⚖️ <strong>Official Head Starts:</strong> Mariam starts with <strong>+15</strong>, Fons starts with <strong>+10</strong>, and Arwa, Youmna, Halla &amp; Maram start with <strong>+5</strong>.
       </div>
 
@@ -3093,6 +3093,87 @@
       if (resetBtn) resetBtn.classList.toggle("hidden", !admin);
     }
 
+    function formatNameList(names) {
+      if (!names.length) return "";
+      if (names.length === 1) return names[0];
+      if (names.length === 2) return names[0] + " & " + names[1];
+      return names.slice(0, -1).join(", ") + " & " + names[names.length - 1];
+    }
+
+    function getLiveHeadStartsMeta() {
+      const grouped = new Map();
+      state.players.forEach(function (p) {
+        const b = Number(p.bonusPoints) || 0;
+        if (b > 0) {
+          if (!grouped.has(b)) grouped.set(b, []);
+          grouped.get(b).push(p);
+        }
+      });
+      const tiers = Array.from(grouped.keys()).sort(function (a, b) {
+        return b - a;
+      });
+      const shortTiers = tiers.map(function (b) {
+        return "+" + b;
+      });
+      const queen =
+        state.players.find(function (p) {
+          return p.isBirthdayQueen;
+        }) || state.players[0];
+
+      const richSegments = tiers.map(function (b) {
+        const names = grouped.get(b).map(function (p) {
+          return escapeAttr(p.name);
+        });
+        return formatNameList(names) + " (<strong>+" + b + "</strong>)";
+      });
+
+      const nonQueenSegments = [];
+      tiers.forEach(function (b) {
+        const nonQueenNames = grouped
+          .get(b)
+          .filter(function (p) {
+            return !p.isBirthdayQueen;
+          })
+          .map(function (p) {
+            return p.name;
+          });
+        if (nonQueenNames.length) {
+          nonQueenSegments.push(formatNameList(nonQueenNames) + " (+" + b + ")");
+        }
+      });
+
+      return {
+        tiers: tiers,
+        shortLabel: shortTiers.length ? shortTiers.join("/") : "None",
+        richExplainerHtml: richSegments.length
+          ? "⚖️ <strong>Live Head Starts:</strong> " + richSegments.join(" • ") + "."
+          : "⚖️ <strong>Live Head Starts:</strong> Everyone currently starts at <strong>+0</strong>.",
+        queenName: queen ? queen.name : "Mariam",
+        queenBonus: queen ? Number(queen.bonusPoints) || 0 : 0,
+        nonQueenSummary: nonQueenSegments.length ? nonQueenSegments.join(", ") : ""
+      };
+    }
+
+    function getLiveDecreeText(index) {
+      const idx = ((Number(index) || 0) % ROYAL_DECREES.length + ROYAL_DECREES.length) % ROYAL_DECREES.length;
+      const meta = getLiveHeadStartsMeta();
+      if (idx === 1) {
+        return (
+          "Rule #27.1: " +
+          meta.queenName +
+          "'s +" +
+          meta.queenBonus +
+          " head start is backed by the Royal Birthday Treasury."
+        );
+      }
+      if (idx === 2) {
+        return meta.nonQueenSummary
+          ? "Rule #27.2: " + meta.nonQueenSummary + " have official head starts; everyone else starts at +0 and zero excuses."
+          : "Rule #27.2: Everyone else starts at +0 and zero excuses.";
+      }
+      return ROYAL_DECREES[idx];
+    }
+
     function renderHeaderProgress() {
       const confirmedCount = state.matches.filter(function (m) {
         return m.confirmed;
@@ -3108,8 +3189,7 @@
       if (formatPill) {
         formatPill.textContent = "16-PT GAMES • " + roundCount + " ROUNDS";
       }
-      document.getElementById("decreeText").textContent =
-        ROYAL_DECREES[state.decreeIndex % ROYAL_DECREES.length];
+      document.getElementById("decreeText").textContent = getLiveDecreeText(state.decreeIndex);
       updateSaveBadge();
     }
 
@@ -3354,9 +3434,9 @@
     function renderBonusBadge(p) {
       if (!state.headStartsActive || !p.bonusPoints) return "";
       let cls = "custom";
-      if (p.bonusPoints === 15) cls = "queen";
-      else if (p.bonusPoints === 10) cls = "fons";
-      else if (p.bonusPoints === 5 || p.bonusPoints === 8) cls = "girl";
+      if (p.isBirthdayQueen) cls = "queen";
+      else if (p.id === 1 || p.bonusPoints >= 10) cls = "fons";
+      else if (p.bonusPoints > 0) cls = "girl";
       return '<span class="bonus-pill ' + cls + '">+' + p.bonusPoints + "</span>";
     }
 
@@ -3367,14 +3447,15 @@
       const headBtn = document.getElementById("toggleHeadStartsBtn");
       const lawBtn = document.getElementById("toggleBirthdayRuleBtn");
       const caption = document.getElementById("rankingModeCaption");
+      const hsMeta = getLiveHeadStartsMeta();
 
       headBtn.textContent = lockPrefix + (state.headStartsActive ? "⚖️ Head Starts: ON" : "⚖️ Head Starts: OFF");
       lawBtn.textContent = lockPrefix + (state.birthdayLawActive ? "👑 Birthday Law: ON" : "📊 Birthday Law: OFF");
 
       caption.textContent =
-        (state.headStartsActive ? "Head Starts ON (+15/+10/+5)" : "Raw Match Points Only") +
+        (state.headStartsActive ? "Head Starts ON (" + hsMeta.shortLabel + ")" : "Raw Match Points Only") +
         " • " +
-        (state.birthdayLawActive ? "Mariam #1 Law ON" : "Pure Order");
+        (state.birthdayLawActive ? hsMeta.queenName + " #1 Law ON" : "Pure Order");
 
       const podiumOrder = [standings[1], standings[0], standings[2]].filter(Boolean);
       const podiumContainer = document.getElementById("podiumContainer");
@@ -3438,6 +3519,10 @@
       const crewTitle = document.getElementById("crewTitle");
       if (crewTitle) {
         crewTitle.textContent = "The " + state.players.length + " Players";
+      }
+      const explainer = document.getElementById("handicapExplainer");
+      if (explainer) {
+        explainer.innerHTML = getLiveHeadStartsMeta().richExplainerHtml;
       }
       const container = document.getElementById("crewContainer");
       container.innerHTML = state.players
@@ -4705,8 +4790,12 @@
 
       textIoModal.classList.add("open");
       setTimeout(function () {
-        textIoArea.focus();
-        if (!isImport) textIoArea.select();
+        if (isImport) {
+          textIoArea.focus();
+        } else {
+          textIoArea.scrollTop = 0;
+          textIoArea.scrollLeft = 0;
+        }
       }, 50);
     }
 
