@@ -1679,11 +1679,32 @@
 
     /**
      * ============================================================================
-     * 2. EXTENSIBLE STORAGE PROVIDER ARCHITECTURE
-     * Swap in Firebase Firestore or Supabase later by subclassing
-     * TournamentStorageProvider and replacing ONLY `const storageProvider = ...`.
+     * 2. EXTENSIBLE STORAGE PROVIDER ARCHITECTURE (LOCAL + FIREBASE FIRESTORE)
      * ============================================================================
      */
+    // Paste your Firebase Web App config from Firebase Console -> Project Settings.
+    // Leave blank to run in offline LocalStorage-only mode.
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDzsKsqTBETKBu_0hNCH0STIwbUoJ4KC2E",
+      authDomain: "mariam-padel.firebaseapp.com",
+      projectId: "mariam-padel",
+      storageBucket: "mariam-padel.firebasestorage.app",
+      messagingSenderId: "164947882683",
+      appId: "1:164947882683:web:95b1d51a6dc795dc80ef9e"
+    };
+
+    function isFirebaseConfigured(cfg) {
+      return Boolean(
+        cfg &&
+        typeof cfg.apiKey === "string" &&
+        cfg.apiKey.trim() &&
+        !cfg.apiKey.includes("YOUR_") &&
+        typeof cfg.projectId === "string" &&
+        cfg.projectId.trim() &&
+        !cfg.projectId.includes("YOUR_")
+      );
+    }
+
     class TournamentStorageProvider {
       async init(defaultState) {
         throw new Error("init() must be implemented by subclass");
@@ -1691,14 +1712,21 @@
       async saveState(state) {
         throw new Error("saveState() must be implemented by subclass");
       }
+      async updateMeta(fullState) {
+        return this.saveState(fullState);
+      }
       async updateMatch(matchId, matchData, fullState) {
         return this.saveState(fullState);
       }
-      async updatePlayer(playerId, playerData, fullState) {
+      async updatePlayer(playerId, playerData, fullState, changedField) {
         return this.saveState(fullState);
       }
       async resetAll(defaultState) {
         return this.saveState(defaultState);
+      }
+      async onAdminUnlock(fullState) {}
+      getSyncStatusLabel() {
+        return "✓ Saved (Local)";
       }
       subscribe(onRemoteChange) {
         return function () {};
@@ -1756,22 +1784,464 @@
       }
     }
 
-    // Drop-in template for future cloud DB support (Firebase Firestore / Supabase):
-    class CloudStorageProviderTemplate extends TournamentStorageProvider {
-      constructor(clientConfig) {
+    class FirestoreStorageProvider extends TournamentStorageProvider {
+      constructor(firebaseConfig, cacheKey) {
         super();
-        this.config = clientConfig;
+        this.firebaseConfig = firebaseConfig;
+        this.localCache = new LocalStorageProvider(cacheKey);
+        this.sdk = null;
+        this.initPromise = null;
+        this.remoteSeeded = false;
+        this.connected = false;
+        this.statusText = "☁️ Connecting...";
+        this.defaultStateTemplate = null;
       }
+
+      getSyncStatusLabel() {
+        return this.statusText;
+      }
+
+      async _ensureSdk() {
+        if (this.sdk) return this.sdk;
+        if (!this.initPromise) {
+          const self = this;
+          this.initPromise = (async function () {
+            try {
+              const [appMod, fsMod] = await Promise.all([
+                import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js"),
+                import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js")
+              ]);
+              const app = appMod.getApps().length
+                ? appMod.getApp()
+                : appMod.initializeApp(self.firebaseConfig);
+              const db = fsMod.getFirestore(app);
+              self.sdk = {
+                db: db,
+                doc: fsMod.doc,
+                getDoc: fsMod.getDoc,
+                getDocs: fsMod.getDocs,
+                setDoc: fsMod.setDoc,
+                updateDoc: fsMod.updateDoc,
+                collection: fsMod.collection,
+                onSnapshot: fsMod.onSnapshot,
+                writeBatch: fsMod.writeBatch
+              };
+              return self.sdk;
+            } catch (err) {
+              self.connected = false;
+              self.statusText = "📱 Offline Cache";
+              return null;
+            }
+          })();
+        }
+        return this.initPromise;
+      }
+
+      _serializeMeta(fullState) {
+        return {
+          headStartsActive: Boolean(fullState.headStartsActive),
+          birthdayLawActive: Boolean(fullState.birthdayLawActive),
+          decreeIndex: Number(fullState.decreeIndex) || 0,
+          updatedAt: Date.now(),
+          adminKey: ADMIN_PASSWORD
+        };
+      }
+
+      _serializePlayer(player, includeAdminKey) {
+        const docData = {
+          id: Number(player.id),
+          name: String(player.name || ""),
+          isBirthdayQueen: Boolean(player.isBirthdayQueen),
+          bonusPoints: Number(player.bonusPoints) || 0,
+          celebratingPhoto: player.celebratingPhoto || "",
+          sadPhoto: player.sadPhoto || ""
+        };
+        if (includeAdminKey) docData.adminKey = ADMIN_PASSWORD;
+        return docData;
+      }
+
+      _serializeMatch(match, includeAdminKey) {
+        const clean = sanitizeMatch16(deepClone(match));
+        const docData = {
+          id: Number(clean.id),
+          round: Number(clean.round),
+          court: Number(clean.court),
+          teamA: Array.isArray(clean.teamA) ? clean.teamA.slice(0, 2).map(Number) : [0, 1],
+          teamB: Array.isArray(clean.teamB) ? clean.teamB.slice(0, 2).map(Number) : [2, 3],
+          scoreA: Number(clean.scoreA),
+          scoreB: Number(clean.scoreB),
+          confirmed: Boolean(clean.confirmed),
+          deleted: false
+        };
+        if (includeAdminKey) docData.adminKey = ADMIN_PASSWORD;
+        return docData;
+      }
+
+      _normalizePlayer(raw, base) {
+        const merged = Object.assign({}, base || {}, raw || {});
+        delete merged.adminKey;
+        merged.id = Number(merged.id);
+        merged.bonusPoints =
+          typeof merged.bonusPoints === "number"
+            ? merged.bonusPoints
+            : typeof (base && base.bonusPoints) === "number"
+              ? base.bonusPoints
+              : 0;
+        merged.celebratingPhoto = merged.celebratingPhoto || "";
+        merged.sadPhoto = merged.sadPhoto || "";
+        return merged;
+      }
+
+      _normalizeMatch(raw) {
+        const m = deepClone(raw);
+        delete m.adminKey;
+        delete m.deleted;
+        m.id = Number(m.id);
+        m.round = Number(m.round) || 1;
+        m.court = Number(m.court) || 1;
+        m.teamA = Array.isArray(m.teamA) ? m.teamA.slice(0, 2).map(Number) : [0, 1];
+        m.teamB = Array.isArray(m.teamB) ? m.teamB.slice(0, 2).map(Number) : [2, 3];
+        m.confirmed = Boolean(m.confirmed);
+        return sanitizeMatch16(m);
+      }
+
+      _mergeRemoteDocs(defaultState, metaData, playerDocs, matchDocs, localActiveRound) {
+        const merged = deepClone(defaultState);
+        if (typeof localActiveRound === "number") {
+          merged.activeRound = localActiveRound;
+        }
+        if (metaData) {
+          if (typeof metaData.headStartsActive === "boolean") {
+            merged.headStartsActive = metaData.headStartsActive;
+          }
+          if (typeof metaData.birthdayLawActive === "boolean") {
+            merged.birthdayLawActive = metaData.birthdayLawActive;
+          }
+          if (typeof metaData.decreeIndex === "number") {
+            merged.decreeIndex = metaData.decreeIndex;
+          }
+        }
+        if (playerDocs && playerDocs.length > 0) {
+          const byId = new Map();
+          playerDocs.forEach(function (p) {
+            byId.set(Number(p.id), p);
+          });
+          merged.players = defaultState.players.map(function (base) {
+            const remote = byId.get(base.id);
+            return remote ? this._normalizePlayer(remote, base) : deepClone(base);
+          }, this);
+        }
+        if (matchDocs && matchDocs.length > 0) {
+          const activeMatches = matchDocs
+            .filter(function (m) {
+              return !m.deleted;
+            })
+            .map(this._normalizeMatch.bind(this))
+            .sort(function (a, b) {
+              return a.id - b.id;
+            });
+          if (activeMatches.length > 0) {
+            merged.matches = activeMatches;
+          }
+        }
+        return merged;
+      }
+
+      async _writeFullState(fullState, softDeleteMatchIds) {
+        const sdk = await this._ensureSdk();
+        if (!sdk) return;
+        const ops = [];
+        ops.push({
+          ref: sdk.doc(sdk.db, "meta", "tournament"),
+          data: this._serializeMeta(fullState)
+        });
+        const self = this;
+        fullState.players.forEach(function (p) {
+          ops.push({
+            ref: sdk.doc(sdk.db, "players", String(p.id)),
+            data: self._serializePlayer(p, true)
+          });
+        });
+        fullState.matches.forEach(function (m) {
+          ops.push({
+            ref: sdk.doc(sdk.db, "matches", String(m.id)),
+            data: self._serializeMatch(m, true)
+          });
+        });
+        if (Array.isArray(softDeleteMatchIds)) {
+          softDeleteMatchIds.forEach(function (id) {
+            ops.push({
+              ref: sdk.doc(sdk.db, "matches", String(id)),
+              data: { id: Number(id), deleted: true, adminKey: ADMIN_PASSWORD }
+            });
+          });
+        }
+
+        for (let i = 0; i < ops.length; i += 400) {
+          const batch = sdk.writeBatch(sdk.db);
+          ops.slice(i, i + 400).forEach(function (op) {
+            batch.set(op.ref, op.data);
+          });
+          await batch.commit();
+        }
+        this.remoteSeeded = true;
+        this.connected = true;
+        this.statusText = "☁️ Live Sync";
+      }
+
       async init(defaultState) {
-        return defaultState;
+        this.defaultStateTemplate = deepClone(defaultState);
+        const cached = await this.localCache.init(defaultState);
+        const sdk = await this._ensureSdk();
+        if (!sdk) return cached;
+
+        try {
+          const [metaSnap, playersSnap, matchesSnap] = await Promise.all([
+            sdk.getDoc(sdk.doc(sdk.db, "meta", "tournament")),
+            sdk.getDocs(sdk.collection(sdk.db, "players")),
+            sdk.getDocs(sdk.collection(sdk.db, "matches"))
+          ]);
+
+          const hasRemote = metaSnap.exists() || !playersSnap.empty || !matchesSnap.empty;
+          this.connected = true;
+
+          if (hasRemote) {
+            this.remoteSeeded = true;
+            this.statusText = "☁️ Live Sync";
+            const playerDocs = [];
+            playersSnap.forEach(function (d) {
+              playerDocs.push(d.data());
+            });
+            const matchDocs = [];
+            matchesSnap.forEach(function (d) {
+              matchDocs.push(d.data());
+            });
+            const merged = this._mergeRemoteDocs(
+              defaultState,
+              metaSnap.exists() ? metaSnap.data() : null,
+              playerDocs,
+              matchDocs,
+              cached.activeRound
+            );
+            await this.localCache.saveState(merged);
+            return merged;
+          }
+
+          if (isAdminUnlocked()) {
+            await this._writeFullState(cached);
+          } else {
+            this.remoteSeeded = false;
+            this.statusText = "☁️ Waiting Admin Seed";
+          }
+          return cached;
+        } catch (err) {
+          this.connected = false;
+          this.statusText = "📱 Offline Cache";
+          return cached;
+        }
       }
-      async saveState(state) {}
-      async updateMatch(matchId, matchData, fullState) {}
-      async updatePlayer(playerId, playerData, fullState) {}
+
+      async onAdminUnlock(fullState) {
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        try {
+          if (!this.remoteSeeded) {
+            const metaSnap = await sdk.getDoc(sdk.doc(sdk.db, "meta", "tournament"));
+            if (!metaSnap.exists()) {
+              await this._writeFullState(fullState);
+              showToast("☁️ Cloud database initialized for all guests!");
+            } else {
+              this.remoteSeeded = true;
+              this.statusText = "☁️ Live Sync";
+            }
+          }
+        } catch (err) {
+          this.statusText = "📱 Offline Cache";
+        }
+      }
+
+      async updateMeta(fullState) {
+        await this.localCache.saveState(fullState);
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        if (!this.remoteSeeded) {
+          await this.onAdminUnlock(fullState);
+        }
+        await sdk.setDoc(
+          sdk.doc(sdk.db, "meta", "tournament"),
+          this._serializeMeta(fullState),
+          { merge: true }
+        );
+        this.statusText = "☁️ Live Sync";
+      }
+
+      async updateMatch(matchId, matchData, fullState) {
+        await this.localCache.saveState(fullState);
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        if (!this.remoteSeeded) {
+          await this.onAdminUnlock(fullState);
+        }
+        await sdk.setDoc(
+          sdk.doc(sdk.db, "matches", String(matchId)),
+          this._serializeMatch(matchData, true)
+        );
+        this.statusText = "☁️ Live Sync";
+      }
+
+      async updatePlayer(playerId, playerData, fullState, changedField) {
+        await this.localCache.saveState(fullState);
+        const sdk = await this._ensureSdk();
+        if (!sdk) return;
+
+        if (isAdminUnlocked()) {
+          if (!this.remoteSeeded) {
+            await this.onAdminUnlock(fullState);
+          }
+          await sdk.setDoc(
+            sdk.doc(sdk.db, "players", String(playerId)),
+            this._serializePlayer(playerData, true)
+          );
+          this.statusText = "☁️ Live Sync";
+          return;
+        }
+
+        // Guest upload into an empty selfie slot: update ONLY that single photo field
+        if (!this.remoteSeeded) {
+          throw new Error("Cloud DB not initialized yet. Ask Admin to unlock once first.");
+        }
+        if (changedField === "celebratingPhoto" || changedField === "sadPhoto") {
+          const patch = {};
+          patch[changedField] = playerData[changedField] || "";
+          await sdk.updateDoc(sdk.doc(sdk.db, "players", String(playerId)), patch);
+          this.statusText = "☁️ Live Sync";
+        }
+      }
+
+      async saveState(fullState) {
+        await this.localCache.saveState(fullState);
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        await this._writeFullState(fullState);
+      }
+
+      async resetAll(defaultState) {
+        await this.localCache.saveState(defaultState);
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        const matchesSnap = await sdk.getDocs(sdk.collection(sdk.db, "matches"));
+        const keepIds = new Set(
+          defaultState.matches.map(function (m) {
+            return String(m.id);
+          })
+        );
+        const toSoftDelete = [];
+        matchesSnap.forEach(function (d) {
+          if (!keepIds.has(d.id)) {
+            toSoftDelete.push(Number(d.id));
+          }
+        });
+        await this._writeFullState(defaultState, toSoftDelete);
+      }
+
+      subscribe(onRemoteChange) {
+        const self = this;
+        let unsubs = [];
+        let cancelled = false;
+        const latest = { meta: null, players: null, matches: null };
+
+        function emit(sourceChanged) {
+          if (cancelled || !self.remoteSeeded) return;
+          const payload = {};
+          if (sourceChanged === "meta" && latest.meta) {
+            payload.meta = latest.meta;
+          }
+          if (sourceChanged === "players" && latest.players) {
+            payload.players = latest.players.map(function (raw) {
+              const base =
+                self.defaultStateTemplate && self.defaultStateTemplate.players
+                  ? self.defaultStateTemplate.players[Number(raw.id)]
+                  : null;
+              return self._normalizePlayer(raw, base);
+            });
+          }
+          if (sourceChanged === "matches" && latest.matches) {
+            payload.matches = latest.matches
+              .filter(function (m) {
+                return !m.deleted;
+              })
+              .map(self._normalizeMatch.bind(self))
+              .sort(function (a, b) {
+                return a.id - b.id;
+              });
+          }
+          onRemoteChange(payload);
+        }
+
+        this._ensureSdk().then(function (sdk) {
+          if (!sdk || cancelled) return;
+
+          unsubs.push(
+            sdk.onSnapshot(sdk.doc(sdk.db, "meta", "tournament"), function (snap) {
+              if (snap.metadata && snap.metadata.hasPendingWrites) return;
+              if (snap.exists()) {
+                self.remoteSeeded = true;
+                self.connected = true;
+                self.statusText = "☁️ Live Sync";
+                latest.meta = snap.data();
+                emit("meta");
+              }
+            })
+          );
+
+          unsubs.push(
+            sdk.onSnapshot(sdk.collection(sdk.db, "players"), function (snap) {
+              if (snap.metadata && snap.metadata.hasPendingWrites) return;
+              if (snap.empty) return;
+              self.remoteSeeded = true;
+              self.connected = true;
+              self.statusText = "☁️ Live Sync";
+              const list = [];
+              snap.forEach(function (d) {
+                list.push(d.data());
+              });
+              latest.players = list;
+              emit("players");
+            })
+          );
+
+          unsubs.push(
+            sdk.onSnapshot(sdk.collection(sdk.db, "matches"), function (snap) {
+              if (snap.metadata && snap.metadata.hasPendingWrites) return;
+              if (snap.empty) return;
+              self.remoteSeeded = true;
+              self.connected = true;
+              self.statusText = "☁️ Live Sync";
+              const list = [];
+              snap.forEach(function (d) {
+                list.push(d.data());
+              });
+              latest.matches = list;
+              emit("matches");
+            })
+          );
+        });
+
+        return function () {
+          cancelled = true;
+          unsubs.forEach(function (u) {
+            try {
+              u();
+            } catch (err) {}
+          });
+        };
+      }
     }
 
-    // >>> SWAP THIS ONE LINE WHEN READY FOR CLOUD DB <<<
-    const storageProvider = new LocalStorageProvider("mariam_bday27_padel_16pt_v2");
+    const CACHE_STORAGE_KEY = "mariam_bday27_padel_16pt_v2";
+    const storageProvider = isFirebaseConfigured(FIREBASE_CONFIG)
+      ? new FirestoreStorageProvider(FIREBASE_CONFIG, CACHE_STORAGE_KEY)
+      : new LocalStorageProvider(CACHE_STORAGE_KEY);
 
     /**
      * ============================================================================
@@ -2002,7 +2472,7 @@
         badge.textContent = "● Unsaved — tap Confirm Result";
         badge.classList.add("unsaved");
       } else {
-        badge.textContent = "✓ Saved";
+        badge.textContent = storageProvider.getSyncStatusLabel();
         badge.classList.remove("unsaved");
       }
     }
@@ -2126,6 +2596,18 @@
       renderMatches();
       renderLeaderboard();
       renderCrew();
+    }
+
+    function renderFromRemoteUpdate() {
+      const activeEl = document.activeElement;
+      const editingLineup = Boolean(activeEl && activeEl.closest && activeEl.closest("[data-lineup-match]"));
+      const editingPlayerName = Boolean(activeEl && activeEl.closest && activeEl.closest("[data-player-name]"));
+      renderAdminChrome();
+      renderHeaderProgress();
+      renderRoundPills();
+      if (!editingLineup) renderMatches();
+      renderLeaderboard();
+      if (!editingPlayerName) renderCrew();
     }
 
     function renderAdminChrome() {
@@ -2893,6 +3375,14 @@
      * 9. EVENT LISTENERS & SYNCHRONOUS BOOTSTRAP
      * ============================================================================
      */
+    async function persistSafely(promiseFn, actionLabel) {
+      try {
+        await promiseFn();
+      } catch (err) {
+        showToast("⚠️ Cloud sync failed (" + (actionLabel || "write") + ") — saved locally.");
+      }
+    }
+
     document.addEventListener("click", async function (e) {
       // Bottom Nav Tabs (always accessible)
       const navBtn = e.target.closest(".nav-item");
@@ -2909,11 +3399,13 @@
         return;
       }
 
-      // Round Pills (always accessible; activeRound stays local when View-Only)
+      // Round Pills (always accessible; activeRound stays local per device)
       const roundBtn = e.target.closest(".round-pill");
       if (roundBtn) {
         state.activeRound = Number(roundBtn.dataset.round);
-        if (isAdminUnlocked()) {
+        if (storageProvider.localCache) {
+          await storageProvider.localCache.saveState(state);
+        } else if (isAdminUnlocked()) {
           await storageProvider.saveState(state);
         }
         renderRoundPills();
@@ -2936,8 +3428,10 @@
         const player = getPlayer(bonusPresetBtn.dataset.playerId);
         if (player) {
           player.bonusPoints = Number(bonusPresetBtn.dataset.bonusPreset);
-          await storageProvider.updatePlayer(player.id, player, state);
           renderAll();
+          await persistSafely(function () {
+            return storageProvider.updatePlayer(player.id, player, state, "bonusPoints");
+          }, "bonus");
         }
         return;
       }
@@ -2950,8 +3444,10 @@
         if (player) {
           const delta = Number(bonusDeltaBtn.dataset.bonusDelta);
           player.bonusPoints = Math.max(0, Math.min(50, (Number(player.bonusPoints) || 0) + delta));
-          await storageProvider.updatePlayer(player.id, player, state);
           renderAll();
+          await persistSafely(function () {
+            return storageProvider.updatePlayer(player.id, player, state, "bonusPoints");
+          }, "bonus");
         }
         return;
       }
@@ -3031,9 +3527,11 @@
           sanitizeMatch16(match);
           match.confirmed = true;
           clearMatchDirty(match.id);
-          await storageProvider.updateMatch(match.id, match, state);
           renderAll();
           openSplitReveal(match);
+          await persistSafely(function () {
+            return storageProvider.updateMatch(match.id, match, state);
+          }, "match #" + match.id);
           return;
         }
       }
@@ -3069,8 +3567,10 @@
         const player = getPlayer(nameInput.dataset.playerName);
         if (player && nameInput.value.trim()) {
           player.name = nameInput.value.trim();
-          await storageProvider.updatePlayer(player.id, player, state);
           renderAll();
+          await persistSafely(function () {
+            return storageProvider.updatePlayer(player.id, player, state, "name");
+          }, "name");
         }
         return;
       }
@@ -3079,8 +3579,8 @@
       if (photoInput && photoInput.files && photoInput.files[0]) {
         const player = getPlayer(photoInput.dataset.photoPlayer);
         const mood = photoInput.dataset.mood;
-        const slotAlreadyFilled =
-          mood === "celebrating" ? Boolean(player.celebratingPhoto) : Boolean(player.sadPhoto);
+        const fieldName = mood === "celebrating" ? "celebratingPhoto" : "sadPhoto";
+        const slotAlreadyFilled = Boolean(player[fieldName]);
 
         // Empty slots are open to everyone; overwriting an existing face requires Admin
         if (slotAlreadyFilled && !requireAdmin("overwrite an existing player photo")) {
@@ -3088,12 +3588,19 @@
           return;
         }
 
-        const compressed = await compressImageFile(photoInput.files[0]);
-        if (mood === "celebrating") player.celebratingPhoto = compressed;
-        if (mood === "sad") player.sadPhoto = compressed;
-        await storageProvider.updatePlayer(player.id, player, state);
-        renderAll();
-        showToast("📸 " + player.name + "'s " + (mood === "celebrating" ? "Winning" : "Crybaby") + " face uploaded!");
+        const prevPhoto = player[fieldName];
+        try {
+          const compressed = await compressImageFile(photoInput.files[0]);
+          player[fieldName] = compressed;
+          await storageProvider.updatePlayer(player.id, player, state, fieldName);
+          renderAll();
+          showToast("📸 " + player.name + "'s " + (mood === "celebrating" ? "Winning" : "Crybaby") + " face uploaded!");
+        } catch (err) {
+          player[fieldName] = prevPhoto;
+          photoInput.value = "";
+          renderAll();
+          showToast("⚠️ Couldn't save photo: " + (err && err.message ? err.message : "slot may already be filled."));
+        }
       }
     });
 
@@ -3107,7 +3614,7 @@
     });
 
     // Unlock Modal Handlers
-    function handlePasswordSubmit() {
+    async function handlePasswordSubmit() {
       const input = document.getElementById("adminPasswordInput");
       const errEl = document.getElementById("adminErrorMsg");
       const card = document.getElementById("adminUnlockCard");
@@ -3118,6 +3625,8 @@
         closeAdminUnlockModal();
         renderAll();
         showToast("👑 Admin Unlocked! Ready to enter scores & manage Chapter 27.");
+        await storageProvider.onAdminUnlock(state);
+        renderHeaderProgress();
       } else {
         errEl.textContent = WRONG_PASSWORD_LINES[Math.floor(Math.random() * WRONG_PASSWORD_LINES.length)];
         errEl.classList.remove("hidden");
@@ -3165,19 +3674,23 @@
     // Header & Overlay Buttons
     document.getElementById("hypeQueenBtn").addEventListener("click", async function () {
       state.decreeIndex = (state.decreeIndex + 1) % ROYAL_DECREES.length;
-      if (isAdminUnlocked()) {
-        await storageProvider.saveState(state);
-      }
       renderHeaderProgress();
       fireGlobalConfettiBurst();
+      if (isAdminUnlocked()) {
+        await persistSafely(function () {
+          return storageProvider.updateMeta(state);
+        }, "decree");
+      }
     });
 
     document.getElementById("decreeBanner").addEventListener("click", async function () {
       state.decreeIndex = (state.decreeIndex + 1) % ROYAL_DECREES.length;
-      if (isAdminUnlocked()) {
-        await storageProvider.saveState(state);
-      }
       renderHeaderProgress();
+      if (isAdminUnlocked()) {
+        await persistSafely(function () {
+          return storageProvider.updateMeta(state);
+        }, "decree");
+      }
     });
 
     document.getElementById("closeRevealBtn").addEventListener("click", closeSplitReveal);
@@ -3190,15 +3703,19 @@
     document.getElementById("toggleHeadStartsBtn").addEventListener("click", async function () {
       if (!requireAdmin("toggle starting head-start bonuses")) return;
       state.headStartsActive = !state.headStartsActive;
-      await storageProvider.saveState(state);
       renderLeaderboard();
+      await persistSafely(function () {
+        return storageProvider.updateMeta(state);
+      }, "head starts");
     });
 
     document.getElementById("toggleBirthdayRuleBtn").addEventListener("click", async function () {
       if (!requireAdmin("toggle the Article 27 #1 ranking rule")) return;
       state.birthdayLawActive = !state.birthdayLawActive;
-      await storageProvider.saveState(state);
       renderLeaderboard();
+      await persistSafely(function () {
+        return storageProvider.updateMeta(state);
+      }, "birthday law");
     });
 
     document.getElementById("playFinaleBtn").addEventListener("click", runGrandFinaleReveal);
@@ -3208,8 +3725,11 @@
 
     document.getElementById("addCustomMatchBtn").addEventListener("click", async function () {
       if (!requireAdmin("add a bonus match")) return;
-      const nextId = state.matches.length + 1;
-      state.matches.push({
+      const nextId =
+        state.matches.reduce(function (maxId, m) {
+          return Math.max(maxId, Number(m.id) || 0);
+        }, 0) + 1;
+      const newMatch = {
         id: nextId,
         round: state.activeRound,
         court: 1,
@@ -3218,9 +3738,12 @@
         scoreA: 8,
         scoreB: 8,
         confirmed: false
-      });
-      await storageProvider.saveState(state);
+      };
+      state.matches.push(newMatch);
       renderAll();
+      await persistSafely(function () {
+        return storageProvider.updateMatch(newMatch.id, newMatch, state);
+      }, "bonus match");
     });
 
     // Demo 32/33 Matches button (Admin only) — 16-pt games
@@ -3240,9 +3763,11 @@
         }
       });
       state.activeRound = 11;
-      await storageProvider.saveState(state);
       renderAll();
       showToast("⚡ Loaded 32/33 demo scores! Confirm Round 11 Match #33 to trigger the Finale!");
+      await persistSafely(function () {
+        return storageProvider.saveState(state);
+      }, "demo seed");
     });
 
     // Export JSON Backup (always open so anyone can save a copy)
@@ -3288,18 +3813,80 @@
       dirtyMatches.clear();
       state.matches = buildBalancedSchedule();
       state.activeRound = 1;
-      await storageProvider.resetAll(state);
       renderAll();
       showToast("🗑️ All 33 matches reset to 0/33!");
+      await persistSafely(function () {
+        return storageProvider.resetAll(state);
+      }, "reset");
     });
 
-    // Synchronous Immediate Render + Async Storage Hydration
+    // Synchronous Immediate Render + Async Storage Hydration + Real-Time Sync
     renderAll();
 
     (async function hydrateStorage() {
       try {
         state = await storageProvider.init(createDefaultState());
         renderAll();
+
+        storageProvider.subscribe(function (remotePatch) {
+          if (!remotePatch) return;
+
+          if (remotePatch.meta) {
+            if (typeof remotePatch.meta.headStartsActive === "boolean") {
+              state.headStartsActive = remotePatch.meta.headStartsActive;
+            }
+            if (typeof remotePatch.meta.birthdayLawActive === "boolean") {
+              state.birthdayLawActive = remotePatch.meta.birthdayLawActive;
+            }
+            if (typeof remotePatch.meta.decreeIndex === "number") {
+              state.decreeIndex = remotePatch.meta.decreeIndex;
+            }
+          }
+
+          if (Array.isArray(remotePatch.players) && remotePatch.players.length > 0) {
+            const byId = new Map();
+            remotePatch.players.forEach(function (p) {
+              byId.set(Number(p.id), p);
+            });
+            state.players = state.players.map(function (existing) {
+              return byId.get(existing.id) || existing;
+            });
+          }
+
+          if (Array.isArray(remotePatch.matches) && remotePatch.matches.length > 0) {
+            const localDirtyById = new Map();
+            state.matches.forEach(function (m) {
+              if (dirtyMatches.has(m.id)) {
+                localDirtyById.set(m.id, m);
+              }
+            });
+
+            const mergedMatches = remotePatch.matches.map(function (rm) {
+              sanitizeMatch16(rm);
+              return localDirtyById.has(rm.id) ? localDirtyById.get(rm.id) : rm;
+            });
+
+            localDirtyById.forEach(function (dirtyMatch, id) {
+              if (
+                !mergedMatches.some(function (m) {
+                  return m.id === id;
+                })
+              ) {
+                mergedMatches.push(dirtyMatch);
+              }
+            });
+
+            mergedMatches.sort(function (a, b) {
+              return a.id - b.id;
+            });
+            state.matches = mergedMatches;
+          }
+
+          if (storageProvider.localCache) {
+            storageProvider.localCache.saveState(state);
+          }
+          renderFromRemoteUpdate();
+        });
       } catch (err) {
         renderAll();
       }
