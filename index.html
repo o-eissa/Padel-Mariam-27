@@ -1207,7 +1207,7 @@
       flex: 1;
       background: radial-gradient(circle at 50% 30%, var(--lime-bright) 0%, var(--lime) 75%);
       border-bottom: 4px solid var(--ink);
-      padding: 18px 16px 14px;
+      padding: 14px 16px 28px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1221,7 +1221,7 @@
       flex: 1;
       background: linear-gradient(180deg, var(--slate-cry) 0%, var(--slate-deep) 100%);
       color: #F8FAFC;
-      padding: 14px 16px 20px;
+      padding: 28px 16px 14px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -1231,28 +1231,56 @@
       z-index: 3;
     }
 
+    .reveal-headline {
+      font-family: var(--font-display);
+      font-size: clamp(1.15rem, 4.4vw, 1.42rem);
+      font-weight: 900;
+      margin: 7px 0 4px;
+      line-height: 1.15;
+      max-width: 390px;
+    }
+
+    .loser-headline {
+      color: #F8FAFC;
+      text-shadow: 0 2px 0 rgba(0, 0, 0, 0.45);
+    }
+
     .winner-hype-line {
       margin: 6px 0 0;
-      font-size: 0.79rem;
+      font-size: 0.85rem;
       font-weight: 800;
       color: var(--ink);
-      background: rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.86);
       border: 1.5px solid var(--ink);
       border-radius: 10px;
-      padding: 4px 10px;
-      max-width: 340px;
+      padding: 6px 12px;
+      max-width: 350px;
+      line-height: 1.3;
+    }
+
+    .loser-roast-line {
+      margin: 6px 0 0;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: #F8FAFC;
+      background: rgba(15, 23, 42, 0.78);
+      border: 1.5px solid #93C5FD;
+      border-radius: 10px;
+      padding: 6px 12px;
+      max-width: 350px;
+      line-height: 1.3;
     }
 
     .reveal-faces {
       display: flex;
       gap: 16px;
-      margin: 8px 0;
+      margin: 6px 0;
       justify-content: center;
     }
 
     .winner-face {
-      width: 96px;
-      height: 96px;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       border: 3.5px solid var(--ink);
       box-shadow: 0 6px 0 var(--ink);
@@ -1636,7 +1664,7 @@
       <div style="font-size:0.74rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; background:#FFFFFF; border:2px solid var(--ink); padding:3px 10px; border-radius:99px;">
         Winners' VIP #27 Lounge
       </div>
-      <h2 id="winnerHeadline" style="font-family:var(--font-display); font-size:1.35rem; margin:8px 0 4px; line-height:1.15;">
+      <h2 id="winnerHeadline" class="reveal-headline">
         ABSOLUTE PADEL ROYALTY!
       </h2>
       <div class="reveal-faces" id="winnerFaces"></div>
@@ -1654,9 +1682,12 @@
         </svg>
         <span>Losers' Crybaby Corner</span>
       </div>
+      <h2 id="loserHeadline" class="reveal-headline loser-headline">
+        🌧️ SEND TISSUES TO COURT!
+      </h2>
       <div class="reveal-faces" id="loserFaces"></div>
-      <div id="loserNames" style="font-weight:800; font-size:0.95rem; color:#E2E8F0;"></div>
-      <p id="loserRoast" style="margin:6px 0 0; font-size:0.82rem; color:#94A3B8; max-width:320px; font-weight:600;"></p>
+      <div id="loserNames" style="font-weight:900; font-size:1rem; color:#E2E8F0;"></div>
+      <p id="loserRoast" class="loser-roast-line"></p>
     </div>
 
     <div class="reveal-close-bar">
@@ -2390,7 +2421,13 @@
       "Rule #27.2: Fons (+10) and the girls (+8) have official head starts; guys start at +0 and zero excuses.",
       "Rule #27.3: Complaining about Mariam's lobs adds +27 spiritual points to Mariam.",
       "Rule #27.4: Mariam is immune to net cords, glass bounces, and 27-year-old knee creaks.",
-      "Rule #27.5: Regardless of math, Mariam finishes #1. Do not argue with the birthday cake."
+      "Rule #27.5: Regardless of math, Mariam finishes #1. Do not argue with the birthday cake.",
+      "Rule #27.6: Smashing directly at the Birthday Girl is punishable by immediate cake confiscation.",
+      "Rule #27.7: Every net cord Mariam hits was 100% calculated geometry. Don't question it.",
+      "Rule #27.8: Losers of any round must hydrate, stretch, and compliment Mariam's volleys.",
+      "Rule #27.9: If a ball hits the fence, it's a tactical trick shot when Mariam does it.",
+      "Rule #27.10: VAR is operated exclusively by the Birthday Committee and always rules in Mariam's favor.",
+      "Rule #27.11: No excuses about lights, wind, or 'new grip' — this is Chapter 27."
     ];
 
     const COMEDY_POOLS = {
@@ -2402,7 +2439,19 @@
         "🥂 VIP VICTORY FOR THE BIRTHDAY GIRL!",
         "💅 EFFORTLESS! MARIAM DIDN'T EVEN BREAK A SWEAT!",
         "👑 ALL HAIL QUEEN MARIAM — COURT RULER OF 27!",
-        "🎉 BIRTHDAY BUFF ACTIVATED! TOTAL ROYAL DOMINATION!"
+        "🎉 BIRTHDAY BUFF ACTIVATED! TOTAL ROYAL DOMINATION!",
+        "👑 CROWN STAYS HEAVY! MARIAM COOKS AGAIN!",
+        "🎂 BLOWING OUT CANDLES & OPPONENTS' DREAMS!",
+        "💎 PRIME 27! MARIAM JUST RAN A MASTERCLASS!",
+        "🔥 ROYAL DECREE DELIVERED AT 120 KM/H!",
+        "👑 COURT? MORE LIKE MARIAM'S PERSONAL THRONE!",
+        "🎈 PARTY QUEEN BY NIGHT, PADEL MENACE BY COURT!",
+        "🏆 GIVE HER THE TROPHY ALREADY — IT'S OVER!",
+        "💫 MAIN CHARACTER ENERGY ALL OVER THE GLASS!",
+        "🥂 CHEERS TO 27! ANOTHER CASUAL ROYAL DUB!",
+        "⚡ BOW TO THE BANDEJA OF THE BIRTHDAY QUEEN!",
+        "👑 UNDEFEATED VIBES! CHAPTER 27 IS BUILT DIFFERENT!",
+        "🎉 ZERO MERCY ON HER OWN BIRTHDAY — ICONIC!"
       ],
       queenWinHype: [
         "Scientifically proven: turning 27 adds +40 km/h to Mariam's bandeja.",
@@ -2410,7 +2459,19 @@
         "This victory has been officially added to Mariam's 27th birthday highlight reel.",
         "Cake tastes 10x sweeter when you're crushing everyone on court.",
         "Her partner deserves half the credit and 10% of the birthday cake.",
-        "27 never looked so ruthless on a blue padel court!"
+        "27 never looked so ruthless on a blue padel court!",
+        "That wasn't a match, that was a royal public service announcement.",
+        "Opponents came to a birthday party and got handed a padel lesson instead.",
+        "Mariam's partner just unlocked VIP front-of-line cake privileges.",
+        "Even the referee stopped watching and just started clapping for Mariam.",
+        "Birthday buff + glass mastery = completely illegal combo.",
+        "Not even a single candle flickered — pure ice-cold royal composure.",
+        "Sources confirm the opponents are still looking for where Mariam's lob landed.",
+        "Mariam didn't even need the +15 head start for that one!",
+        "The Queen came for cake AND cardio, and she's already out of mercy.",
+        "Petition to rename this court 'Mariam Arena' effective immediately.",
+        "27 candles on the cake, 27 reasons not to lob Mariam.",
+        "Every shot was approved by the Royal Ministry of Padel Excellence."
       ],
       queenLossHeadlines: [
         "🚨 ILLEGAL UPSET! SOMEONE BEAT THE BIRTHDAY GIRL?! 🚨",
@@ -2418,14 +2479,34 @@
         "🎂 CONGRATS ON WINNING... YOUR CAKE PRIVILEGES ARE REVOKED!",
         "😱 CALL THE PADEL POLICE! THEY DARED BEAT MARIAM ON HER 27TH!",
         "🚩 OBVIOUS COURT MALFUNCTION! MARIAM CLEARLY WON IN SPIRIT!",
-        "👑 TEMPORARY MERCY GRANTED BY QUEEN MARIAM!"
+        "👑 TEMPORARY MERCY GRANTED BY QUEEN MARIAM!",
+        "🕵️‍♂️ SUSPICIOUS SCOREBOARD! DEMANDING AN IMMEDIATE VAR CHECK!",
+        "🍰 HOPE THAT WIN WAS WORTH GETTING THE SMALLEST SLICE OF CAKE!",
+        "🚨 HIGH TREASON COMMITTED ON COURT TONIGHT!",
+        "😈 BOLD OF YOU TO BEAT THE HOST BEFORE DINNER!",
+        "📜 ARTICLE 27 AMENDMENT INCOMING: THIS MATCH NEVER HAPPENED!",
+        "🎭 PLOT TWIST! MARIAM JUST LET YOU FEEL SPECIAL FOR 10 MINUTES!",
+        "⚖️ COURT IN SESSION: WINNERS CHARGED WITH BIRTHDAY DISRESPECT!",
+        "🚨 EMERGENCY MEETING! WHO AUTHORIZED THIS SCORE?!",
+        "🫣 BRAVE... VERY BRAVE TO CELEBRATE IN FRONT OF THE BIRTHDAY QUEEN!",
+        "👑 ROYAL CHARITY MATCH! MARIAM GENEROUSLY DONATED THOSE POINTS!"
       ],
       queenLossHype: [
         "Enjoy the points now — Article 27 still crowns Mariam #1 at the end!",
         "Bold strategy beating the host before she cuts the birthday cake.",
         "Mariam let you win purely out of 27th-birthday charity. You're welcome.",
         "Official protest filed: the sun/lights were in the Birthday Queen's eyes.",
-        "Technically a win for you, morally a felony against the Birthday Girl."
+        "Technically a win for you, morally a felony against the Birthday Girl.",
+        "Celebrate quietly before the Birthday Committee deducts 50 vibes points.",
+        "The Birthday Queen was clearly playing at 15% power to keep it polite.",
+        "Hope you brought your own cake because you just got uninvited from dessert.",
+        "VAR review pending for approximately the next 27 years.",
+        "Statistically impossible — clearly a glitch in the glass physics.",
+        "Your names have been written down in Mariam's Royal Revenge Notebook.",
+        "Congrats! You won the battle and lost your front-row party seat.",
+        "Mariam was just warming up her wrist for the Grand Finale takeover.",
+        "Fake news! Everybody saw Mariam hit at least 19 spiritual winners.",
+        "The court was definitely tilted 2 degrees against the Birthday Girl."
       ],
       blowoutHeadlines: [
         "🥯 BAKERY OPEN! FRESH 27TH BIRTHDAY BAGELS!",
@@ -2433,7 +2514,19 @@
         "🧹 SOMEONE BRING A BROOM — CLEAN SWEEP!",
         "🔥 ABSOLUTE CLINIC! WAS THAT EVEN A FAIR FIGHT?!",
         "💀 R.I.P. TO THE LOSERS' PADEL CAREERS!",
-        "🍳 COOKED, FRIED & SERVED ON A SILVER PLATTER!"
+        "🍳 COOKED, FRIED & SERVED ON A SILVER PLATTER!",
+        "🚨 MERCY RULE TRIGGERED! STOP THE MATCH!",
+        "💣 DEMOLITION DERBY ON THE BLUE TURF!",
+        "🌪️ CATEGORY 5 PADEL HURRICANE JUST HIT THAT COURT!",
+        "🎬 SOMEONE CHECK IF THIS IS LEGAL TO BROADCAST!",
+        "🥩 WELL DONE! ABSOLUTELY GRILLED FROM START TO FINISH!",
+        "🚜 BULLDOZED! ZERO SURVIVORS ON THE OTHER SIDE!",
+        "📉 HISTORIC COLLAPSE! CALL THE STOCK MARKET!",
+        "🥊 KNOCKOUT IN ROUND 1! THROW IN THE TOWEL!",
+        "🚀 NOT EVEN CLOSE — DIFFERENT STRATOSPHERE!",
+        "🧊 COLD-BLOODED DESTRUCTION! NO PRISONERS!",
+        "🔔 SCHOOL'S IN SESSION — FREE PADEL TUITION!",
+        "💥 COMPLETE ANNIHILATION! CHECK THE GLASS FOR CRACKS!"
       ],
       nailbiterHeadlines: [
         "💓 HEART-ATTACK FINISH! PURE SWEAT & LUCK!",
@@ -2441,7 +2534,19 @@
         "🥵 CARDIOLOGISTS HATE THIS ONE-POINT THRILLER!",
         "⚡ PHOTO FINISH! SURVIVED BY PURE BIRTHDAY MAGIC!",
         "🎭 DRAMA QUEENS! CLUTCHED IT AT THE DEATH!",
-        "🧊 ICE IN THEIR VEINS! ICE-COLD CLUTCH WINNERS!"
+        "🧊 ICE IN THEIR VEINS! ICE-COLD CLUTCH WINNERS!",
+        "🎢 ROLLERCOASTER MADNESS! MY NERVES ARE GONE!",
+        "🔎 NEEDED A MICROSCOPE TO CALL THAT WINNER!",
+        "⏱️ BUZZER-BEATER CHAOS! STOLE IT AT THE WIRE!",
+        "🍿 ABSOLUTE CINEMA! GIVE THIS MATCH AN OSCAR!",
+        "🤯 STOLEN RIGHT OUT OF THE JAWS OF DEFEAT!",
+        "💨 WON BY ONE SINGLE HAIR & A PRAYER!",
+        "🔥 MAXIMUM STRESS! BOTH TEAMS NEED AN ICE BATH!",
+        "🎯 CLUTCH GENE ACTIVATED WHEN IT MATTERED MOST!",
+        "⚡ PURE ADRENALINE! BARELY ESCAPED ALIVE!",
+        "🏆 THAT WAS BASICALLY A WORLD CUP FINAL!",
+        "😬 SWEATY PALMS, SHAKY KNEES, BIG DUB!",
+        "🎲 ROLLED A NATURAL 20 ON THE FINAL POINT!"
       ],
       standardWinHeadlines: [
         "🏆 ABSOLUTE PADEL ROYALTY ON COURT!",
@@ -2451,7 +2556,23 @@
         "🌟 CERTIFIED PADEL WEAPONS!",
         "🎯 SURGICAL PRECISION! TEXTBOOK AMERICANO!",
         "⚡ UNSTOPPABLE DUO! BUILT DIFFERENT!",
-        "😎 SMOOTH OPERATORS! EASY WORK!"
+        "😎 SMOOTH OPERATORS! EASY WORK!",
+        "🔥 LOCKED IN! LIGHTS OUT PERFORMANCE!",
+        "🎾 PURE FILTH! THOSE ANGLES SHOULD BE BANNED!",
+        "💪 BUSINESS HANDLED! NEXT VICTIMS PLEASE!",
+        "✨ POETRY IN MOTION ON THE GLASS!",
+        "🚀 LAUNCHED INTO ORBIT! WHAT A SHIFT!",
+        "🕶️ TOO COOL FOR THIS COURT! CLEAN VICTORY!",
+        "⚡ ELECTRIC CHEMISTRY! UNTOUCHABLE AT THE NET!",
+        "🏅 GOLD MEDAL VIBES! PUT THEM ON CENTER COURT!",
+        "💣 DROPPING BOMBS ALL OVER THE SERVICE BOX!",
+        "🥳 PARTY MODE ENGAGED! WINNERS STAY WINNING!",
+        "🎯 LASER-GUIDED VOLLEYS! ZERO CHANCE!",
+        "🔥 SCORCHING HOT! SOMEONE CHECK THEIR RACKETS!",
+        "👑 DOMINATED THE NET LIKE THEY OWN THE CLUB!",
+        "🚀 FULL THROTTLE! NO BRAKES ON THIS DUO!",
+        "🎉 VICTORY LAP TIME! BRING OUT THE CONFETTI!",
+        "💎 ICE-COLD EXECUTION FROM FIRST SERVE TO LAST!"
       ],
       standardWinHype: [
         "They played like they already ate three slices of birthday cake.",
@@ -2459,7 +2580,77 @@
         "Zero unforced errors, 100% birthday party energy.",
         "Somewhere, a World Padel Tour scout just took notes.",
         "Chemistry level: telepathic.",
-        "Win first, celebrate with Mariam's cake second."
+        "Win first, celebrate with Mariam's cake second.",
+        "They didn't even break a sweat — barely messed up their hair.",
+        "Every lob landed on the back line like it had GPS.",
+        "The net belongs to them now; everybody else is just paying rent.",
+        "Warning: watching their volleys may cause sudden jealousy.",
+        "They communicated entirely through vibes and winners.",
+        "That glass bounce recovery should be framed on a wall.",
+        "Opponents tried everything except actually winning a point.",
+        "Smooth like butter, sharp like a birthday candle flame.",
+        "Honestly? Sign them up for Premier Padel tomorrow morning.",
+        "Zero panic, maximum swag, clean scoreboard.",
+        "They treated the net like a VIP velvet rope — nobody got past.",
+        "Their rackets are officially under investigation for aimbot.",
+        "That match had 'highlight reel' written all over it.",
+        "Built for big moments, fueled by Chapter 27 vibes.",
+        "Textbook spacing, ruthless finishing, certified menace duo.",
+        "Cleanest teamwork since peanut butter met jelly."
+      ],
+      loserHeadlines: [
+        "😭 SEND TISSUES TO COURT IMMEDIATELY!",
+        "🌧️ FORECAST: 100% CHANCE OF TEARS!",
+        "🪦 PADEL PRIVILEGES TEMPORARILY REVOKED!",
+        "📉 EMOTIONAL DAMAGE DETECTED ON COURT!",
+        "🧂 EXTRA SALTY! PASS THE ELECTROLYTES!",
+        "🎻 WORLD'S SMALLEST VIOLIN PLAYING NOW!",
+        "🚑 SOMEONE GET THESE TWO AN ICE PACK & A HUG!",
+        "🫠 MELTED UNDER PRESSURE! TRY AGAIN NEXT ROUND!",
+        "🚧 COURT CLOSED FOR EGO RECONSTRUCTION!",
+        "😬 OOF! LET'S PRETEND THAT MATCH NEVER HAPPENED!",
+        "🏳️ WHITE FLAG WAVED! BETTER LUCK NEXT COURT!",
+        "🤡 CIRCUS MUSIC INTENSIFIES IN CRYBABY CORNER!",
+        "💔 HEARTBREAK HOTEL — CHECK-IN COMPLETE!",
+        "🛋️ STRAIGHT TO THE BENCH TO THINK ABOUT IT!",
+        "🌧️ PERSONAL RAINCLOUD FOLLOWED YOU OFF COURT!",
+        "📸 SMILE FOR THE SAD PHOTO! YOU EARNED IT!",
+        "🪦 HERE LIES A PERFECTLY GOOD WARM-UP!",
+        "😵‍💫 DIZZY FROM CHASING ALL THOSE LOBS!",
+        "🫠 VIBES: IMMACULATE. SCOREBOARD: TRAGIC.",
+        "🚨 MISSING PERSONS REPORT: YOUR FIRST SERVES!",
+        "🎭 TRAGEDY IN 16 POINTS — DIRECTED BY YOU TWO!",
+        "🧊 FROZEN AT THE BASELINE! SEND HELP!",
+        "🪫 BATTERY AT 1% — SHUTTING DOWN!",
+        "🙈 DON'T LOOK AT THE LEADERBOARD FOR 5 MINUTES!"
+      ],
+      blowoutLoserHeadlines: [
+        "💀 ABSOLUTELY VAPORIZED! CALL FOR BACKUP!",
+        "🧹 SWEPT RIGHT OUT OF THE PADEL CLUB!",
+        "🥯 CONGRATS ON OPENING A BAGEL SHOP!",
+        "🚑 MEDIC! WE HAVE A CODE RED ON COURT!",
+        "🔥 ROASTED, TOASTED & COMPLETELY COOKED!",
+        "🏃‍♂️ SHOULD'VE STAYED IN THE PARKING LOT!",
+        "📉 WORST CRASH SINCE 2008!",
+        "🪦 REST IN PIECES TO THAT SCORE DIFFERENTIAL!",
+        "🚨 WITNESS PROTECTION RECOMMENDED FOR BOTH PLAYERS!",
+        "😭 THAT WASN'T A MATCH, THAT WAS A CRIME SCENE!",
+        "🍳 FLIPPED LIKE PANCAKES ON SUNDAY MORNING!",
+        "🫣 QUICK, BLAME THE BALLS AND WALK AWAY!",
+        "💣 TOTAL WIPEOUT! CHECK FOR SURVIVORS!",
+        "🌪️ BLOWN OFF THE COURT IN RECORD TIME!"
+      ],
+      queenLoserHeadlines: [
+        "👑 THIS LOSS IS UNCONSTITUTIONAL!",
+        "🚨 MARIAM DEMANDS AN IMMEDIATE RECOUNT!",
+        "⚖️ COURT RULING: THIS SCORE IS FAKE NEWS!",
+        "🎂 WHOEVER DID THIS GETS ZERO CAKE!",
+        "👑 QUEEN MARIAM WAS CLEARLY GOING EASY ON YOU!",
+        "🚩 ILLEGAL MATCH! THE NET WAS TOO HIGH!",
+        "🕵️‍♀️ OBVIOUS SABOTAGE AGAINST THE BIRTHDAY GIRL!",
+        "📜 ARTICLE 27 VETO ACTIVATED — DOESN'T COUNT!",
+        "👑 EVEN IN DEFEAT, MARIAM STILL FINISHES #1!",
+        "😤 ROYAL REVENGE ARC STARTS NEXT ROUND!"
       ],
       loserRoasts: [
         "Sponsored by the Net & Back Glass™.",
@@ -2475,7 +2666,29 @@
         "That smash went straight into next week.",
         "Even the glass wall felt sorry for you.",
         "Your lobs gave the opponents free overhead practice.",
-        "Petition to lower the net by 6 inches just for you two."
+        "Petition to lower the net by 6 inches just for you two.",
+        "Bold strategy: playing defense from the snack table.",
+        "You hit the fence more times than the actual court.",
+        "Your communication was 90% 'YOURS!' followed by silence.",
+        "Good news: you burned 400 calories chasing their winners.",
+        "Maybe try holding the racket by the handle next round?",
+        "Breaking news: the ball is actually supposed to bounce ONCE.",
+        "That 'tactical drop shot' didn't even reach the net.",
+        "You two gave the opponents a full-paid spa day at the net.",
+        "The glass called — it's filing a restraining order against your volleys.",
+        "Legend says they're still yelling 'MINE!' at a ball that landed 10 seconds ago.",
+        "Checked the replay: yeah, you definitely can't blame the lights for that one.",
+        "Your warm-up looked Olympic. The match looked like a comedy sketch.",
+        "Honestly impressive how consistently you found the exact center of the net tape.",
+        "Don't cry — at least you're helping everyone else's point differential!",
+        "Coach says: keep your eye on the ball, not on the birthday cake.",
+        "Plot twist: losing builds character. You two are now extremely charismatic.",
+        "Your overgrip wasn't slipping — your soul was leaving your body.",
+        "If unforced errors counted as points, you'd be World #1 right now.",
+        "Even your shadows tried to switch sides halfway through.",
+        "You played 'keep away' — mostly keeping the ball away from the court.",
+        "Recommendation: switch to bowling, the bumpers might help.",
+        "Drink water, shake it off, and definitely don't check the scoreboard."
       ]
     };
 
@@ -3250,35 +3463,41 @@
 
       let headline = "";
       let hypeLine = "";
+      let loserHeadline = "";
 
-      if (
-        winners.some(function (p) {
-          return p.isBirthdayQueen;
-        })
-      ) {
+      const queenWon = winners.some(function (p) {
+        return p.isBirthdayQueen;
+      });
+      const queenLost = losers.some(function (p) {
+        return p.isBirthdayQueen;
+      });
+
+      if (queenWon) {
         headline = pickFreshLine("queenWinHeadlines");
         hypeLine = pickFreshLine("queenWinHype");
-      } else if (
-        losers.some(function (p) {
-          return p.isBirthdayQueen;
-        })
-      ) {
+        loserHeadline = margin >= 7 ? pickFreshLine("blowoutLoserHeadlines") : pickFreshLine("loserHeadlines");
+      } else if (queenLost) {
         headline = pickFreshLine("queenLossHeadlines");
         hypeLine = pickFreshLine("queenLossHype");
+        loserHeadline = pickFreshLine("queenLoserHeadlines");
       } else if (margin >= 7) {
         headline = pickFreshLine("blowoutHeadlines");
         hypeLine = pickFreshLine("standardWinHype");
+        loserHeadline = pickFreshLine("blowoutLoserHeadlines");
       } else if (margin <= 2) {
         headline = pickFreshLine("nailbiterHeadlines");
         hypeLine = pickFreshLine("standardWinHype");
+        loserHeadline = pickFreshLine("loserHeadlines");
       } else {
         headline = pickFreshLine("standardWinHeadlines");
         hypeLine = pickFreshLine("standardWinHype");
+        loserHeadline = pickFreshLine("loserHeadlines");
       }
 
       document.getElementById("winnerHeadline").textContent = headline;
       document.getElementById("winnerHypeLine").textContent = hypeLine;
       document.getElementById("winnerNames").textContent = winners[0].name + " & " + winners[1].name;
+      document.getElementById("loserHeadline").textContent = loserHeadline;
       document.getElementById("loserNames").textContent = losers[0].name + " & " + losers[1].name;
       document.getElementById("revealScorePill").textContent = winScore + " — " + loseScore;
       document.getElementById("loserRoast").textContent = pickFreshLine("loserRoasts");
