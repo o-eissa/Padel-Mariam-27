@@ -1143,6 +1143,34 @@
       margin-bottom: 10px;
     }
 
+    .bye-banner {
+      background: #FEF3C7;
+      border: 2.5px solid var(--ink);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 9px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remove-player-btn {
+      min-width: 44px;
+      min-height: 44px;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      background: #FEE2E2;
+      color: #B91C1C;
+      font-weight: 900;
+      font-size: 0.85rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      flex-shrink: 0;
+    }
+
     /* ==========================================================================
        9. 50/50 SPLIT-SCREEN REVEAL OVERLAY
        ========================================================================== */
@@ -1436,7 +1464,7 @@
         <div class="progress-meta">
           <span id="progressLabel">0 / 33 Matches Confirmed</span>
           <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
-            <span class="format-pill">16-PT GAMES • 11 ROUNDS</span>
+            <span id="formatPill" class="format-pill">16-PT GAMES • 11 ROUNDS</span>
             <span id="saveStatusBadge" class="save-pill">✓ Saved</span>
           </div>
         </div>
@@ -1476,7 +1504,7 @@
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
         <div>
-          <h2 style="font-family:var(--font-display); margin:0; font-size:1.35rem;">The 12 Players</h2>
+          <h2 id="crewTitle" style="font-family:var(--font-display); margin:0; font-size:1.35rem;">The 12 Players</h2>
           <div style="font-size:0.76rem; color:var(--ink-muted); font-weight:700;">
             Starting head-start bonuses &amp; phone selfie uploads
           </div>
@@ -1491,6 +1519,7 @@
       <div class="crew-grid" id="crewContainer"></div>
 
       <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-sm btn-gold" id="addPlayerBtn" type="button">+ Add Player</button>
         <button class="btn btn-sm" id="exportTextBtn" type="button">📋 Export Text</button>
         <button class="btn btn-sm btn-lime" id="importTextBtn" type="button">📥 Import Text</button>
         <button class="btn btn-sm" id="resetTournamentBtn" type="button" style="color:#DC2626;">🗑️ Reset Scores</button>
@@ -1922,7 +1951,8 @@
           isBirthdayQueen: Boolean(player.isBirthdayQueen),
           bonusPoints: Number(player.bonusPoints) || 0,
           celebratingPhoto: player.celebratingPhoto || "",
-          sadPhoto: player.sadPhoto || ""
+          sadPhoto: player.sadPhoto || "",
+          deleted: false
         };
         if (includeAdminKey) docData.adminKey = ADMIN_PASSWORD;
         return docData;
@@ -1948,6 +1978,7 @@
       _normalizePlayer(raw, base) {
         const merged = Object.assign({}, base || {}, raw || {});
         delete merged.adminKey;
+        delete merged.deleted;
         merged.id = Number(merged.id);
         merged.bonusPoints =
           typeof merged.bonusPoints === "number"
@@ -1990,14 +2021,23 @@
           }
         }
         if (playerDocs && playerDocs.length > 0) {
-          const byId = new Map();
-          playerDocs.forEach(function (p) {
-            byId.set(Number(p.id), p);
+          const baseById = new Map();
+          defaultState.players.forEach(function (bp) {
+            baseById.set(Number(bp.id), bp);
           });
-          merged.players = defaultState.players.map(function (base) {
-            const remote = byId.get(base.id);
-            return remote ? this._normalizePlayer(remote, base) : deepClone(base);
-          }, this);
+          const activePlayers = playerDocs
+            .filter(function (p) {
+              return !p.deleted;
+            })
+            .map(function (p) {
+              return this._normalizePlayer(p, baseById.get(Number(p.id)));
+            }, this)
+            .sort(function (a, b) {
+              return a.id - b.id;
+            });
+          if (activePlayers.length > 0) {
+            merged.players = activePlayers;
+          }
         }
         if (matchDocs && matchDocs.length > 0) {
           const activeMatches = matchDocs
@@ -2015,7 +2055,7 @@
         return merged;
       }
 
-      async _writeFullState(fullState, softDeleteMatchIds) {
+      async _writeFullState(fullState, softDeleteMatchIds, softDeletePlayerIds) {
         const sdk = await this._ensureSdk();
         if (!sdk) return;
         const ops = [];
@@ -2040,6 +2080,14 @@
           softDeleteMatchIds.forEach(function (id) {
             ops.push({
               ref: sdk.doc(sdk.db, "matches", String(id)),
+              data: { id: Number(id), deleted: true, adminKey: ADMIN_PASSWORD }
+            });
+          });
+        }
+        if (Array.isArray(softDeletePlayerIds)) {
+          softDeletePlayerIds.forEach(function (id) {
+            ops.push({
+              ref: sdk.doc(sdk.db, "players", String(id)),
               data: { id: Number(id), deleted: true, adminKey: ADMIN_PASSWORD }
             });
           });
@@ -2190,19 +2238,33 @@
         await this.localCache.saveState(fullState);
         const sdk = await this._ensureSdk();
         if (!sdk || !isAdminUnlocked()) return;
-        const matchesSnap = await sdk.getDocs(sdk.collection(sdk.db, "matches"));
-        const keepIds = new Set(
+        const [matchesSnap, playersSnap] = await Promise.all([
+          sdk.getDocs(sdk.collection(sdk.db, "matches")),
+          sdk.getDocs(sdk.collection(sdk.db, "players"))
+        ]);
+        const keepMatchIds = new Set(
           fullState.matches.map(function (m) {
             return String(m.id);
           })
         );
-        const toSoftDelete = [];
+        const toSoftDeleteMatches = [];
         matchesSnap.forEach(function (d) {
-          if (!keepIds.has(d.id)) {
-            toSoftDelete.push(Number(d.id));
+          if (!keepMatchIds.has(d.id)) {
+            toSoftDeleteMatches.push(Number(d.id));
           }
         });
-        await this._writeFullState(fullState, toSoftDelete);
+        const keepPlayerIds = new Set(
+          fullState.players.map(function (p) {
+            return String(p.id);
+          })
+        );
+        const toSoftDeletePlayers = [];
+        playersSnap.forEach(function (d) {
+          if (!keepPlayerIds.has(d.id)) {
+            toSoftDeletePlayers.push(Number(d.id));
+          }
+        });
+        await this._writeFullState(fullState, toSoftDeleteMatches, toSoftDeletePlayers);
       }
 
       async resetAll(defaultState) {
@@ -2222,13 +2284,22 @@
             payload.meta = latest.meta;
           }
           if (sourceChanged === "players" && latest.players) {
-            payload.players = latest.players.map(function (raw) {
-              const base =
-                self.defaultStateTemplate && self.defaultStateTemplate.players
-                  ? self.defaultStateTemplate.players[Number(raw.id)]
-                  : null;
-              return self._normalizePlayer(raw, base);
-            });
+            payload.players = latest.players
+              .filter(function (raw) {
+                return !raw.deleted;
+              })
+              .map(function (raw) {
+                const base =
+                  self.defaultStateTemplate && self.defaultStateTemplate.players
+                    ? self.defaultStateTemplate.players.find(function (bp) {
+                        return Number(bp.id) === Number(raw.id);
+                      })
+                    : null;
+                return self._normalizePlayer(raw, base);
+              })
+              .sort(function (a, b) {
+                return a.id - b.id;
+              });
           }
           if (sourceChanged === "matches" && latest.matches) {
             payload.matches = latest.matches
@@ -2451,18 +2522,59 @@
       });
     }
 
-    // Cyclic Z_11 Whist Americano: 12 players, 11 rounds, 3 courts/round, 16-pt default (8-8)
-    function buildBalancedSchedule() {
+    // Cyclic Whist Americano:
+    // - Default 12 players: Z_11 (11 rounds, 3 courts/round, 33 matches — every pair partners once)
+    // - Optional 13 players: Z_13 (13 rounds, 3 courts/round, 39 matches, 1 bye/round — every pair partners once & opposes twice)
+    function buildBalancedSchedule(playersOrCount) {
+      const playerIds = Array.isArray(playersOrCount)
+        ? playersOrCount.map(function (p) {
+            return Number(p.id);
+          })
+        : Array.from({ length: Number(playersOrCount) || 12 }, function (_, i) {
+            return i;
+          });
+
       const matches = [];
       let matchId = 1;
+
+      if (playerIds.length === 13) {
+        const pick = function (idx) {
+          return playerIds[(idx % 13 + 13) % 13];
+        };
+        for (let r = 0; r < 13; r++) {
+          const roundNum = r + 1;
+          const rot = (r + 12) % 13;
+          // Player pick(rot) rests this round (so Mariam plays Round 1); remaining 12 play on 3 courts
+          const pairings13 = [
+            { court: 1, teamA: [pick(1 + rot), pick(12 + rot)], teamB: [pick(8 + rot), pick(5 + rot)] },
+            { court: 2, teamA: [pick(2 + rot), pick(11 + rot)], teamB: [pick(3 + rot), pick(10 + rot)] },
+            { court: 3, teamA: [pick(4 + rot), pick(9 + rot)], teamB: [pick(6 + rot), pick(7 + rot)] }
+          ];
+          pairings13.forEach(function (p) {
+            matches.push({
+              id: matchId++,
+              round: roundNum,
+              court: p.court,
+              teamA: p.teamA,
+              teamB: p.teamB,
+              scoreA: 8,
+              scoreB: 8,
+              confirmed: false
+            });
+          });
+        }
+        return matches;
+      }
+
+      const ids12 = playerIds.length >= 12 ? playerIds.slice(0, 12) : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
       const shift = function (x, r) {
-        return (x + r) % 11;
+        return ids12[(x + r) % 11];
       };
 
       for (let r = 0; r < 11; r++) {
         const roundNum = r + 1;
         const pairings = [
-          { court: 1, teamA: [11, shift(0, r)], teamB: [shift(1, r), shift(2, r)] },
+          { court: 1, teamA: [ids12[11], shift(0, r)], teamB: [shift(1, r), shift(2, r)] },
           { court: 2, teamA: [shift(3, r), shift(6, r)], teamB: [shift(7, r), shift(9, r)] },
           { court: 3, teamA: [shift(4, r), shift(8, r)], teamB: [shift(5, r), shift(10, r)] }
         ];
@@ -2587,9 +2699,10 @@
       }
       const useHeadStarts = Boolean(state.headStartsActive);
 
+      const statsById = new Map();
       const stats = state.players.map(function (p) {
         const appliedBonus = useHeadStarts ? Number(p.bonusPoints) || 0 : 0;
-        return Object.assign({}, p, {
+        const row = Object.assign({}, p, {
           appliedBonus: appliedBonus,
           matchPoints: 0,
           points: appliedBonus,
@@ -2597,6 +2710,8 @@
           played: 0,
           wins: 0
         });
+        statsById.set(Number(p.id), row);
+        return row;
       });
 
       state.matches.forEach(function (m) {
@@ -2606,7 +2721,7 @@
         const bWon = m.scoreB > m.scoreA;
 
         m.teamA.forEach(function (pid) {
-          const row = stats[pid];
+          const row = statsById.get(Number(pid));
           if (!row) return;
           row.matchPoints += m.scoreA;
           row.points += m.scoreA;
@@ -2616,7 +2731,7 @@
         });
 
         m.teamB.forEach(function (pid) {
-          const row = stats[pid];
+          const row = statsById.get(Number(pid));
           if (!row) return;
           row.matchPoints += m.scoreB;
           row.points += m.scoreB;
@@ -2697,9 +2812,11 @@
       if (crewBanner) crewBanner.classList.toggle("hidden", admin);
 
       const seedBtn = document.getElementById("seedDemoBtn");
+      const addPlayerBtn = document.getElementById("addPlayerBtn");
       const importBtn = document.getElementById("importTextBtn");
       const resetBtn = document.getElementById("resetTournamentBtn");
       if (seedBtn) seedBtn.classList.toggle("hidden", !admin);
+      if (addPlayerBtn) addPlayerBtn.classList.toggle("hidden", !admin);
       if (importBtn) importBtn.classList.toggle("hidden", !admin);
       if (resetBtn) resetBtn.classList.toggle("hidden", !admin);
     }
@@ -2710,6 +2827,15 @@
       }).length;
       document.getElementById("progressLabel").textContent =
         confirmedCount + " / " + state.matches.length + " Matches Confirmed";
+      const roundCount = new Set(
+        state.matches.map(function (m) {
+          return m.round;
+        })
+      ).size;
+      const formatPill = document.getElementById("formatPill");
+      if (formatPill) {
+        formatPill.textContent = "16-PT GAMES • " + roundCount + " ROUNDS";
+      }
       document.getElementById("decreeText").textContent =
         ROYAL_DECREES[state.decreeIndex % ROYAL_DECREES.length];
       updateSaveBadge();
@@ -2767,7 +2893,28 @@
         return m.round === state.activeRound;
       });
 
-      container.innerHTML = roundMatches
+      const playingIds = new Set();
+      roundMatches.forEach(function (m) {
+        m.teamA.forEach(function (pid) { playingIds.add(Number(pid)); });
+        m.teamB.forEach(function (pid) { playingIds.add(Number(pid)); });
+      });
+      const restingPlayers = state.players.filter(function (p) {
+        return !playingIds.has(Number(p.id));
+      });
+      const byeBannerHtml =
+        restingPlayers.length > 0
+          ? '<div class="bye-banner"><span>🛋️</span><span>Resting this round: ' +
+              restingPlayers
+                .map(function (p) {
+                  return escapeAttr(p.name);
+                })
+                .join(", ") +
+              "</span></div>"
+          : "";
+
+      container.innerHTML =
+        byeBannerHtml +
+        roundMatches
         .map(function (m) {
           sanitizeMatch16(m);
           const pA1 = getPlayer(m.teamA[0]);
@@ -3016,6 +3163,10 @@
 
     function renderCrew() {
       const admin = isAdminUnlocked();
+      const crewTitle = document.getElementById("crewTitle");
+      if (crewTitle) {
+        crewTitle.textContent = "The " + state.players.length + " Players";
+      }
       const container = document.getElementById("crewContainer");
       container.innerHTML = state.players
         .map(function (p) {
@@ -3060,6 +3211,7 @@
                 '<span style="font-family:var(--font-mono); font-weight:800;">#' + (p.id + 1) + "</span>" +
                 '<input class="name-input ' + (admin ? "" : "readonly-input") + '" type="text" value="' + escapeAttr(p.name) + '" data-player-name="' + p.id + '" ' + (admin ? "" : "readonly") + " />" +
                 (p.isBirthdayQueen ? '<span class="decree-tag">👑 Queen</span>' : "") +
+                (admin && p.id >= 12 ? '<button class="remove-player-btn" data-remove-player="' + p.id + '" type="button" title="Remove extra player">✕</button>' : "") +
               "</div>" +
               handicapSection +
               '<div class="photo-slots">' +
@@ -3468,13 +3620,13 @@
       const roundBtn = e.target.closest(".round-pill");
       if (roundBtn) {
         state.activeRound = Number(roundBtn.dataset.round);
+        renderRoundPills();
+        renderMatches();
         if (storageProvider.localCache) {
           await storageProvider.localCache.saveState(state);
         } else if (isAdminUnlocked()) {
           await storageProvider.saveState(state);
         }
-        renderRoundPills();
-        renderMatches();
         return;
       }
 
@@ -3483,6 +3635,37 @@
       if (lockedSlot) {
         e.preventDefault();
         requireAdmin("overwrite an existing player photo");
+        return;
+      }
+
+      // Remove Optional Extra Player (#13+) in Crew Tab (Admin only)
+      const removePlayerBtn = e.target.closest("[data-remove-player]");
+      if (removePlayerBtn) {
+        if (!requireAdmin("remove an extra player")) return;
+        const targetId = Number(removePlayerBtn.dataset.removePlayer);
+        if (targetId < 12) return;
+        const removed = getPlayer(targetId);
+        state.players = state.players.filter(function (p) {
+          return Number(p.id) !== targetId;
+        });
+        const anyConfirmed = state.matches.some(function (m) {
+          return m.confirmed;
+        });
+        if (!anyConfirmed && (state.players.length === 12 || state.players.length === 13)) {
+          dirtyMatches.clear();
+          state.matches = buildBalancedSchedule(state.players);
+          state.activeRound = 1;
+          renderAll();
+          showToast(
+            "➖ Removed " + (removed ? removed.name : "player") + " & updated to balanced " + state.matches.length + "-match schedule!"
+          );
+        } else {
+          renderAll();
+          showToast("➖ Removed " + (removed ? removed.name : "player") + ".");
+        }
+        await persistSafely(function () {
+          return storageProvider.saveState(state);
+        }, "remove player");
         return;
       }
 
@@ -4062,7 +4245,7 @@
       }
 
       // Build updated players list while preserving existing photos
-      const nextPlayers = deepClone(currentState.players);
+      const nextPlayers = parsedPlayerEntries.length >= 12 ? [] : deepClone(currentState.players);
       if (parsedPlayerEntries.length > 0) {
         const existingByName = new Map();
         currentState.players.forEach(function (p) {
@@ -4355,14 +4538,52 @@
       }
     });
 
+    // Add Optional Extra Player (#13+) (Admin only)
+    document.getElementById("addPlayerBtn").addEventListener("click", async function () {
+      if (!requireAdmin("add a player")) return;
+      const nextId =
+        state.players.reduce(function (maxId, p) {
+          return Math.max(maxId, Number(p.id) || 0);
+        }, -1) + 1;
+      const newPlayer = {
+        id: nextId,
+        name: "Player " + (nextId + 1),
+        isBirthdayQueen: false,
+        bonusPoints: 0,
+        celebratingPhoto: "",
+        sadPhoto: ""
+      };
+      state.players.push(newPlayer);
+
+      const anyConfirmed = state.matches.some(function (m) {
+        return m.confirmed;
+      });
+      if (!anyConfirmed && state.players.length === 13) {
+        dirtyMatches.clear();
+        state.matches = buildBalancedSchedule(state.players);
+        state.activeRound = 1;
+        renderAll();
+        showToast("➕ Added Player #13 & generated balanced 13-round schedule (39 matches)!");
+        await persistSafely(function () {
+          return storageProvider.saveState(state);
+        }, "add player #13");
+      } else {
+        renderAll();
+        showToast("➕ Added " + newPlayer.name + "! Edit their name/bonus or use Import Text for pairings.");
+        await persistSafely(function () {
+          return storageProvider.updatePlayer(newPlayer.id, newPlayer, state, "name");
+        }, "add player");
+      }
+    });
+
     // Reset Scores (Admin only)
     document.getElementById("resetTournamentBtn").addEventListener("click", async function () {
       if (!requireAdmin("reset all match scores")) return;
       dirtyMatches.clear();
-      state.matches = buildBalancedSchedule();
+      state.matches = buildBalancedSchedule(state.players);
       state.activeRound = 1;
       renderAll();
-      showToast("🗑️ All 33 matches reset to 0/33!");
+      showToast("🗑️ All " + state.matches.length + " matches reset to 0/" + state.matches.length + "!");
       await persistSafely(function () {
         return storageProvider.resetAll(state);
       }, "reset");
@@ -4392,12 +4613,8 @@
           }
 
           if (Array.isArray(remotePatch.players) && remotePatch.players.length > 0) {
-            const byId = new Map();
-            remotePatch.players.forEach(function (p) {
-              byId.set(Number(p.id), p);
-            });
-            state.players = state.players.map(function (existing) {
-              return byId.get(existing.id) || existing;
+            state.players = remotePatch.players.slice().sort(function (a, b) {
+              return a.id - b.id;
             });
           }
 
