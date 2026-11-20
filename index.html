@@ -1511,7 +1511,7 @@
       <div>
         <h2 style="font-family:var(--font-display); margin:0; font-size:1.38rem;">Chapter 27 Standings</h2>
         <div style="font-size:0.78rem; color:var(--ink-muted); font-weight:700;" id="rankingModeCaption">
-          Head Starts ON (+15 Mariam, +10 Fons, +8 Girls) • Mariam #1 Law ON
+          Head Starts ON (+15 Mariam, +10 Fons, +5 Girls) • Mariam #1 Law ON
         </div>
         <div class="lb-toolbar">
           <button class="btn btn-sm btn-lime" id="toggleHeadStartsBtn" type="button">🔒 ⚖️ Head Starts: ON</button>
@@ -1541,7 +1541,7 @@
       </div>
 
       <div class="handicap-explainer">
-        ⚖️ <strong>Official Head Starts:</strong> Mariam starts with <strong>+15</strong>, Fons (Omar) starts with <strong>+10</strong>, and Arwa, Youmna, Halla &amp; Maram start with <strong>+8</strong>.
+        ⚖️ <strong>Official Head Starts:</strong> Mariam starts with <strong>+15</strong>, Fons starts with <strong>+10</strong>, and Arwa, Youmna, Halla &amp; Maram start with <strong>+5</strong>.
       </div>
 
       <div class="crew-grid" id="crewContainer"></div>
@@ -2418,7 +2418,7 @@
     const ROYAL_DECREES = [
       'Article 27: Any ball hit by Mariam that lands out is legally "In by Birthday Law."',
       "Rule #27.1: Mariam's +15 head start is backed by the Royal Birthday Treasury.",
-      "Rule #27.2: Fons (+10) and the girls (+8) have official head starts; guys start at +0 and zero excuses.",
+      "Rule #27.2: Fons (+10) and the girls (+5) have official head starts; guys start at +0 and zero excuses.",
       "Rule #27.3: Complaining about Mariam's lobs adds +27 spiritual points to Mariam.",
       "Rule #27.4: Mariam is immune to net cords, glass bounces, and 27-year-old knee creaks.",
       "Rule #27.5: Regardless of math, Mariam finishes #1. Do not argue with the birthday cake.",
@@ -2711,11 +2711,11 @@
     function buildDefaultPlayers() {
       const roster = [
         { name: "Mariam", isBirthdayQueen: true, bonusPoints: 15 },
-        { name: "Fons (Omar)", isBirthdayQueen: false, bonusPoints: 10 },
-        { name: "Arwa", isBirthdayQueen: false, bonusPoints: 8 },
-        { name: "Youmna", isBirthdayQueen: false, bonusPoints: 8 },
-        { name: "Halla", isBirthdayQueen: false, bonusPoints: 8 },
-        { name: "Maram", isBirthdayQueen: false, bonusPoints: 8 },
+        { name: "Fons", isBirthdayQueen: false, bonusPoints: 10 },
+        { name: "Arwa", isBirthdayQueen: false, bonusPoints: 5 },
+        { name: "Youmna", isBirthdayQueen: false, bonusPoints: 5 },
+        { name: "Halla", isBirthdayQueen: false, bonusPoints: 5 },
+        { name: "Maram", isBirthdayQueen: false, bonusPoints: 5 },
         { name: "Hedaya", isBirthdayQueen: false, bonusPoints: 0 },
         { name: "Karim Ehab", isBirthdayQueen: false, bonusPoints: 0 },
         { name: "Sasa", isBirthdayQueen: false, bonusPoints: 0 },
@@ -2735,8 +2735,8 @@
       });
     }
 
-    // Cyclic Whist Americano:
-    // - Default 12 players: Z_11 (11 rounds, 3 courts/round, 33 matches — every pair partners once)
+    // Balanced Americano schedules:
+    // - Default 12 players: exact 11-round, 33-match tournament schedule (every pair partners once)
     // - Optional 13 players: Z_13 (13 rounds, 3 courts/round, 39 matches, 1 bye/round — every pair partners once & opposes twice)
     function buildBalancedSchedule(playersOrCount) {
       const playerIds = Array.isArray(playersOrCount)
@@ -2780,31 +2780,90 @@
       }
 
       const ids12 = playerIds.length >= 12 ? playerIds.slice(0, 12) : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-      const shift = function (x, r) {
-        return ids12[(x + r) % 11];
-      };
+      const defaultRounds12 = [
+        // Round 1
+        [
+          { court: 1, teamA: [6, 10], teamB: [8, 7] },
+          { court: 2, teamA: [3, 11], teamB: [9, 0] },
+          { court: 3, teamA: [1, 2], teamB: [4, 5] }
+        ],
+        // Round 2
+        [
+          { court: 1, teamA: [6, 8], teamB: [9, 1] },
+          { court: 2, teamA: [7, 4], teamB: [3, 2] },
+          { court: 3, teamA: [0, 11], teamB: [5, 10] }
+        ],
+        // Round 3
+        [
+          { court: 1, teamA: [6, 9], teamB: [3, 0] },
+          { court: 2, teamA: [1, 5], teamB: [7, 11] },
+          { court: 3, teamA: [2, 4], teamB: [10, 8] }
+        ],
+        // Round 4
+        [
+          { court: 1, teamA: [6, 3], teamB: [7, 2] },
+          { court: 2, teamA: [0, 10], teamB: [1, 4] },
+          { court: 3, teamA: [11, 5], teamB: [8, 9] }
+        ],
+        // Round 5
+        [
+          { court: 1, teamA: [6, 7], teamB: [1, 11] },
+          { court: 2, teamA: [2, 8], teamB: [0, 5] },
+          { court: 3, teamA: [4, 10], teamB: [9, 3] }
+        ],
+        // Round 6
+        [
+          { court: 1, teamA: [6, 1], teamB: [0, 4] },
+          { court: 2, teamA: [11, 9], teamB: [2, 10] },
+          { court: 3, teamA: [5, 8], teamB: [3, 7] }
+        ],
+        // Round 7
+        [
+          { court: 1, teamA: [6, 0], teamB: [2, 5] },
+          { court: 2, teamA: [4, 3], teamB: [11, 8] },
+          { court: 3, teamA: [10, 9], teamB: [7, 1] }
+        ],
+        // Round 8
+        [
+          { court: 1, teamA: [6, 2], teamB: [11, 10] },
+          { court: 2, teamA: [5, 7], teamB: [4, 9] },
+          { court: 3, teamA: [8, 3], teamB: [1, 0] }
+        ],
+        // Round 9
+        [
+          { court: 1, teamA: [6, 11], teamB: [4, 8] },
+          { court: 2, teamA: [10, 1], teamB: [5, 3] },
+          { court: 3, teamA: [9, 7], teamB: [0, 2] }
+        ],
+        // Round 10
+        [
+          { court: 1, teamA: [6, 4], teamB: [5, 9] },
+          { court: 2, teamA: [8, 0], teamB: [10, 7] },
+          { court: 3, teamA: [3, 1], teamB: [2, 11] }
+        ],
+        // Round 11
+        [
+          { court: 1, teamA: [6, 5], teamB: [10, 3] },
+          { court: 2, teamA: [9, 2], teamB: [8, 1] },
+          { court: 3, teamA: [7, 0], teamB: [11, 4] }
+        ]
+      ];
 
-      for (let r = 0; r < 11; r++) {
-        const roundNum = r + 1;
-        const pairings = [
-          { court: 1, teamA: [ids12[11], shift(0, r)], teamB: [shift(1, r), shift(2, r)] },
-          { court: 2, teamA: [shift(3, r), shift(6, r)], teamB: [shift(7, r), shift(9, r)] },
-          { court: 3, teamA: [shift(4, r), shift(8, r)], teamB: [shift(5, r), shift(10, r)] }
-        ];
-
+      defaultRounds12.forEach(function (pairings, rIdx) {
+        const roundNum = rIdx + 1;
         pairings.forEach(function (p) {
           matches.push({
             id: matchId++,
             round: roundNum,
             court: p.court,
-            teamA: p.teamA,
-            teamB: p.teamB,
+            teamA: [ids12[p.teamA[0]], ids12[p.teamA[1]]],
+            teamB: [ids12[p.teamB[0]], ids12[p.teamB[1]]],
             scoreA: 8,
             scoreB: 8,
             confirmed: false
           });
         });
-      }
+      });
       return matches;
     }
 
@@ -3297,7 +3356,7 @@
       let cls = "custom";
       if (p.bonusPoints === 15) cls = "queen";
       else if (p.bonusPoints === 10) cls = "fons";
-      else if (p.bonusPoints === 8) cls = "girl";
+      else if (p.bonusPoints === 5 || p.bonusPoints === 8) cls = "girl";
       return '<span class="bonus-pill ' + cls + '">+' + p.bonusPoints + "</span>";
     }
 
@@ -3313,7 +3372,7 @@
       lawBtn.textContent = lockPrefix + (state.birthdayLawActive ? "👑 Birthday Law: ON" : "📊 Birthday Law: OFF");
 
       caption.textContent =
-        (state.headStartsActive ? "Head Starts ON (+15/+10/+8)" : "Raw Match Points Only") +
+        (state.headStartsActive ? "Head Starts ON (+15/+10/+5)" : "Raw Match Points Only") +
         " • " +
         (state.birthdayLawActive ? "Mariam #1 Law ON" : "Pure Order");
 
@@ -3389,7 +3448,7 @@
                 '<div class="role-presets">' +
                   '<button class="role-chip ' + (b === 15 ? "active-queen" : "") + '" data-bonus-preset="15" data-player-id="' + p.id + '" type="button">👑 Queen +15</button>' +
                   '<button class="role-chip ' + (b === 10 ? "active-fons" : "") + '" data-bonus-preset="10" data-player-id="' + p.id + '" type="button">🔥 Fons +10</button>' +
-                  '<button class="role-chip ' + (b === 8 ? "active-girl" : "") + '" data-bonus-preset="8" data-player-id="' + p.id + '" type="button">🎀 Girl +8</button>' +
+                  '<button class="role-chip ' + (b === 5 ? "active-girl" : "") + '" data-bonus-preset="5" data-player-id="' + p.id + '" type="button">🎀 Girl +5</button>' +
                   '<button class="role-chip ' + (b === 0 ? "active-zero" : "") + '" data-bonus-preset="0" data-player-id="' + p.id + '" type="button">🎾 +0</button>' +
                 "</div>" +
                 '<div class="bonus-stepper">' +
@@ -4781,17 +4840,20 @@
       }
     });
 
-    // Reset Scores (Admin only)
+    // Reset Scores (Admin only — resets scores to 8-8 pending while keeping all current matchups intact)
     document.getElementById("resetTournamentBtn").addEventListener("click", async function () {
       if (!requireAdmin("reset all match scores")) return;
       dirtyMatches.clear();
-      state.matches = buildBalancedSchedule(state.players);
-      state.activeRound = 1;
+      state.matches.forEach(function (m) {
+        m.scoreA = 8;
+        m.scoreB = 8;
+        m.confirmed = false;
+      });
       renderAll();
-      showToast("🗑️ All " + state.matches.length + " matches reset to 0/" + state.matches.length + "!");
+      showToast("🗑️ Reset scores to 0/" + state.matches.length + " (current matchups kept)!");
       await persistSafely(function () {
         return storageProvider.resetAll(state);
-      }, "reset");
+      }, "reset scores");
     });
 
     // Synchronous Immediate Render + Async Storage Hydration + Real-Time Sync
