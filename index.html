@@ -1499,7 +1499,7 @@
     <!-- TAB 3: CREW & FACES -->
     <section id="tabCrew" class="section-pad hidden">
       <div id="crewViewOnlyBanner" class="view-only-banner">
-        👀 <strong>View-Only Mode:</strong> Empty selfie slots are open for you to upload your Winning &amp; Sad faces! Names, head starts, and overwriting existing photos require Admin.
+        👀 <strong>View-Only Mode:</strong> Tap any selfie slot to upload or replace your Winning &amp; Sad faces! Names, head starts, and match scores require Admin.
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
@@ -3190,20 +3190,13 @@
                 '<span class="static-bonus-badge">+' + b + " PTS</span>" +
               "</div>";
 
-          const canUploadCeleb = !p.celebratingPhoto || admin;
-          const canUploadSad = !p.sadPhoto || admin;
-
           const celebSubTag = !p.celebratingPhoto
             ? '<span class="slot-sub-tag open-upload">📸 Tap to Upload</span>'
-            : admin
-              ? '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>'
-              : '<span class="slot-sub-tag guest-locked">🔒 Photo Locked</span>';
+            : '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>';
 
           const sadSubTag = !p.sadPhoto
             ? '<span class="slot-sub-tag open-upload">📸 Tap to Upload</span>'
-            : admin
-              ? '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>'
-              : '<span class="slot-sub-tag guest-locked">🔒 Photo Locked</span>';
+            : '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>';
 
           return (
             '<div class="player-setup-card">' +
@@ -3215,21 +3208,21 @@
               "</div>" +
               handicapSection +
               '<div class="photo-slots">' +
-                '<label class="photo-slot ' + (canUploadCeleb ? "uploadable-slot" : "locked-slot") + '" data-slot-guard="' + (canUploadCeleb ? "open" : "locked") + '">' +
+                '<label class="photo-slot uploadable-slot" data-slot-guard="open">' +
                   (p.celebratingPhoto
                     ? '<img class="slot-preview" src="' + p.celebratingPhoto + '" alt="Winning face" />'
                     : '<div class="slot-preview">🥳</div>') +
                   "<span>Winning Face</span>" +
                   celebSubTag +
-                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="celebrating" hidden ' + (canUploadCeleb ? "" : "disabled") + " />" +
+                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="celebrating" hidden />' +
                 "</label>" +
-                '<label class="photo-slot ' + (canUploadSad ? "uploadable-slot" : "locked-slot") + '" data-slot-guard="' + (canUploadSad ? "open" : "locked") + '">' +
+                '<label class="photo-slot uploadable-slot" data-slot-guard="open">' +
                   (p.sadPhoto
                     ? '<img class="slot-preview" src="' + p.sadPhoto + '" alt="Sad face" />'
                     : '<div class="slot-preview">😭</div>') +
                   "<span>Sad Crybaby Face</span>" +
                   sadSubTag +
-                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="sad" hidden ' + (canUploadSad ? "" : "disabled") + " />" +
+                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="sad" hidden />' +
                 "</label>" +
               "</div>" +
             "</div>"
@@ -3828,13 +3821,6 @@
         const player = getPlayer(photoInput.dataset.photoPlayer);
         const mood = photoInput.dataset.mood;
         const fieldName = mood === "celebrating" ? "celebratingPhoto" : "sadPhoto";
-        const slotAlreadyFilled = Boolean(player[fieldName]);
-
-        // Empty slots are open to everyone; overwriting an existing face requires Admin
-        if (slotAlreadyFilled && !requireAdmin("overwrite an existing player photo")) {
-          photoInput.value = "";
-          return;
-        }
 
         const prevPhoto = player[fieldName];
         try {
@@ -3842,12 +3828,12 @@
           player[fieldName] = compressed;
           await storageProvider.updatePlayer(player.id, player, state, fieldName);
           renderAll();
-          showToast("📸 " + player.name + "'s " + (mood === "celebrating" ? "Winning" : "Crybaby") + " face uploaded!");
+          showToast("📸 " + player.name + "'s " + (mood === "celebrating" ? "Winning" : "Crybaby") + " face saved!");
         } catch (err) {
           player[fieldName] = prevPhoto;
           photoInput.value = "";
           renderAll();
-          showToast("⚠️ Couldn't save photo: " + (err && err.message ? err.message : "slot may already be filled."));
+          showToast("⚠️ Couldn't save photo: " + (err && err.message ? err.message : "please check Firestore rules."));
         }
       }
     });

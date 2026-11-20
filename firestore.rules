@@ -21,12 +21,10 @@ service cloud.firestore {
       allow update: if isAdminWrite()
         || (
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['celebratingPhoto'])
-          && resource.data.celebratingPhoto == ''
           && request.resource.data.celebratingPhoto is string
         )
         || (
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['sadPhoto'])
-          && resource.data.sadPhoto == ''
           && request.resource.data.sadPhoto is string
         );
     }
