@@ -1,0 +1,3309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mariam's 27th Birthday Smash — Royal Padel Americano</title>
+
+  <!-- WhatsApp / Open Graph & Mobile Web-App Meta Tags -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Mariam's 27th Birthday Smash — Royal Padel Americano" />
+  <meta property="og:description" content="Live 16-point scores, player selfie uploads, comedy match reveals, and the Article 27 Grand Finale Padel Americano for Mariam's 27th Birthday!" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Mariam 27 Smash" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#FFFDF5" />
+
+  <!-- Editorial & Tabular Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;0,9..144,800;0,9..144,900;1,9..144,800&family=JetBrains+Mono:wght@600;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       1. NEO-RETRO 27TH BIRTHDAY PARTY ZINE DESIGN TOKENS
+       ========================================================================== */
+    :root {
+      --bg-cream: #FFFDF5;
+      --bg-card: #FFFFFF;
+      --ink: #1C1917;
+      --ink-muted: #57534E;
+      --lime: #C8F542;
+      --lime-bright: #DCFF6B;
+      --pink: #FF4D8D;
+      --pink-soft: #FFE4EE;
+      --gold: #FFD23F;
+      --gold-soft: #FFF5CC;
+      --slate-cry: #1E293B;
+      --slate-deep: #0F172A;
+      --rain-blue: #38BDF8;
+      --border: 2.5px solid #1C1917;
+      --shadow-sm: 2px 2px 0px #1C1917;
+      --shadow-md: 4px 4px 0px #1C1917;
+      --shadow-lg: 6px 6px 0px #1C1917;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(circle at 14% 18%, rgba(255, 77, 141, 0.14) 4px, transparent 5px),
+        radial-gradient(circle at 86% 14%, rgba(200, 245, 66, 0.34) 5px, transparent 6px),
+        radial-gradient(circle at 76% 64%, rgba(255, 210, 63, 0.28) 4px, transparent 5px),
+        radial-gradient(circle at 24% 82%, rgba(56, 189, 248, 0.16) 4px, transparent 5px);
+      background-size: 136px 136px;
+      color: var(--ink);
+      font-family: var(--font-sans);
+      min-height: 100dvh;
+      overflow-x: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      min-height: 100dvh;
+      padding-bottom: 102px;
+      position: relative;
+    }
+
+    /* ==========================================================================
+       2. TACTILE COMIC BUTTONS & INTERACTIVE CONTROLS
+       ========================================================================== */
+    .btn {
+      font-family: var(--font-sans);
+      font-weight: 800;
+      border: var(--border);
+      border-radius: 12px;
+      background: var(--bg-card);
+      color: var(--ink);
+      box-shadow: var(--shadow-sm);
+      padding: 10px 14px;
+      min-height: 44px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      touch-action: manipulation;
+      user-select: none;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background-color 0.15s ease;
+    }
+
+    .btn:active {
+      transform: translate(2px, 2px);
+      box-shadow: 0px 0px 0px #1C1917;
+    }
+
+    .btn-lime { background: var(--lime); }
+    .btn-pink { background: var(--pink); color: #FFFFFF; }
+    .btn-gold { background: var(--gold); }
+    .btn-cream { background: var(--bg-cream); }
+    .btn-ink { background: var(--ink); color: #FFFFFF; }
+    .btn-sm { min-height: 44px; padding: 8px 12px; font-size: 0.78rem; border-radius: 10px; }
+    .btn-header { min-height: 44px; padding: 6px 10px; font-size: 0.73rem; border-radius: 10px; white-space: nowrap; }
+
+    /* ==========================================================================
+       3. STICKY PARTY HEADER, ADMIN LOCK PILL & ROYAL DECREE BANNER
+       ========================================================================== */
+    .top-header {
+      padding: 12px 14px 10px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 253, 245, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 2px solid rgba(28, 25, 23, 0.12);
+    }
+
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .mascot-badge {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: var(--gold);
+      border: var(--border);
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      animation: mascotWobble 3.2s ease-in-out infinite;
+    }
+
+    @keyframes mascotWobble {
+      0%, 100% { transform: rotate(-4deg) translateY(0px); }
+      50% { transform: rotate(5deg) translateY(-2px); }
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.04rem;
+      line-height: 1.06;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--pink);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .decree-banner {
+      margin: 10px 16px 0;
+      background: var(--gold-soft);
+      border: var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      padding: 10px 12px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.79rem;
+      font-weight: 700;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .decree-tag {
+      background: var(--pink);
+      color: #FFFFFF;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 3px 7px;
+      border-radius: 6px;
+      border: 1.5px solid var(--ink);
+      white-space: nowrap;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* ==========================================================================
+       4. ROUND SCRUBBER & MATCH SCORECARDS (EDITABLE + READ-ONLY MODES)
+       ========================================================================== */
+    .controls-strip {
+      padding: 12px 16px 4px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.77rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .save-pill {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+      border: 1.5px solid var(--ink);
+      background: var(--lime);
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .save-pill.unsaved {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .format-pill {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 99px;
+      border: 1.5px solid var(--ink);
+      background: var(--pink-soft);
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .round-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      scrollbar-width: none;
+    }
+    .round-pills::-webkit-scrollbar { display: none; }
+
+    .round-pill {
+      flex-shrink: 0;
+      min-width: 52px;
+      height: 44px;
+      border-radius: 12px;
+      border: var(--border);
+      background: var(--bg-card);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.82rem;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      touch-action: manipulation;
+      transition: transform 0.1s ease;
+    }
+
+    .round-pill.active {
+      background: var(--ink);
+      color: var(--lime);
+      transform: translateY(-2px);
+    }
+
+    .round-pill.done:not(.active) {
+      background: var(--lime);
+    }
+
+    .cards-list {
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .match-card {
+      background: var(--bg-card);
+      border: var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+
+    .match-card.queen-court {
+      background: linear-gradient(180deg, #FFFDF5 0%, #FFFFFF 100%);
+    }
+
+    .queen-ribbon {
+      background: var(--gold);
+      border-bottom: var(--border);
+      padding: 5px 12px;
+      font-size: 0.71rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .card-head {
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1.5px dashed rgba(28, 25, 23, 0.16);
+    }
+
+    .court-badge {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.73rem;
+      background: var(--pink-soft);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      padding: 3px 9px;
+      border-radius: 99px;
+    }
+
+    .status-chip {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+    .status-chip.confirmed { background: var(--lime); border: 1.5px solid var(--ink); }
+    .status-chip.dirty { background: var(--gold); border: 1.5px solid var(--ink); color: var(--ink); }
+    .status-chip.pending { background: #F5F5F4; color: var(--ink-muted); }
+
+    .versus-grid {
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .team-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+    }
+
+    .avatar-pair {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-avatar {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 2.5px solid var(--ink);
+      background: var(--gold-soft);
+      object-fit: cover;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      box-shadow: 1px 2px 0 var(--ink);
+      flex-shrink: 0;
+    }
+
+    .mini-avatar + .mini-avatar {
+      margin-left: -10px;
+    }
+
+    .mini-avatar.queen-ring {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 2px var(--gold), 2px 2px 0 var(--ink);
+    }
+
+    .team-names {
+      font-size: 0.83rem;
+      font-weight: 800;
+      line-height: 1.28;
+    }
+
+    .vs-pill {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 900;
+      font-size: 1rem;
+      background: var(--ink);
+      color: var(--gold);
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      transform: rotate(-8deg);
+    }
+
+    /* Admin Interactive Steppers */
+    .score-link-bar {
+      display: flex;
+      justify-content: center;
+      padding: 0 14px 8px;
+    }
+
+    .score-link-pill {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: var(--gold-soft);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+
+    .score-controls {
+      padding: 0 14px 12px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stepper-box {
+      background: #F8F7F2;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .step-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      border: 2px solid var(--ink);
+      background: #FFFFFF;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.25rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: grid;
+      place-items: center;
+    }
+    .step-btn:active { background: var(--lime); transform: scale(0.95); }
+    .step-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      background: #E7E5E4;
+      transform: none;
+    }
+
+    .score-readout {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      font-size: 1.45rem;
+      min-width: 36px;
+      text-align: center;
+    }
+
+    /* Read-Only Scoreboard (View-Only Mode) */
+    .readonly-scoreboard {
+      margin: 0 14px 12px;
+      background: #F8F7F2;
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ro-score {
+      font-size: 1.65rem;
+      font-weight: 800;
+      padding: 2px 12px;
+      border-radius: 10px;
+    }
+
+    .ro-score.winner {
+      background: var(--lime);
+      border: 1.5px solid var(--ink);
+    }
+
+    .ro-dash {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+    }
+
+    .readonly-pending-bar {
+      width: 100%;
+      background: #F5F5F4;
+      border: 1.5px dashed #A8A29E;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 0.77rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+    }
+
+    .preset-row {
+      padding: 0 14px 12px;
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .preset-chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      background: #FFFFFF;
+      border: 1.5px solid var(--ink);
+      border-radius: 8px;
+      padding: 8px 9px;
+      min-height: 44px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .preset-chip:active { background: var(--gold); }
+    .preset-chip.active-preset {
+      background: var(--gold);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-actions {
+      padding: 0 14px 14px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .lineup-editor {
+      background: var(--pink-soft);
+      border-top: var(--border);
+      padding: 12px 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .lineup-editor select {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px;
+      border-radius: 10px;
+      border: 2px solid var(--ink);
+      font-family: var(--font-sans);
+      font-weight: 700;
+      background: #FFFFFF;
+    }
+
+    /* ==========================================================================
+       5. BOTTOM TAB NAVIGATION
+       ========================================================================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      background: var(--bg-card);
+      border-top: var(--border);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      padding: 8px 10px calc(8px + env(safe-area-inset-bottom));
+      gap: 8px;
+      z-index: 40;
+    }
+
+    .nav-item {
+      border: 2px solid transparent;
+      border-radius: 12px;
+      background: transparent;
+      padding: 8px 4px;
+      min-height: 52px;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 0.78rem;
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      touch-action: manipulation;
+    }
+
+    .nav-item.active {
+      background: var(--lime);
+      color: var(--ink);
+      border-color: var(--ink);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==========================================================================
+       6. LEADERBOARD PODIUM & STANDINGS ROWS
+       ========================================================================== */
+    .section-pad { padding: 14px 16px; }
+
+    .lb-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .podium-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      align-items: end;
+      gap: 8px;
+      margin: 14px 0 18px;
+    }
+
+    .podium-card {
+      background: var(--bg-card);
+      border: var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      padding: 12px 6px;
+      text-align: center;
+      position: relative;
+    }
+
+    .podium-card.first {
+      background: linear-gradient(180deg, var(--gold) 0%, #FFFDF5 100%);
+      padding-top: 18px;
+      padding-bottom: 16px;
+    }
+
+    .podium-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: var(--border);
+      object-fit: cover;
+      margin: 0 auto 6px;
+      display: grid;
+      place-items: center;
+      background: #FFFFFF;
+      font-weight: 900;
+    }
+
+    .podium-card.first .podium-avatar {
+      width: 66px;
+      height: 66px;
+      border-color: var(--pink);
+    }
+
+    .standings-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rank-row {
+      background: var(--bg-card);
+      border: var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 34px 44px 1fr auto;
+      align-items: center;
+      gap: 10px;
+      will-change: transform;
+    }
+
+    .rank-row.queen-row {
+      background: var(--gold-soft);
+      border-color: var(--ink);
+      box-shadow: var(--shadow-md);
+    }
+
+    .rank-num {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-align: center;
+    }
+
+    .bonus-pill {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1.5px solid var(--ink);
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    .bonus-pill.queen { background: var(--gold); color: var(--ink); }
+    .bonus-pill.fons { background: var(--lime); color: var(--ink); }
+    .bonus-pill.girl { background: var(--pink-soft); color: var(--ink); }
+    .bonus-pill.custom { background: #E0F2FE; color: var(--ink); }
+
+    .rank-stats {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rank-pts {
+      font-weight: 800;
+      font-size: 1.05rem;
+    }
+
+    .rank-sub {
+      font-size: 0.68rem;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+
+    /* ==========================================================================
+       7. CREW, STARTING BONUS PRESETS & PHOTO SLOTS (GUEST SELFIE UPLOADS)
+       ========================================================================== */
+    .view-only-banner {
+      background: var(--pink-soft);
+      border: var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      line-height: 1.4;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .handicap-explainer {
+      background: var(--gold-soft);
+      border: var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow-sm);
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      line-height: 1.42;
+      font-weight: 700;
+    }
+
+    .crew-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .player-setup-card {
+      background: var(--bg-card);
+      border: var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      padding: 12px;
+    }
+
+    .player-name-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .name-input {
+      flex: 1;
+      min-width: 0;
+      min-height: 44px;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-family: var(--font-sans);
+      font-weight: 800;
+      font-size: 0.92rem;
+      background: #FFFFFF;
+      color: var(--ink);
+    }
+
+    .name-input.readonly-input {
+      background: #F8F7F2;
+      border-color: rgba(28, 25, 23, 0.35);
+      cursor: default;
+    }
+
+    .handicap-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: #F8F7F2;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .role-presets {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .role-chip {
+      font-family: var(--font-sans);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 8px 9px;
+      min-height: 44px;
+      border-radius: 8px;
+      border: 1.5px solid var(--ink);
+      background: #FFFFFF;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .role-chip.active-queen { background: var(--gold); box-shadow: 1px 1px 0 var(--ink); }
+    .role-chip.active-fons { background: var(--lime); box-shadow: 1px 1px 0 var(--ink); }
+    .role-chip.active-girl { background: var(--pink-soft); box-shadow: 1px 1px 0 var(--ink); }
+    .role-chip.active-zero { background: #E7E5E4; box-shadow: 1px 1px 0 var(--ink); }
+
+    .static-bonus-badge {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1.5px solid var(--ink);
+      background: var(--gold);
+    }
+
+    .bonus-stepper {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-step-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      border: 1.5px solid var(--ink);
+      background: #FFFFFF;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.05rem;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: grid;
+      place-items: center;
+    }
+    .mini-step-btn:active { background: var(--gold); }
+
+    .bonus-val {
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.84rem;
+      min-width: 44px;
+      text-align: center;
+    }
+
+    .photo-slots {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .photo-slot {
+      border: 2px dashed var(--ink);
+      border-radius: 12px;
+      padding: 10px 8px;
+      min-height: 44px;
+      text-align: center;
+      background: #FAF9F5;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      touch-action: manipulation;
+      transition: transform 0.08s ease, background-color 0.15s ease;
+    }
+
+    .photo-slot.uploadable-slot {
+      background: #FFFDF5;
+      border: 2.5px dashed var(--pink);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .photo-slot.uploadable-slot:active {
+      transform: translate(1px, 1px);
+      background: var(--pink-soft);
+    }
+
+    .photo-slot.locked-slot {
+      border: 2px solid rgba(28, 25, 23, 0.28);
+      background: #F5F5F4;
+      cursor: pointer;
+    }
+
+    .slot-sub-tag {
+      font-size: 0.66rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 99px;
+      border: 1.5px solid var(--ink);
+    }
+
+    .slot-sub-tag.open-upload {
+      background: var(--lime);
+      color: var(--ink);
+    }
+
+    .slot-sub-tag.admin-replace {
+      background: var(--gold);
+      color: var(--ink);
+    }
+
+    .slot-sub-tag.guest-locked {
+      background: #E7E5E4;
+      color: var(--ink-muted);
+      border-color: rgba(28, 25, 23, 0.3);
+    }
+
+    .slot-preview {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 2px solid var(--ink);
+      object-fit: cover;
+      background: #FFFFFF;
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+    }
+
+    /* ==========================================================================
+       8. CUSTOM COMICAL ADMIN UNLOCK & LOCK MODALS (STRICT POINTER ISOLATION)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 160;
+      background: rgba(28, 25, 23, 0.68);
+      display: none;
+      pointer-events: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .modal-backdrop.open {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .comic-modal {
+      width: 100%;
+      max-width: 390px;
+      background: var(--bg-cream);
+      border: 3px solid var(--ink);
+      border-radius: 22px;
+      box-shadow: var(--shadow-lg);
+      padding: 18px;
+      position: relative;
+      animation: popIn 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .comic-modal.shake {
+      animation: comicShake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes comicShake {
+      10%, 90% { transform: translateX(-3px); }
+      20%, 80% { transform: translateX(5px); }
+      30%, 50%, 70% { transform: translateX(-7px); }
+      40%, 60% { transform: translateX(7px); }
+    }
+
+    .modal-badge {
+      display: inline-block;
+      background: var(--gold);
+      border: 2px solid var(--ink);
+      border-radius: 99px;
+      padding: 3px 10px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.35rem;
+      margin: 0 0 6px;
+      line-height: 1.15;
+    }
+
+    .modal-desc {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--ink-muted);
+      margin: 0 0 14px;
+      line-height: 1.4;
+    }
+
+    .modal-input-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .modal-input {
+      width: 100%;
+      min-height: 48px;
+      border: 2.5px solid var(--ink);
+      border-radius: 12px;
+      padding: 10px 48px 10px 12px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1rem;
+      background: #FFFFFF;
+      color: var(--ink);
+    }
+
+    .eye-toggle-btn {
+      position: absolute;
+      right: 4px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+    }
+
+    .modal-error {
+      background: var(--pink);
+      color: #FFFFFF;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    /* ==========================================================================
+       9. 50/50 SPLIT-SCREEN REVEAL OVERLAY
+       ========================================================================== */
+    .reveal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      pointer-events: none;
+      flex-direction: column;
+      background: var(--ink);
+      animation: popIn 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal-overlay.open {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .reveal-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .split-top {
+      flex: 1;
+      background: radial-gradient(circle at 50% 30%, var(--lime-bright) 0%, var(--lime) 75%);
+      border-bottom: 4px solid var(--ink);
+      padding: 18px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .split-bottom {
+      flex: 1;
+      background: linear-gradient(180deg, var(--slate-cry) 0%, var(--slate-deep) 100%);
+      color: #F8FAFC;
+      padding: 14px 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .winner-hype-line {
+      margin: 6px 0 0;
+      font-size: 0.79rem;
+      font-weight: 800;
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.82);
+      border: 1.5px solid var(--ink);
+      border-radius: 10px;
+      padding: 4px 10px;
+      max-width: 340px;
+    }
+
+    .reveal-faces {
+      display: flex;
+      gap: 16px;
+      margin: 8px 0;
+      justify-content: center;
+    }
+
+    .winner-face {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 3.5px solid var(--ink);
+      box-shadow: 0 6px 0 var(--ink);
+      object-fit: cover;
+      background: var(--gold);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.45rem;
+      color: var(--ink);
+      animation: winnerBounce 0.65s ease-in-out infinite alternate;
+    }
+
+    .winner-face:nth-child(2) { animation-delay: 0.18s; }
+
+    @keyframes winnerBounce {
+      from { transform: translateY(0px) rotate(-4deg) scale(1); }
+      to { transform: translateY(-10px) rotate(4deg) scale(1.05); }
+    }
+
+    .loser-face {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 3px solid #64748B;
+      filter: grayscale(40%);
+      object-fit: cover;
+      background: #334155;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.25rem;
+      color: #CBD5E1;
+      animation: loserWobble 1.4s ease-in-out infinite;
+    }
+
+    @keyframes loserWobble {
+      0%, 100% { transform: rotate(-3deg) translateY(0); }
+      50% { transform: rotate(3deg) translateY(4px); }
+    }
+
+    .reveal-score-pill {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-3deg);
+      z-index: 5;
+      background: var(--gold);
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-lg);
+      border-radius: 999px;
+      padding: 6px 20px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 1.35rem;
+      white-space: nowrap;
+    }
+
+    .reveal-close-bar {
+      position: relative;
+      z-index: 6;
+      background: var(--ink);
+      padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       10. GRAND FINALE TAKEOVER OVERLAY & INLINE TOAST BANNER
+       ========================================================================== */
+    .finale-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 120;
+      background: var(--bg-cream);
+      display: none;
+      pointer-events: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 18px 16px 32px;
+    }
+    .finale-overlay.open {
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .override-stamp {
+      display: none;
+      margin: 10px auto;
+      padding: 10px 14px;
+      background: var(--pink);
+      color: #FFFFFF;
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-lg);
+      border-radius: 12px;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 0.98rem;
+      text-align: center;
+      transform: rotate(-2deg);
+      animation: stampSlam 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .override-stamp.visible { display: block; }
+
+    @keyframes stampSlam {
+      from { opacity: 0; transform: scale(2.2) rotate(-12deg); }
+      to { opacity: 1; transform: scale(1) rotate(-2deg); }
+    }
+
+    .toast-banner {
+      position: fixed;
+      bottom: 88px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--ink);
+      color: #FFFFFF;
+      border: 2px solid var(--gold);
+      box-shadow: var(--shadow-md);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      max-width: 90vw;
+      text-align: center;
+    }
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .runtime-error-banner {
+      background: #DC2626;
+      color: #FFFFFF;
+      border: 2.5px solid var(--ink);
+      border-radius: 12px;
+      margin: 10px 16px 0;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      font-weight: 800;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+  <canvas id="globalConfettiCanvas" class="reveal-canvas" style="z-index:150;"></canvas>
+  <div id="toastBanner" class="toast-banner" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <!-- Sticky Party Header with Admin Lock/Unlock Pill -->
+    <header class="top-header">
+      <div class="header-row">
+        <div class="brand-box">
+          <div class="mascot-badge" aria-hidden="true">
+            <!-- Custom SVG Smiling Padel Ball Mascot Wearing Pink Striped "27" Party Hat -->
+            <svg width="36" height="36" viewBox="0 0 64 64" fill="none">
+              <defs>
+                <clipPath id="partyHatClip">
+                  <polygon points="32,1 17,22 47,22" />
+                </clipPath>
+              </defs>
+              <polygon points="32,1 17,22 47,22" fill="#FF4D8D" />
+              <g clip-path="url(#partyHatClip)">
+                <path d="M12 10L26 2M15 18L36 6M22 23L44 10M34 23L49 14" stroke="#FFD23F" stroke-width="2.6" stroke-linecap="round"/>
+                <rect x="23" y="8.5" width="18" height="11.5" rx="3" fill="#FF4D8D"/>
+              </g>
+              <polygon points="32,1 17,22 47,22" fill="none" stroke="#1C1917" stroke-width="2.8" stroke-linejoin="round"/>
+              <circle cx="32" cy="2" r="3.2" fill="#C8F542" stroke="#1C1917" stroke-width="2"/>
+              <text x="32" y="18.2" text-anchor="middle" fill="#FFFFFF" font-family="JetBrains Mono, monospace" font-weight="800" font-size="10">27</text>
+
+              <circle cx="32" cy="41" r="19" fill="#C8F542" stroke="#1C1917" stroke-width="2.8"/>
+              <path d="M16.5 30.5C23 35.5 23 46.5 16.5 51.5" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"/>
+              <path d="M47.5 30.5C41 35.5 41 46.5 47.5 51.5" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"/>
+              <circle cx="26" cy="38" r="2.2" fill="#1C1917"/>
+              <circle cx="38" cy="38" r="2.2" fill="#1C1917"/>
+              <path d="M26 45C28.5 49 35.5 49 38 45" stroke="#1C1917" stroke-width="2.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">Mariam's 27th Birthday Smash</h1>
+            <div class="brand-sub">Royal Padel Americano</div>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <button class="btn btn-pink btn-header" id="hypeQueenBtn" type="button">🎉 Hype #27</button>
+          <button class="btn btn-cream btn-header" id="adminLockBtn" type="button">🔒 View Only</button>
+        </div>
+      </div>
+    </header>
+
+    <div id="runtimeErrorBanner" class="runtime-error-banner hidden" role="alert"></div>
+
+    <!-- Clickable Royal Decree Ticker -->
+    <div class="decree-banner" id="decreeBanner" title="Tap for next 27th birthday law">
+      <span class="decree-tag">Article 27</span>
+      <span id="decreeText">Article 27: Any ball hit by Mariam that lands out is legally "In by Birthday Law."</span>
+    </div>
+
+    <!-- TAB 1: MATCHES -->
+    <main id="tabMatches">
+      <div class="controls-strip">
+        <div class="progress-meta">
+          <span id="progressLabel">0 / 33 Matches Confirmed</span>
+          <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+            <span class="format-pill">16-PT GAMES • 11 ROUNDS</span>
+            <span id="saveStatusBadge" class="save-pill">✓ Saved</span>
+          </div>
+        </div>
+        <div class="round-pills" id="roundPills"></div>
+      </div>
+
+      <div class="cards-list" id="matchesContainer"></div>
+
+      <div id="bonusMatchBar" style="padding: 8px 16px 16px; display:flex; gap:8px; justify-content:center;">
+        <button class="btn btn-sm" id="addCustomMatchBtn" type="button">+ Add Bonus Match</button>
+      </div>
+    </main>
+
+    <!-- TAB 2: LEADERBOARD -->
+    <section id="tabLeaderboard" class="section-pad hidden">
+      <div>
+        <h2 style="font-family:var(--font-display); margin:0; font-size:1.38rem;">Chapter 27 Standings</h2>
+        <div style="font-size:0.78rem; color:var(--ink-muted); font-weight:700;" id="rankingModeCaption">
+          Head Starts ON (+15 Mariam, +10 Fons, +8 Girls) • Mariam #1 Law ON
+        </div>
+        <div class="lb-toolbar">
+          <button class="btn btn-sm btn-lime" id="toggleHeadStartsBtn" type="button">🔒 ⚖️ Head Starts: ON</button>
+          <button class="btn btn-sm btn-gold" id="toggleBirthdayRuleBtn" type="button">🔒 👑 Birthday Law: ON</button>
+          <button class="btn btn-sm btn-pink" id="playFinaleBtn" type="button">🏆 Finale Reveal</button>
+        </div>
+      </div>
+
+      <div class="podium-grid" id="podiumContainer"></div>
+      <div class="standings-list" id="standingsContainer"></div>
+    </section>
+
+    <!-- TAB 3: CREW & FACES -->
+    <section id="tabCrew" class="section-pad hidden">
+      <div id="crewViewOnlyBanner" class="view-only-banner">
+        👀 <strong>View-Only Mode:</strong> Empty selfie slots are open for you to upload your Winning &amp; Sad faces! Names, head starts, and overwriting existing photos require Admin.
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:8px;">
+        <div>
+          <h2 style="font-family:var(--font-display); margin:0; font-size:1.35rem;">The 12 Players</h2>
+          <div style="font-size:0.76rem; color:var(--ink-muted); font-weight:700;">
+            Starting head-start bonuses &amp; phone selfie uploads
+          </div>
+        </div>
+        <button class="btn btn-sm btn-lime" id="seedDemoBtn" type="button">⚡ Demo 32/33</button>
+      </div>
+
+      <div class="handicap-explainer">
+        ⚖️ <strong>Official Head Starts:</strong> Mariam starts with <strong>+15</strong>, Fons (Omar) starts with <strong>+10</strong>, and Arwa, Youmna, Halla &amp; Maram start with <strong>+8</strong>.
+      </div>
+
+      <div class="crew-grid" id="crewContainer"></div>
+
+      <div style="margin-top:18px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-sm" id="exportJsonBtn" type="button">💾 Export Backup</button>
+        <label class="btn btn-sm" id="importJsonLabel" style="cursor:pointer;">
+          📂 Import Backup
+          <input type="file" id="importJsonInput" accept="application/json" hidden />
+        </label>
+        <button class="btn btn-sm" id="resetTournamentBtn" type="button" style="color:#DC2626;">🗑️ Reset Scores</button>
+      </div>
+    </section>
+
+    <!-- Bottom Tab Bar -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-tab="tabMatches" type="button">
+        <span>🎾</span>
+        <span>Matches</span>
+      </button>
+      <button class="nav-item" data-tab="tabLeaderboard" type="button">
+        <span>👑</span>
+        <span>Leaderboard</span>
+      </button>
+      <button class="nav-item" data-tab="tabCrew" type="button">
+        <span>🤪</span>
+        <span>Crew &amp; Faces</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- CUSTOM COMICAL ADMIN UNLOCK MODAL -->
+  <div class="modal-backdrop" id="adminUnlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockModalTitle">
+    <div class="comic-modal" id="adminUnlockCard">
+      <div class="modal-badge">🔐 Birthday Committee Only</div>
+      <h3 class="modal-title" id="unlockModalTitle">Unlock Admin Controls</h3>
+      <p class="modal-desc" id="adminModalSubtitle">
+        Enter the secret birthday password to enter match scores, swap lineups, and overwrite player faces.
+      </p>
+
+      <div class="modal-input-wrap">
+        <input
+          type="password"
+          id="adminPasswordInput"
+          class="modal-input"
+          placeholder="Enter secret code..."
+          autocomplete="off"
+          autocapitalize="characters"
+        />
+        <button type="button" class="eye-toggle-btn" id="togglePwdVisBtn" aria-label="Show or hide password">👁️</button>
+      </div>
+
+      <div class="modal-error hidden" id="adminErrorMsg">
+        🚨 Nice try! Only the Birthday Committee knows the secret code.
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn" id="cancelUnlockBtn">Cancel</button>
+        <button type="button" class="btn btn-lime" id="submitUnlockBtn">Unlock Admin 🔓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CUSTOM COMICAL ADMIN LOCK CONFIRMATION MODAL -->
+  <div class="modal-backdrop" id="adminLockModal" role="dialog" aria-modal="true" aria-labelledby="lockModalTitle">
+    <div class="comic-modal">
+      <div class="modal-badge">🛡️ Safe View-Only Mode</div>
+      <h3 class="modal-title" id="lockModalTitle">Lock Admin Controls?</h3>
+      <p class="modal-desc">
+        Switch back to <strong>🔒 View Only</strong> mode so guests can watch reveals, upload empty selfies, and check standings without accidental score edits.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="stayAdminBtn">Stay Admin</button>
+        <button type="button" class="btn btn-gold" id="confirmLockBtn">Lock Now 🔒</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 50/50 SPLIT-SCREEN MATCH REVEAL OVERLAY -->
+  <div class="reveal-overlay" id="revealOverlay">
+    <canvas id="revealCanvas" class="reveal-canvas"></canvas>
+
+    <div class="split-top">
+      <div style="font-size:0.74rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; background:#FFFFFF; border:2px solid var(--ink); padding:3px 10px; border-radius:99px;">
+        Winners' VIP #27 Lounge
+      </div>
+      <h2 id="winnerHeadline" style="font-family:var(--font-display); font-size:1.35rem; margin:8px 0 4px; line-height:1.15;">
+        ABSOLUTE PADEL ROYALTY!
+      </h2>
+      <div class="reveal-faces" id="winnerFaces"></div>
+      <div id="winnerNames" style="font-weight:900; font-size:1rem;"></div>
+      <p id="winnerHypeLine" class="winner-hype-line"></p>
+    </div>
+
+    <div class="reveal-score-pill" id="revealScorePill">10 — 6</div>
+
+    <div class="split-bottom">
+      <div style="display:flex; align-items:center; gap:6px; font-size:0.74rem; font-weight:800; color:#93C5FD; text-transform:uppercase; letter-spacing:0.06em;">
+        <svg width="24" height="17" viewBox="0 0 32 22" fill="none">
+          <path d="M8 18H24C27.3 18 30 15.3 30 12C30 8.9 27.6 6.4 24.6 6.1C23.5 2.6 20.2 0 16.3 0C11.6 0 7.8 3.7 7.6 8.3C4.5 8.8 2 11.5 2 14.8C2 16.6 4.7 18 8 18Z" fill="#64748B"/>
+          <path d="M12 13L15 15M20 13L17 15" stroke="#1E293B" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <span>Losers' Crybaby Corner</span>
+      </div>
+      <div class="reveal-faces" id="loserFaces"></div>
+      <div id="loserNames" style="font-weight:800; font-size:0.95rem; color:#E2E8F0;"></div>
+      <p id="loserRoast" style="margin:6px 0 0; font-size:0.82rem; color:#94A3B8; max-width:320px; font-weight:600;"></p>
+    </div>
+
+    <div class="reveal-close-bar">
+      <button class="btn btn-lime" id="closeRevealBtn" type="button">Back to Courts 🎾</button>
+      <button class="btn btn-gold hidden" id="launchFinaleFromRevealBtn" type="button">🏆 Unveil Final Podium!</button>
+    </div>
+  </div>
+
+  <!-- GRAND FINALE "MARIAM ALWAYS #1" FLIP TAKEOVER OVERLAY -->
+  <div class="finale-overlay" id="finaleOverlay">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h2 style="font-family:var(--font-display); margin:0; font-size:1.42rem;">🏆 Chapter 27 Grand Finale</h2>
+      <button class="btn btn-sm" id="closeFinaleBtn" type="button">✕ Close</button>
+    </div>
+    <p id="finaleSubtitle" style="margin:4px 0 8px; font-size:0.84rem; font-weight:700; color:var(--ink-muted);">
+      Counting down from 12th place...
+    </p>
+
+    <div class="override-stamp" id="overrideStamp">
+      🚨 ARTICLE 27 INVOKED: BIRTHDAY QUEEN EXECUTIVE OVERRIDE! 🚨
+    </div>
+
+    <div class="standings-list" id="finaleList" style="margin-top:8px;"></div>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * 0. GLOBAL ERROR FALLBACK BANNER (NEVER FAILS SILENTLY)
+     * ============================================================================
+     */
+    window.onerror = function (msg, url, lineNo) {
+      const banner = document.getElementById("runtimeErrorBanner");
+      if (banner) {
+        banner.textContent = "⚠️ App notice (line " + lineNo + "): " + msg;
+        banner.classList.remove("hidden");
+      }
+      return false;
+    };
+
+    /**
+     * ============================================================================
+     * 1. SANDBOX-SAFE CLONING, STORAGE WRAPPERS & HARDCODED ADMIN ACCESS CONTROL
+     * ============================================================================
+     */
+    function deepClone(obj) {
+      return JSON.parse(JSON.stringify(obj));
+    }
+
+    const ADMIN_PASSWORD = "MARIAM27";
+    const ADMIN_SESSION_KEY = "mariam_padel_admin_unlocked";
+
+    const WRONG_PASSWORD_LINES = [
+      "🚨 Nice try! Only the Birthday Committee knows the secret code.",
+      "🙅‍♂️ Access denied! Article 27 blocks unauthorized score tampering.",
+      "🕵️‍♀️ Suspicious activity! Ask the tournament host for the birthday code.",
+      "🎂 Wrong code! No birthday cake for sneaky score editors."
+    ];
+
+    let adminUnlockedMemory = false;
+
+    function isAdminUnlocked() {
+      try {
+        return sessionStorage.getItem(ADMIN_SESSION_KEY) === "true" || adminUnlockedMemory;
+      } catch (err) {
+        return adminUnlockedMemory;
+      }
+    }
+
+    function setAdminUnlocked(unlocked) {
+      adminUnlockedMemory = Boolean(unlocked);
+      try {
+        if (unlocked) {
+          sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+        } else {
+          sessionStorage.removeItem(ADMIN_SESSION_KEY);
+        }
+      } catch (err) {
+        // Fallback to in-memory flag in sandboxed iframes
+      }
+      if (!unlocked) {
+        editingMatchId = null;
+      }
+    }
+
+    function openAdminUnlockModal(customReason) {
+      const modal = document.getElementById("adminUnlockModal");
+      const card = document.getElementById("adminUnlockCard");
+      const input = document.getElementById("adminPasswordInput");
+      const errEl = document.getElementById("adminErrorMsg");
+      const subEl = document.getElementById("adminModalSubtitle");
+
+      subEl.textContent =
+        customReason ||
+        "Enter the secret birthday password to enter match scores, swap lineups, and overwrite player faces.";
+      errEl.classList.add("hidden");
+      card.classList.remove("shake");
+      input.type = "password";
+      input.value = "";
+      modal.classList.add("open");
+      setTimeout(function () {
+        input.focus();
+      }, 60);
+    }
+
+    function closeAdminUnlockModal() {
+      document.getElementById("adminUnlockModal").classList.remove("open");
+    }
+
+    function requireAdmin(actionDescription) {
+      if (isAdminUnlocked()) return true;
+      openAdminUnlockModal(
+        "🔒 View-Only Mode is active. Unlock Admin to " + (actionDescription || "modify tournament data") + "."
+      );
+      return false;
+    }
+
+    /**
+     * ============================================================================
+     * 2. EXTENSIBLE STORAGE PROVIDER ARCHITECTURE
+     * Swap in Firebase Firestore or Supabase later by subclassing
+     * TournamentStorageProvider and replacing ONLY `const storageProvider = ...`.
+     * ============================================================================
+     */
+    class TournamentStorageProvider {
+      async init(defaultState) {
+        throw new Error("init() must be implemented by subclass");
+      }
+      async saveState(state) {
+        throw new Error("saveState() must be implemented by subclass");
+      }
+      async updateMatch(matchId, matchData, fullState) {
+        return this.saveState(fullState);
+      }
+      async updatePlayer(playerId, playerData, fullState) {
+        return this.saveState(fullState);
+      }
+      async resetAll(defaultState) {
+        return this.saveState(defaultState);
+      }
+      subscribe(onRemoteChange) {
+        return function () {};
+      }
+    }
+
+    class LocalStorageProvider extends TournamentStorageProvider {
+      constructor(storageKey) {
+        super();
+        this.storageKey = storageKey;
+        this.memoryFallback = null;
+      }
+
+      async init(defaultState) {
+        try {
+          const raw = localStorage.getItem(this.storageKey);
+          if (!raw) {
+            await this.saveState(defaultState);
+            return deepClone(defaultState);
+          }
+          const parsed = JSON.parse(raw);
+          const merged = Object.assign({}, deepClone(defaultState), parsed);
+          if (Array.isArray(merged.players)) {
+            merged.players = merged.players.map(function (p, idx) {
+              const base = defaultState.players[idx] || {};
+              return Object.assign({}, base, p, {
+                bonusPoints:
+                  typeof p.bonusPoints === "number"
+                    ? p.bonusPoints
+                    : typeof base.bonusPoints === "number"
+                      ? base.bonusPoints
+                      : 0
+              });
+            });
+          }
+          if (Array.isArray(merged.matches)) {
+            merged.matches.forEach(function (m) {
+              sanitizeMatch16(m);
+            });
+          }
+          return merged;
+        } catch (err) {
+          this.memoryFallback = deepClone(defaultState);
+          return this.memoryFallback;
+        }
+      }
+
+      async saveState(state) {
+        this.memoryFallback = deepClone(state);
+        try {
+          localStorage.setItem(this.storageKey, JSON.stringify(state));
+        } catch (err) {
+          // Ignore quota or sandboxed storage errors; in-memory state stays live
+        }
+      }
+    }
+
+    // Drop-in template for future cloud DB support (Firebase Firestore / Supabase):
+    class CloudStorageProviderTemplate extends TournamentStorageProvider {
+      constructor(clientConfig) {
+        super();
+        this.config = clientConfig;
+      }
+      async init(defaultState) {
+        return defaultState;
+      }
+      async saveState(state) {}
+      async updateMatch(matchId, matchData, fullState) {}
+      async updatePlayer(playerId, playerData, fullState) {}
+    }
+
+    // >>> SWAP THIS ONE LINE WHEN READY FOR CLOUD DB <<<
+    const storageProvider = new LocalStorageProvider("mariam_bday27_padel_16pt_v2");
+
+    /**
+     * ============================================================================
+     * 3. 27TH BIRTHDAY COMEDY POOLS, EXACT 12-PLAYER ROSTER & 16-PT SCHEDULE
+     * ============================================================================
+     */
+    const ROYAL_DECREES = [
+      'Article 27: Any ball hit by Mariam that lands out is legally "In by Birthday Law."',
+      "Rule #27.1: Mariam's +15 head start is backed by the Royal Birthday Treasury.",
+      "Rule #27.2: Fons (+10) and the girls (+8) have official head starts; guys start at +0 and zero excuses.",
+      "Rule #27.3: Complaining about Mariam's lobs adds +27 spiritual points to Mariam.",
+      "Rule #27.4: Mariam is immune to net cords, glass bounces, and 27-year-old knee creaks.",
+      "Rule #27.5: Regardless of math, Mariam finishes #1. Do not argue with the birthday cake."
+    ];
+
+    const COMEDY_POOLS = {
+      queenWinHeadlines: [
+        "👑 BOW DOWN! THE 27-YEAR-OLD QUEEN DOMINATES! 👑",
+        "🎂 CHAPTER 27 OFF TO A SAVAGE START!",
+        "👑 ROYAL SMASH! MARIAM OWNS THIS COURT!",
+        "✨ 27 YEARS YOUNG & UNPLAYABLE AT THE NET!",
+        "🥂 VIP VICTORY FOR THE BIRTHDAY GIRL!",
+        "💅 EFFORTLESS! MARIAM DIDN'T EVEN BREAK A SWEAT!",
+        "👑 ALL HAIL QUEEN MARIAM — COURT RULER OF 27!",
+        "🎉 BIRTHDAY BUFF ACTIVATED! TOTAL ROYAL DOMINATION!"
+      ],
+      queenWinHype: [
+        "Scientifically proven: turning 27 adds +40 km/h to Mariam's bandeja.",
+        "Opponents forgot Article 27: you're not allowed to beat the birthday girl.",
+        "This victory has been officially added to Mariam's 27th birthday highlight reel.",
+        "Cake tastes 10x sweeter when you're crushing everyone on court.",
+        "Her partner deserves half the credit and 10% of the birthday cake.",
+        "27 never looked so ruthless on a blue padel court!"
+      ],
+      queenLossHeadlines: [
+        "🚨 ILLEGAL UPSET! SOMEONE BEAT THE BIRTHDAY GIRL?! 🚨",
+        "⚖️ RESULT UNDER ROYAL INVESTIGATION BY ARTICLE 27!",
+        "🎂 CONGRATS ON WINNING... YOUR CAKE PRIVILEGES ARE REVOKED!",
+        "😱 CALL THE PADEL POLICE! THEY DARED BEAT MARIAM ON HER 27TH!",
+        "🚩 OBVIOUS COURT MALFUNCTION! MARIAM CLEARLY WON IN SPIRIT!",
+        "👑 TEMPORARY MERCY GRANTED BY QUEEN MARIAM!"
+      ],
+      queenLossHype: [
+        "Enjoy the points now — Article 27 still crowns Mariam #1 at the end!",
+        "Bold strategy beating the host before she cuts the birthday cake.",
+        "Mariam let you win purely out of 27th-birthday charity. You're welcome.",
+        "Official protest filed: the sun/lights were in the Birthday Queen's eyes.",
+        "Technically a win for you, morally a felony against the Birthday Girl."
+      ],
+      blowoutHeadlines: [
+        "🥯 BAKERY OPEN! FRESH 27TH BIRTHDAY BAGELS!",
+        "🚑 CALL AN AMBULANCE! TOTAL PADEL HUMILIATION!",
+        "🧹 SOMEONE BRING A BROOM — CLEAN SWEEP!",
+        "🔥 ABSOLUTE CLINIC! WAS THAT EVEN A FAIR FIGHT?!",
+        "💀 R.I.P. TO THE LOSERS' PADEL CAREERS!",
+        "🍳 COOKED, FRIED & SERVED ON A SILVER PLATTER!"
+      ],
+      nailbiterHeadlines: [
+        "💓 HEART-ATTACK FINISH! PURE SWEAT & LUCK!",
+        "🪙 FLIP A COIN! VICTORY BY A MILLIMETER!",
+        "🥵 CARDIOLOGISTS HATE THIS ONE-POINT THRILLER!",
+        "⚡ PHOTO FINISH! SURVIVED BY PURE BIRTHDAY MAGIC!",
+        "🎭 DRAMA QUEENS! CLUTCHED IT AT THE DEATH!",
+        "🧊 ICE IN THEIR VEINS! ICE-COLD CLUTCH WINNERS!"
+      ],
+      standardWinHeadlines: [
+        "🏆 ABSOLUTE PADEL ROYALTY ON COURT!",
+        "🚀 TOO HOT TO HANDLE! VIBORA MASTERCLASS!",
+        "🥂 CHAMPAGNE PADEL FOR MARIAM'S 27TH!",
+        "💥 SMASHED IT! ZERO MERCY ON COURT!",
+        "🌟 CERTIFIED PADEL WEAPONS!",
+        "🎯 SURGICAL PRECISION! TEXTBOOK AMERICANO!",
+        "⚡ UNSTOPPABLE DUO! BUILT DIFFERENT!",
+        "😎 SMOOTH OPERATORS! EASY WORK!"
+      ],
+      standardWinHype: [
+        "They played like they already ate three slices of birthday cake.",
+        "That chiquita-to-volley combo belongs in a museum.",
+        "Zero unforced errors, 100% birthday party energy.",
+        "Somewhere, a World Padel Tour scout just took notes.",
+        "Chemistry level: telepathic.",
+        "Win first, celebrate with Mariam's cake second."
+      ],
+      loserRoasts: [
+        "Sponsored by the Net & Back Glass™.",
+        "Have you tried hitting the ball OVER the net?",
+        "Blaming indoor wind is a bold tactical choice.",
+        "Great cardio! Terrible scoreboard.",
+        "Your rackets have filed a formal resignation letter.",
+        "Don't worry, birthday cake heals all padel trauma.",
+        "404 Error: Backhand not found.",
+        "At least your outfits looked great while losing!",
+        "Were you aiming for the court or the parking lot?",
+        "New rule: losers fetch all stray balls for the rest of the night.",
+        "That smash went straight into next week.",
+        "Even the glass wall felt sorry for you.",
+        "Your lobs gave the opponents free overhead practice.",
+        "Petition to lower the net by 6 inches just for you two."
+      ]
+    };
+
+    const usedLinesByPool = {};
+    function pickFreshLine(poolKey) {
+      const pool = COMEDY_POOLS[poolKey] || [];
+      if (!pool.length) return "";
+      if (!usedLinesByPool[poolKey]) usedLinesByPool[poolKey] = new Set();
+      const used = usedLinesByPool[poolKey];
+      if (used.size >= pool.length) used.clear();
+      const available = [];
+      for (let i = 0; i < pool.length; i++) {
+        if (!used.has(i)) available.push(i);
+      }
+      const chosenIdx = available[Math.floor(Math.random() * available.length)];
+      used.add(chosenIdx);
+      return pool[chosenIdx];
+    }
+
+    function buildDefaultPlayers() {
+      const roster = [
+        { name: "Mariam", isBirthdayQueen: true, bonusPoints: 15 },
+        { name: "Fons (Omar)", isBirthdayQueen: false, bonusPoints: 10 },
+        { name: "Arwa", isBirthdayQueen: false, bonusPoints: 8 },
+        { name: "Youmna", isBirthdayQueen: false, bonusPoints: 8 },
+        { name: "Halla", isBirthdayQueen: false, bonusPoints: 8 },
+        { name: "Maram", isBirthdayQueen: false, bonusPoints: 8 },
+        { name: "Hedaya", isBirthdayQueen: false, bonusPoints: 0 },
+        { name: "Karim Ehab", isBirthdayQueen: false, bonusPoints: 0 },
+        { name: "Sasa", isBirthdayQueen: false, bonusPoints: 0 },
+        { name: "Osama", isBirthdayQueen: false, bonusPoints: 0 },
+        { name: "Sharawy", isBirthdayQueen: false, bonusPoints: 0 },
+        { name: "Nour", isBirthdayQueen: false, bonusPoints: 0 }
+      ];
+      return roster.map(function (entry, idx) {
+        return {
+          id: idx,
+          name: entry.name,
+          isBirthdayQueen: entry.isBirthdayQueen,
+          bonusPoints: entry.bonusPoints,
+          celebratingPhoto: "",
+          sadPhoto: ""
+        };
+      });
+    }
+
+    // Cyclic Z_11 Whist Americano: 12 players, 11 rounds, 3 courts/round, 16-pt default (8-8)
+    function buildBalancedSchedule() {
+      const matches = [];
+      let matchId = 1;
+      const shift = function (x, r) {
+        return (x + r) % 11;
+      };
+
+      for (let r = 0; r < 11; r++) {
+        const roundNum = r + 1;
+        const pairings = [
+          { court: 1, teamA: [11, shift(0, r)], teamB: [shift(1, r), shift(2, r)] },
+          { court: 2, teamA: [shift(3, r), shift(6, r)], teamB: [shift(7, r), shift(9, r)] },
+          { court: 3, teamA: [shift(4, r), shift(8, r)], teamB: [shift(5, r), shift(10, r)] }
+        ];
+
+        pairings.forEach(function (p) {
+          matches.push({
+            id: matchId++,
+            round: roundNum,
+            court: p.court,
+            teamA: p.teamA,
+            teamB: p.teamB,
+            scoreA: 8,
+            scoreB: 8,
+            confirmed: false
+          });
+        });
+      }
+      return matches;
+    }
+
+    function createDefaultState() {
+      return {
+        activeRound: 1,
+        headStartsActive: true,
+        birthdayLawActive: true,
+        decreeIndex: 0,
+        players: buildDefaultPlayers(),
+        matches: buildBalancedSchedule()
+      };
+    }
+
+    /**
+     * ============================================================================
+     * 4. APPLICATION STATE, STRICT 16-PT ENFORCEMENT & DIRTY TRACKING
+     * ============================================================================
+     */
+    let state = createDefaultState();
+    let editingMatchId = null;
+    let revealAnimFrame = null;
+    let toastTimer = null;
+
+    const dirtyMatches = new Set();
+    const MATCH_TOTAL_POINTS = 16;
+
+    function sanitizeMatch16(match) {
+      if (!match) return match;
+      let a = Number(match.scoreA);
+      let b = Number(match.scoreB);
+      if (!Number.isFinite(a)) {
+        a = Number.isFinite(b) ? MATCH_TOTAL_POINTS - b : 8;
+      }
+      a = Math.max(0, Math.min(MATCH_TOTAL_POINTS, Math.round(a)));
+      match.scoreA = a;
+      match.scoreB = MATCH_TOTAL_POINTS - a;
+      return match;
+    }
+
+    function markMatchDirty(matchId) {
+      dirtyMatches.add(matchId);
+      updateSaveBadge();
+    }
+
+    function clearMatchDirty(matchId) {
+      dirtyMatches.delete(matchId);
+      updateSaveBadge();
+    }
+
+    function updateSaveBadge() {
+      const badge = document.getElementById("saveStatusBadge");
+      if (!badge) return;
+      if (dirtyMatches.size > 0) {
+        badge.textContent = "● Unsaved — tap Confirm Result";
+        badge.classList.add("unsaved");
+      } else {
+        badge.textContent = "✓ Saved";
+        badge.classList.remove("unsaved");
+      }
+    }
+
+    function showToast(msg) {
+      const el = document.getElementById("toastBanner");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        el.classList.remove("show");
+      }, 2800);
+    }
+
+    function getPlayer(id) {
+      const numId = Number(id);
+      return (
+        state.players.find(function (p) {
+          return p.id === numId;
+        }) || state.players[0]
+      );
+    }
+
+    function initials(name) {
+      return (name || "?")
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map(function (w) {
+          return w[0] ? w[0].toUpperCase() : "";
+        })
+        .join("");
+    }
+
+    function escapeAttr(str) {
+      return String(str || "")
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function computeStandings(applyBirthdayOverride) {
+      if (typeof applyBirthdayOverride !== "boolean") {
+        applyBirthdayOverride = state.birthdayLawActive;
+      }
+      const useHeadStarts = Boolean(state.headStartsActive);
+
+      const stats = state.players.map(function (p) {
+        const appliedBonus = useHeadStarts ? Number(p.bonusPoints) || 0 : 0;
+        return Object.assign({}, p, {
+          appliedBonus: appliedBonus,
+          matchPoints: 0,
+          points: appliedBonus,
+          pointsAgainst: 0,
+          played: 0,
+          wins: 0
+        });
+      });
+
+      state.matches.forEach(function (m) {
+        if (!m.confirmed) return;
+        sanitizeMatch16(m);
+        const aWon = m.scoreA > m.scoreB;
+        const bWon = m.scoreB > m.scoreA;
+
+        m.teamA.forEach(function (pid) {
+          const row = stats[pid];
+          if (!row) return;
+          row.matchPoints += m.scoreA;
+          row.points += m.scoreA;
+          row.pointsAgainst += m.scoreB;
+          row.played += 1;
+          if (aWon) row.wins += 1;
+        });
+
+        m.teamB.forEach(function (pid) {
+          const row = stats[pid];
+          if (!row) return;
+          row.matchPoints += m.scoreB;
+          row.points += m.scoreB;
+          row.pointsAgainst += m.scoreA;
+          row.played += 1;
+          if (bWon) row.wins += 1;
+        });
+      });
+
+      stats.sort(function (a, b) {
+        if (b.points !== a.points) return b.points - a.points;
+        const diffA = a.matchPoints - a.pointsAgainst;
+        const diffB = b.matchPoints - b.pointsAgainst;
+        if (diffB !== diffA) return diffB - diffA;
+        return b.wins - a.wins;
+      });
+
+      if (applyBirthdayOverride) {
+        const queenIdx = stats.findIndex(function (p) {
+          return p.isBirthdayQueen;
+        });
+        if (queenIdx > 0) {
+          const queen = stats.splice(queenIdx, 1)[0];
+          stats.unshift(queen);
+        }
+      }
+
+      return stats.map(function (row, idx) {
+        return Object.assign({}, row, { rank: idx + 1 });
+      });
+    }
+
+    /**
+     * ============================================================================
+     * 5. RENDERING FUNCTIONS (ADMIN & VIEW-ONLY MODES)
+     * ============================================================================
+     */
+    function renderAll() {
+      renderAdminChrome();
+      renderHeaderProgress();
+      renderRoundPills();
+      renderMatches();
+      renderLeaderboard();
+      renderCrew();
+    }
+
+    function renderAdminChrome() {
+      const admin = isAdminUnlocked();
+      const lockBtn = document.getElementById("adminLockBtn");
+      if (lockBtn) {
+        if (admin) {
+          lockBtn.textContent = "🔓 Admin";
+          lockBtn.classList.remove("btn-cream");
+          lockBtn.classList.add("btn-lime");
+        } else {
+          lockBtn.textContent = "🔒 View Only";
+          lockBtn.classList.remove("btn-lime");
+          lockBtn.classList.add("btn-cream");
+        }
+      }
+
+      const bonusBar = document.getElementById("bonusMatchBar");
+      if (bonusBar) bonusBar.classList.toggle("hidden", !admin);
+
+      const crewBanner = document.getElementById("crewViewOnlyBanner");
+      if (crewBanner) crewBanner.classList.toggle("hidden", admin);
+
+      const seedBtn = document.getElementById("seedDemoBtn");
+      const importLabel = document.getElementById("importJsonLabel");
+      const resetBtn = document.getElementById("resetTournamentBtn");
+      if (seedBtn) seedBtn.classList.toggle("hidden", !admin);
+      if (importLabel) importLabel.classList.toggle("hidden", !admin);
+      if (resetBtn) resetBtn.classList.toggle("hidden", !admin);
+    }
+
+    function renderHeaderProgress() {
+      const confirmedCount = state.matches.filter(function (m) {
+        return m.confirmed;
+      }).length;
+      document.getElementById("progressLabel").textContent =
+        confirmedCount + " / " + state.matches.length + " Matches Confirmed";
+      document.getElementById("decreeText").textContent =
+        ROYAL_DECREES[state.decreeIndex % ROYAL_DECREES.length];
+      updateSaveBadge();
+    }
+
+    function renderRoundPills() {
+      const roundSet = new Set(
+        state.matches.map(function (m) {
+          return m.round;
+        })
+      );
+      const rounds = Array.from(roundSet).sort(function (a, b) {
+        return a - b;
+      });
+      const container = document.getElementById("roundPills");
+      container.innerHTML = rounds
+        .map(function (r) {
+          const roundMatches = state.matches.filter(function (m) {
+            return m.round === r;
+          });
+          const allDone =
+            roundMatches.length > 0 &&
+            roundMatches.every(function (m) {
+              return m.confirmed;
+            });
+          const active = state.activeRound === r;
+          return (
+            '<button class="round-pill ' +
+            (active ? "active " : "") +
+            (allDone ? "done" : "") +
+            '" data-round="' +
+            r +
+            '" type="button">R' +
+            r +
+            (allDone ? "✓" : "") +
+            "</button>"
+          );
+        })
+        .join("");
+    }
+
+    function renderMiniAvatar(player, mood) {
+      const src = mood === "sad" ? player.sadPhoto : player.celebratingPhoto;
+      const ringClass = player.isBirthdayQueen ? "queen-ring" : "";
+      if (src) {
+        return '<img class="mini-avatar ' + ringClass + '" src="' + src + '" alt="' + escapeAttr(player.name) + '" />';
+      }
+      return '<div class="mini-avatar ' + ringClass + '">' + initials(player.name) + "</div>";
+    }
+
+    function renderMatches() {
+      const admin = isAdminUnlocked();
+      const container = document.getElementById("matchesContainer");
+      const roundMatches = state.matches.filter(function (m) {
+        return m.round === state.activeRound;
+      });
+
+      container.innerHTML = roundMatches
+        .map(function (m) {
+          sanitizeMatch16(m);
+          const pA1 = getPlayer(m.teamA[0]);
+          const pA2 = getPlayer(m.teamA[1]);
+          const pB1 = getPlayer(m.teamB[0]);
+          const pB2 = getPlayer(m.teamB[1]);
+          const hasQueen = [pA1, pA2, pB1, pB2].some(function (p) {
+            return p.isBirthdayQueen;
+          });
+          const isEditing = admin && editingMatchId === m.id;
+          const isDirty = dirtyMatches.has(m.id);
+
+          const atMinA = m.scoreA <= 0;
+          const atMaxA = m.scoreA >= MATCH_TOTAL_POINTS;
+          const presets = [
+            [12, 4],
+            [10, 6],
+            [9, 7],
+            [7, 9],
+            [6, 10],
+            [4, 12]
+          ];
+          const presetChipsHtml = presets
+            .map(function (pair) {
+              const pA = pair[0];
+              const pB = pair[1];
+              const isSelected = m.scoreA === pA && m.scoreB === pB;
+              return (
+                '<button class="preset-chip' +
+                (isSelected ? " active-preset" : "") +
+                '" data-preset="' +
+                pA +
+                "," +
+                pB +
+                '" data-id="' +
+                m.id +
+                '" type="button">' +
+                pA +
+                "–" +
+                pB +
+                "</button>"
+              );
+            })
+            .join("");
+
+          let statusChipHtml = "";
+          if (isDirty) {
+            statusChipHtml = '<span class="status-chip dirty">● UNSAVED</span>';
+          } else if (m.confirmed) {
+            statusChipHtml = '<span class="status-chip confirmed">✓ CONFIRMED</span>';
+          } else {
+            statusChipHtml = '<span class="status-chip pending">UPCOMING</span>';
+          }
+
+          let scoreSectionHtml = "";
+          if (admin) {
+            scoreSectionHtml =
+              '<div class="score-link-bar"><span class="score-link-pill">16-PT MATCH</span></div>' +
+              '<div class="score-controls">' +
+                '<div class="stepper-box">' +
+                  '<button class="step-btn" data-action="decA" data-id="' + m.id + '" type="button"' + (atMinA ? " disabled" : "") + ">−</button>" +
+                  '<span class="score-readout">' + m.scoreA + "</span>" +
+                  '<button class="step-btn" data-action="incA" data-id="' + m.id + '" type="button"' + (atMaxA ? " disabled" : "") + ">+</button>" +
+                "</div>" +
+                '<div class="stepper-box">' +
+                  '<button class="step-btn" data-action="decB" data-id="' + m.id + '" type="button"' + (atMaxA ? " disabled" : "") + ">−</button>" +
+                  '<span class="score-readout">' + m.scoreB + "</span>" +
+                  '<button class="step-btn" data-action="incB" data-id="' + m.id + '" type="button"' + (atMinA ? " disabled" : "") + ">+</button>" +
+                "</div>" +
+              "</div>" +
+              '<div class="preset-row">' +
+                presetChipsHtml +
+              "</div>" +
+              '<div class="card-actions">' +
+                '<button class="btn btn-sm" data-action="toggleEdit" data-id="' + m.id + '" type="button">' +
+                  (isEditing ? "Done" : "⇄ Lineup") +
+                "</button>" +
+                '<button class="btn btn-lime" style="flex:1;" data-action="confirm" data-id="' + m.id + '" type="button">' +
+                  (m.confirmed ? "🎉 Re-Confirm & Replay" : "🎉 Confirm Result") +
+                "</button>" +
+              "</div>";
+          } else {
+            scoreSectionHtml =
+              '<div class="score-link-bar"><span class="score-link-pill">16-PT MATCH</span></div>' +
+              '<div class="readonly-scoreboard">' +
+                (m.confirmed
+                  ? '<span class="ro-score ' + (m.scoreA > m.scoreB ? "winner" : "") + '">' + m.scoreA + "</span>" +
+                    '<span class="ro-dash">—</span>' +
+                    '<span class="ro-score ' + (m.scoreB > m.scoreA ? "winner" : "") + '">' + m.scoreB + "</span>"
+                  : '<div class="readonly-pending-bar">🔒 Admin Only — Score Pending</div>') +
+              "</div>" +
+              (m.confirmed
+                ? '<div class="card-actions">' +
+                    '<button class="btn btn-gold" style="flex:1;" data-action="replay" data-id="' + m.id + '" type="button">' +
+                      "🎬 Replay Reveal" +
+                    "</button>" +
+                  "</div>"
+                : "");
+          }
+
+          return (
+            '<article class="match-card ' + (hasQueen ? "queen-court" : "") + '" data-match-id="' + m.id + '">' +
+              (hasQueen
+                ? '<div class="queen-ribbon"><span>👑 27th Birthday Queen On Court</span><span>+27 Royal Luck</span></div>'
+                : "") +
+              '<div class="card-head">' +
+                '<span class="court-badge">COURT ' + m.court + " • MATCH #" + m.id + "</span>" +
+                statusChipHtml +
+              "</div>" +
+              '<div class="versus-grid">' +
+                '<div class="team-box">' +
+                  '<div class="avatar-pair">' +
+                    renderMiniAvatar(pA1, "celebrating") +
+                    renderMiniAvatar(pA2, "celebrating") +
+                  "</div>" +
+                  '<div class="team-names">' +
+                    pA1.name + (pA1.isBirthdayQueen ? " 👑" : "") + "<br/>&amp; " +
+                    pA2.name + (pA2.isBirthdayQueen ? " 👑" : "") +
+                  "</div>" +
+                "</div>" +
+                '<div class="vs-pill">VS</div>' +
+                '<div class="team-box">' +
+                  '<div class="avatar-pair">' +
+                    renderMiniAvatar(pB1, "celebrating") +
+                    renderMiniAvatar(pB2, "celebrating") +
+                  "</div>" +
+                  '<div class="team-names">' +
+                    pB1.name + (pB1.isBirthdayQueen ? " 👑" : "") + "<br/>&amp; " +
+                    pB2.name + (pB2.isBirthdayQueen ? " 👑" : "") +
+                  "</div>" +
+                "</div>" +
+              "</div>" +
+              scoreSectionHtml +
+              (isEditing
+                ? '<div class="lineup-editor">' +
+                    renderPlayerSelect(m.id, "A0", m.teamA[0]) +
+                    renderPlayerSelect(m.id, "B0", m.teamB[0]) +
+                    renderPlayerSelect(m.id, "A1", m.teamA[1]) +
+                    renderPlayerSelect(m.id, "B1", m.teamB[1]) +
+                  "</div>"
+                : "") +
+            "</article>"
+          );
+        })
+        .join("");
+    }
+
+    function renderPlayerSelect(matchId, slot, selectedId) {
+      const options = state.players
+        .map(function (p) {
+          return (
+            '<option value="' +
+            p.id +
+            '" ' +
+            (p.id === selectedId ? "selected" : "") +
+            ">" +
+            p.name +
+            "</option>"
+          );
+        })
+        .join("");
+      return '<select data-lineup-match="' + matchId + '" data-slot="' + slot + '">' + options + "</select>";
+    }
+
+    function renderBonusBadge(p) {
+      if (!state.headStartsActive || !p.bonusPoints) return "";
+      let cls = "custom";
+      if (p.bonusPoints === 15) cls = "queen";
+      else if (p.bonusPoints === 10) cls = "fons";
+      else if (p.bonusPoints === 8) cls = "girl";
+      return '<span class="bonus-pill ' + cls + '">+' + p.bonusPoints + "</span>";
+    }
+
+    function renderLeaderboard() {
+      const admin = isAdminUnlocked();
+      const lockPrefix = admin ? "" : "🔒 ";
+      const standings = computeStandings(state.birthdayLawActive);
+      const headBtn = document.getElementById("toggleHeadStartsBtn");
+      const lawBtn = document.getElementById("toggleBirthdayRuleBtn");
+      const caption = document.getElementById("rankingModeCaption");
+
+      headBtn.textContent = lockPrefix + (state.headStartsActive ? "⚖️ Head Starts: ON" : "⚖️ Head Starts: OFF");
+      lawBtn.textContent = lockPrefix + (state.birthdayLawActive ? "👑 Birthday Law: ON" : "📊 Birthday Law: OFF");
+
+      caption.textContent =
+        (state.headStartsActive ? "Head Starts ON (+15/+10/+8)" : "Raw Match Points Only") +
+        " • " +
+        (state.birthdayLawActive ? "Mariam #1 Law ON" : "Pure Order");
+
+      const podiumOrder = [standings[1], standings[0], standings[2]].filter(Boolean);
+      const podiumContainer = document.getElementById("podiumContainer");
+      podiumContainer.innerHTML = podiumOrder
+        .map(function (p) {
+          const isFirst = p.rank === 1;
+          const medal = p.rank === 1 ? "👑 #1" : p.rank === 2 ? "🥈 #2" : "🥉 #3";
+          const avatarHtml = p.celebratingPhoto
+            ? '<img class="podium-avatar" src="' + p.celebratingPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+            : '<div class="podium-avatar">' + initials(p.name) + "</div>";
+          return (
+            '<div class="podium-card ' + (isFirst ? "first" : "") + '">' +
+              '<div style="font-family:var(--font-mono); font-weight:800; font-size:0.78rem; margin-bottom:6px;">' +
+                medal +
+              "</div>" +
+              avatarHtml +
+              '<div style="font-weight:900; font-size:0.86rem;">' + p.name + "</div>" +
+              '<div style="font-family:var(--font-mono); font-weight:800; font-size:0.82rem; color:var(--pink); margin-top:2px;">' +
+                p.points + " pts" +
+              "</div>" +
+            "</div>"
+          );
+        })
+        .join("");
+
+      const listContainer = document.getElementById("standingsContainer");
+      listContainer.innerHTML = standings
+        .map(function (p) {
+          const diff = p.matchPoints - p.pointsAgainst;
+          const diffStr = diff >= 0 ? "+" + diff : "" + diff;
+          const breakdown =
+            state.headStartsActive && p.appliedBonus > 0
+              ? p.matchPoints + " game + " + p.appliedBonus + " bonus"
+              : p.wins + "W • " + p.played + " played • " + diffStr + " diff";
+
+          return (
+            '<div class="rank-row ' + (p.isBirthdayQueen ? "queen-row" : "") + '">' +
+              '<div class="rank-num">' + (p.rank === 1 && p.isBirthdayQueen ? "👑" : "#" + p.rank) + "</div>" +
+              renderMiniAvatar(p, "celebrating") +
+              "<div>" +
+                '<div style="font-weight:800; font-size:0.9rem;">' +
+                  p.name +
+                  renderBonusBadge(p) +
+                "</div>" +
+                '<div style="font-size:0.72rem; color:var(--ink-muted); font-weight:700;">' +
+                  breakdown +
+                "</div>" +
+              "</div>" +
+              '<div class="rank-stats">' +
+                '<div class="rank-pts">' + p.points + "</div>" +
+                '<div class="rank-sub">TOTAL</div>' +
+              "</div>" +
+            "</div>"
+          );
+        })
+        .join("");
+    }
+
+    function renderCrew() {
+      const admin = isAdminUnlocked();
+      const container = document.getElementById("crewContainer");
+      container.innerHTML = state.players
+        .map(function (p) {
+          const b = Number(p.bonusPoints) || 0;
+          const handicapSection = admin
+            ? '<div class="handicap-bar">' +
+                '<div class="role-presets">' +
+                  '<button class="role-chip ' + (b === 15 ? "active-queen" : "") + '" data-bonus-preset="15" data-player-id="' + p.id + '" type="button">👑 Queen +15</button>' +
+                  '<button class="role-chip ' + (b === 10 ? "active-fons" : "") + '" data-bonus-preset="10" data-player-id="' + p.id + '" type="button">🔥 Fons +10</button>' +
+                  '<button class="role-chip ' + (b === 8 ? "active-girl" : "") + '" data-bonus-preset="8" data-player-id="' + p.id + '" type="button">🎀 Girl +8</button>' +
+                  '<button class="role-chip ' + (b === 0 ? "active-zero" : "") + '" data-bonus-preset="0" data-player-id="' + p.id + '" type="button">🎾 +0</button>' +
+                "</div>" +
+                '<div class="bonus-stepper">' +
+                  '<button class="mini-step-btn" data-bonus-delta="-1" data-player-id="' + p.id + '" type="button">−</button>' +
+                  '<span class="bonus-val">+' + b + "</span>" +
+                  '<button class="mini-step-btn" data-bonus-delta="1" data-player-id="' + p.id + '" type="button">+</button>' +
+                "</div>" +
+              "</div>"
+            : '<div class="handicap-bar">' +
+                '<span style="font-size:0.74rem; font-weight:800; color:var(--ink-muted);">Starting Head Start</span>' +
+                '<span class="static-bonus-badge">+' + b + " PTS</span>" +
+              "</div>";
+
+          const canUploadCeleb = !p.celebratingPhoto || admin;
+          const canUploadSad = !p.sadPhoto || admin;
+
+          const celebSubTag = !p.celebratingPhoto
+            ? '<span class="slot-sub-tag open-upload">📸 Tap to Upload</span>'
+            : admin
+              ? '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>'
+              : '<span class="slot-sub-tag guest-locked">🔒 Photo Locked</span>';
+
+          const sadSubTag = !p.sadPhoto
+            ? '<span class="slot-sub-tag open-upload">📸 Tap to Upload</span>'
+            : admin
+              ? '<span class="slot-sub-tag admin-replace">🔄 Tap to Replace</span>'
+              : '<span class="slot-sub-tag guest-locked">🔒 Photo Locked</span>';
+
+          return (
+            '<div class="player-setup-card">' +
+              '<div class="player-name-row">' +
+                '<span style="font-family:var(--font-mono); font-weight:800;">#' + (p.id + 1) + "</span>" +
+                '<input class="name-input ' + (admin ? "" : "readonly-input") + '" type="text" value="' + escapeAttr(p.name) + '" data-player-name="' + p.id + '" ' + (admin ? "" : "readonly") + " />" +
+                (p.isBirthdayQueen ? '<span class="decree-tag">👑 Queen</span>' : "") +
+              "</div>" +
+              handicapSection +
+              '<div class="photo-slots">' +
+                '<label class="photo-slot ' + (canUploadCeleb ? "uploadable-slot" : "locked-slot") + '" data-slot-guard="' + (canUploadCeleb ? "open" : "locked") + '">' +
+                  (p.celebratingPhoto
+                    ? '<img class="slot-preview" src="' + p.celebratingPhoto + '" alt="Winning face" />'
+                    : '<div class="slot-preview">🥳</div>') +
+                  "<span>Winning Face</span>" +
+                  celebSubTag +
+                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="celebrating" hidden ' + (canUploadCeleb ? "" : "disabled") + " />" +
+                "</label>" +
+                '<label class="photo-slot ' + (canUploadSad ? "uploadable-slot" : "locked-slot") + '" data-slot-guard="' + (canUploadSad ? "open" : "locked") + '">' +
+                  (p.sadPhoto
+                    ? '<img class="slot-preview" src="' + p.sadPhoto + '" alt="Sad face" />'
+                    : '<div class="slot-preview">😭</div>') +
+                  "<span>Sad Crybaby Face</span>" +
+                  sadSubTag +
+                  '<input type="file" accept="image/*" data-photo-player="' + p.id + '" data-mood="sad" hidden ' + (canUploadSad ? "" : "disabled") + " />" +
+                "</label>" +
+              "</div>" +
+            "</div>"
+          );
+        })
+        .join("");
+    }
+
+    /**
+     * ============================================================================
+     * 6. 50/50 SPLIT-SCREEN REVEAL & 60FPS CANVAS PARTICLES
+     * ============================================================================
+     */
+    function openSplitReveal(match) {
+      sanitizeMatch16(match);
+      const aWon = match.scoreA >= match.scoreB;
+      const winIds = aWon ? match.teamA : match.teamB;
+      const loseIds = aWon ? match.teamB : match.teamA;
+      const winScore = aWon ? match.scoreA : match.scoreB;
+      const loseScore = aWon ? match.scoreB : match.scoreA;
+
+      const winners = winIds.map(getPlayer);
+      const losers = loseIds.map(getPlayer);
+      const margin = Math.abs(winScore - loseScore);
+
+      let headline = "";
+      let hypeLine = "";
+
+      if (
+        winners.some(function (p) {
+          return p.isBirthdayQueen;
+        })
+      ) {
+        headline = pickFreshLine("queenWinHeadlines");
+        hypeLine = pickFreshLine("queenWinHype");
+      } else if (
+        losers.some(function (p) {
+          return p.isBirthdayQueen;
+        })
+      ) {
+        headline = pickFreshLine("queenLossHeadlines");
+        hypeLine = pickFreshLine("queenLossHype");
+      } else if (margin >= 7) {
+        headline = pickFreshLine("blowoutHeadlines");
+        hypeLine = pickFreshLine("standardWinHype");
+      } else if (margin <= 2) {
+        headline = pickFreshLine("nailbiterHeadlines");
+        hypeLine = pickFreshLine("standardWinHype");
+      } else {
+        headline = pickFreshLine("standardWinHeadlines");
+        hypeLine = pickFreshLine("standardWinHype");
+      }
+
+      document.getElementById("winnerHeadline").textContent = headline;
+      document.getElementById("winnerHypeLine").textContent = hypeLine;
+      document.getElementById("winnerNames").textContent = winners[0].name + " & " + winners[1].name;
+      document.getElementById("loserNames").textContent = losers[0].name + " & " + losers[1].name;
+      document.getElementById("revealScorePill").textContent = winScore + " — " + loseScore;
+      document.getElementById("loserRoast").textContent = pickFreshLine("loserRoasts");
+
+      document.getElementById("winnerFaces").innerHTML = winners
+        .map(function (p) {
+          return p.celebratingPhoto
+            ? '<img class="winner-face" src="' + p.celebratingPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+            : '<div class="winner-face">' + initials(p.name) + "</div>";
+        })
+        .join("");
+
+      document.getElementById("loserFaces").innerHTML = losers
+        .map(function (p) {
+          return p.sadPhoto
+            ? '<img class="loser-face" src="' + p.sadPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+            : '<div class="loser-face">' + initials(p.name) + "</div>";
+        })
+        .join("");
+
+      const allConfirmed = state.matches.every(function (m) {
+        return m.confirmed;
+      });
+      const finaleCta = document.getElementById("launchFinaleFromRevealBtn");
+      finaleCta.classList.toggle("hidden", !allConfirmed);
+
+      const overlay = document.getElementById("revealOverlay");
+      overlay.classList.add("open");
+      startSplitCanvasAnimation();
+    }
+
+    function startSplitCanvasAnimation() {
+      const canvas = document.getElementById("revealCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const palette = ["#FF4D8D", "#FFD23F", "#FFFFFF", "#1C1917"];
+      const confetti = Array.from({ length: 48 }, function () {
+        return {
+          x: Math.random() * canvas.width,
+          y: Math.random() * (canvas.height * 0.5),
+          size: 6 + Math.random() * 7,
+          vy: 1.4 + Math.random() * 2.4,
+          vx: (Math.random() - 0.5) * 1.6,
+          rot: Math.random() * Math.PI * 2,
+          vrot: (Math.random() - 0.5) * 0.12,
+          color: palette[Math.floor(Math.random() * palette.length)]
+        };
+      });
+
+      const raindrops = Array.from({ length: 55 }, function () {
+        return {
+          x: Math.random() * canvas.width,
+          y: canvas.height * 0.5 + Math.random() * (canvas.height * 0.5),
+          len: 10 + Math.random() * 14,
+          vy: 5 + Math.random() * 5
+        };
+      });
+
+      function frame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const halfY = canvas.height * 0.5;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, canvas.width, halfY);
+        ctx.clip();
+        confetti.forEach(function (c) {
+          c.x += c.vx;
+          c.y += c.vy;
+          c.rot += c.vrot;
+          if (c.y > halfY) {
+            c.y = -10;
+            c.x = Math.random() * canvas.width;
+          }
+          ctx.save();
+          ctx.translate(c.x, c.y);
+          ctx.rotate(c.rot);
+          ctx.fillStyle = c.color;
+          ctx.fillRect(-c.size / 2, -c.size / 2, c.size, c.size * 0.65);
+          ctx.restore();
+        });
+        ctx.restore();
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, halfY, canvas.width, halfY);
+        ctx.clip();
+        ctx.strokeStyle = "rgba(147, 197, 253, 0.45)";
+        ctx.lineWidth = 2;
+        raindrops.forEach(function (d) {
+          d.y += d.vy;
+          if (d.y > canvas.height) {
+            d.y = halfY - 10;
+            d.x = Math.random() * canvas.width;
+          }
+          ctx.beginPath();
+          ctx.moveTo(d.x, d.y);
+          ctx.lineTo(d.x - 2, d.y + d.len);
+          ctx.stroke();
+        });
+        ctx.restore();
+
+        revealAnimFrame = requestAnimationFrame(frame);
+      }
+
+      if (revealAnimFrame) cancelAnimationFrame(revealAnimFrame);
+      frame();
+    }
+
+    function closeSplitReveal() {
+      document.getElementById("revealOverlay").classList.remove("open");
+      if (revealAnimFrame) {
+        cancelAnimationFrame(revealAnimFrame);
+        revealAnimFrame = null;
+      }
+    }
+
+    /**
+     * ============================================================================
+     * 7. GRAND FINALE "MARIAM ALWAYS #1" FLIP ANIMATION
+     * ============================================================================
+     */
+    async function runGrandFinaleReveal() {
+      const overlay = document.getElementById("finaleOverlay");
+      const listEl = document.getElementById("finaleList");
+      const stampEl = document.getElementById("overrideStamp");
+      const subEl = document.getElementById("finaleSubtitle");
+
+      stampEl.classList.remove("visible");
+      listEl.innerHTML = "";
+      overlay.classList.add("open");
+
+      const mathStandings = computeStandings(false);
+      subEl.textContent = "Revealing Chapter 27 standings from #12 to #1...";
+
+      for (let i = mathStandings.length - 1; i >= 0; i--) {
+        const p = mathStandings[i];
+        const row = document.createElement("div");
+        row.className = "rank-row " + (p.isBirthdayQueen ? "queen-row" : "");
+        row.dataset.playerId = p.id;
+        const diff = p.matchPoints - p.pointsAgainst;
+        const subText =
+          state.headStartsActive && p.appliedBonus > 0
+            ? p.matchPoints + " game + " + p.appliedBonus + " bonus"
+            : p.wins + "W • " + (diff >= 0 ? "+" + diff : diff) + " diff";
+
+        row.innerHTML =
+          '<div class="rank-num finale-rank">#' + p.rank + "</div>" +
+          renderMiniAvatar(p, "celebrating") +
+          "<div>" +
+            '<div style="font-weight:800; font-size:0.9rem;">' + p.name + renderBonusBadge(p) + "</div>" +
+            '<div style="font-size:0.72rem; color:var(--ink-muted); font-weight:700;">' + subText + "</div>" +
+          "</div>" +
+          '<div class="rank-stats">' +
+            '<div class="rank-pts">' + p.points + "</div>" +
+            '<div class="rank-sub">TOTAL</div>' +
+          "</div>";
+
+        row.style.opacity = "0";
+        row.style.transform = "translateY(14px) scale(0.96)";
+        listEl.prepend(row);
+
+        if (row.animate) {
+          row.animate(
+            [
+              { opacity: 0, transform: "translateY(14px) scale(0.96)" },
+              { opacity: 1, transform: "translateY(0) scale(1)" }
+            ],
+            { duration: 220, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+          );
+        } else {
+          row.style.opacity = "1";
+          row.style.transform = "none";
+        }
+
+        await new Promise(function (r) {
+          setTimeout(r, i < 3 ? 340 : 140);
+        });
+      }
+
+      const queenRow = listEl.querySelector('[data-player-id="0"]');
+      const firstRow = listEl.firstElementChild;
+
+      if (queenRow && firstRow && queenRow !== firstRow) {
+        await new Promise(function (r) {
+          setTimeout(r, 650);
+        });
+        subEl.textContent = "Wait a second... checking Article 27 of the Birthday Constitution...";
+        stampEl.classList.add("visible");
+        await new Promise(function (r) {
+          setTimeout(r, 700);
+        });
+
+        const rows = Array.from(listEl.children);
+        const firstRects = new Map(
+          rows.map(function (el) {
+            return [el, el.getBoundingClientRect()];
+          })
+        );
+
+        listEl.prepend(queenRow);
+
+        Array.from(listEl.children).forEach(function (el, idx) {
+          const badge = el.querySelector(".finale-rank");
+          badge.textContent = idx === 0 ? "👑" : "#" + (idx + 1);
+        });
+
+        Array.from(listEl.children).forEach(function (el) {
+          const oldRect = firstRects.get(el);
+          const newRect = el.getBoundingClientRect();
+          const dy = oldRect.top - newRect.top;
+          if (dy !== 0 && el.animate) {
+            el.animate(
+              [
+                { transform: "translateY(" + dy + "px) scale(" + (el === queenRow ? 1.04 : 1) + ")" },
+                { transform: "translateY(0px) scale(1)" }
+              ],
+              { duration: 750, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+            );
+          }
+        });
+
+        subEl.textContent = "👑 ALL HAIL MARIAM — CHAPTER 27 UNDEFEATED CHAMPION!";
+        fireGlobalConfettiBurst();
+      } else {
+        subEl.textContent = "👑 Mariam won #1 both on points AND by Article 27 Birthday Law!";
+        fireGlobalConfettiBurst();
+      }
+    }
+
+    function fireGlobalConfettiBurst() {
+      const canvas = document.getElementById("globalConfettiCanvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const colors = ["#C8F542", "#FF4D8D", "#FFD23F", "#38BDF8"];
+      const particles = Array.from({ length: 75 }, function () {
+        return {
+          x: canvas.width / 2,
+          y: canvas.height * 0.35,
+          vx: (Math.random() - 0.5) * 14,
+          vy: -4 - Math.random() * 10,
+          g: 0.35,
+          size: 6 + Math.random() * 6,
+          color: colors[Math.floor(Math.random() * colors.length)]
+        };
+      });
+
+      let frames = 0;
+      function tick() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(function (p) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.g;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size * 0.7);
+        });
+        frames++;
+        if (frames < 95) {
+          requestAnimationFrame(tick);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      tick();
+    }
+
+    /**
+     * ============================================================================
+     * 8. PHOTO COMPRESSION (200x200 JPEG FOR PHONE CAMERA/GALLERY)
+     * ============================================================================
+     */
+    function compressImageFile(file) {
+      return new Promise(function (resolve, reject) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            const size = 200;
+            const canvas = document.createElement("canvas");
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext("2d");
+            const minSide = Math.min(img.width, img.height);
+            const sx = (img.width - minSide) / 2;
+            const sy = (img.height - minSide) / 2;
+            ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+            resolve(canvas.toDataURL("image/jpeg", 0.76));
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    /**
+     * ============================================================================
+     * 9. EVENT LISTENERS & SYNCHRONOUS BOOTSTRAP
+     * ============================================================================
+     */
+    document.addEventListener("click", async function (e) {
+      // Bottom Nav Tabs (always accessible)
+      const navBtn = e.target.closest(".nav-item");
+      if (navBtn) {
+        document.querySelectorAll(".nav-item").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        navBtn.classList.add("active");
+        const targetId = navBtn.dataset.tab;
+        ["tabMatches", "tabLeaderboard", "tabCrew"].forEach(function (id) {
+          document.getElementById(id).classList.toggle("hidden", id !== targetId);
+        });
+        if (targetId === "tabLeaderboard") renderLeaderboard();
+        return;
+      }
+
+      // Round Pills (always accessible; activeRound stays local when View-Only)
+      const roundBtn = e.target.closest(".round-pill");
+      if (roundBtn) {
+        state.activeRound = Number(roundBtn.dataset.round);
+        if (isAdminUnlocked()) {
+          await storageProvider.saveState(state);
+        }
+        renderRoundPills();
+        renderMatches();
+        return;
+      }
+
+      // Locked Photo Slot Guard in View-Only Mode (empty slots remain open for guests!)
+      const lockedSlot = e.target.closest('[data-slot-guard="locked"]');
+      if (lockedSlot) {
+        e.preventDefault();
+        requireAdmin("overwrite an existing player photo");
+        return;
+      }
+
+      // Starting Bonus Presets in Crew Tab (Admin only)
+      const bonusPresetBtn = e.target.closest("[data-bonus-preset]");
+      if (bonusPresetBtn) {
+        if (!requireAdmin("change starting head-start bonuses")) return;
+        const player = getPlayer(bonusPresetBtn.dataset.playerId);
+        if (player) {
+          player.bonusPoints = Number(bonusPresetBtn.dataset.bonusPreset);
+          await storageProvider.updatePlayer(player.id, player, state);
+          renderAll();
+        }
+        return;
+      }
+
+      // Starting Bonus +/- Stepper in Crew Tab (Admin only)
+      const bonusDeltaBtn = e.target.closest("[data-bonus-delta]");
+      if (bonusDeltaBtn) {
+        if (!requireAdmin("adjust starting head-start bonuses")) return;
+        const player = getPlayer(bonusDeltaBtn.dataset.playerId);
+        if (player) {
+          const delta = Number(bonusDeltaBtn.dataset.bonusDelta);
+          player.bonusPoints = Math.max(0, Math.min(50, (Number(player.bonusPoints) || 0) + delta));
+          await storageProvider.updatePlayer(player.id, player, state);
+          renderAll();
+        }
+        return;
+      }
+
+      // Score Presets (Admin only — updates client memory ONLY until Confirm Result)
+      const presetBtn = e.target.closest(".preset-chip");
+      if (presetBtn) {
+        if (!requireAdmin("edit match scores")) return;
+        const match = state.matches.find(function (m) {
+          return m.id === Number(presetBtn.dataset.id);
+        });
+        if (match) {
+          const parts = presetBtn.dataset.preset.split(",").map(Number);
+          match.scoreA = parts[0];
+          match.scoreB = parts[1];
+          sanitizeMatch16(match);
+          markMatchDirty(match.id);
+          renderMatches();
+        }
+        return;
+      }
+
+      // Match Card Actions
+      const actionBtn = e.target.closest("[data-action]");
+      if (actionBtn) {
+        const action = actionBtn.dataset.action;
+        const match = state.matches.find(function (m) {
+          return m.id === Number(actionBtn.dataset.id);
+        });
+        if (!match) return;
+
+        // Guests can replay confirmed match reveals freely
+        if (action === "replay") {
+          openSplitReveal(match);
+          return;
+        }
+
+        if (!requireAdmin("edit or confirm match scores")) return;
+
+        if (action === "incA") {
+          match.scoreA = Math.min(MATCH_TOTAL_POINTS, match.scoreA + 1);
+          match.scoreB = MATCH_TOTAL_POINTS - match.scoreA;
+          markMatchDirty(match.id);
+          renderMatches();
+          return;
+        }
+        if (action === "decA") {
+          match.scoreA = Math.max(0, match.scoreA - 1);
+          match.scoreB = MATCH_TOTAL_POINTS - match.scoreA;
+          markMatchDirty(match.id);
+          renderMatches();
+          return;
+        }
+        if (action === "incB") {
+          match.scoreB = Math.min(MATCH_TOTAL_POINTS, match.scoreB + 1);
+          match.scoreA = MATCH_TOTAL_POINTS - match.scoreB;
+          markMatchDirty(match.id);
+          renderMatches();
+          return;
+        }
+        if (action === "decB") {
+          match.scoreB = Math.max(0, match.scoreB - 1);
+          match.scoreA = MATCH_TOTAL_POINTS - match.scoreB;
+          markMatchDirty(match.id);
+          renderMatches();
+          return;
+        }
+
+        if (action === "toggleEdit") {
+          editingMatchId = editingMatchId === match.id ? null : match.id;
+          renderMatches();
+          return;
+        }
+
+        // ONLY 'Confirm Result' persists the match via storageProvider.updateMatch()
+        if (action === "confirm") {
+          sanitizeMatch16(match);
+          match.confirmed = true;
+          clearMatchDirty(match.id);
+          await storageProvider.updateMatch(match.id, match, state);
+          renderAll();
+          openSplitReveal(match);
+          return;
+        }
+      }
+    });
+
+    // Lineup Swaps, Player Name Edits & Photo Uploads
+    document.addEventListener("change", async function (e) {
+      const lineupSelect = e.target.closest("[data-lineup-match]");
+      if (lineupSelect) {
+        if (!requireAdmin("swap match lineups")) return;
+        const match = state.matches.find(function (m) {
+          return m.id === Number(lineupSelect.dataset.lineupMatch);
+        });
+        const val = Number(lineupSelect.value);
+        const slot = lineupSelect.dataset.slot;
+        if (match) {
+          if (slot === "A0") match.teamA[0] = val;
+          if (slot === "A1") match.teamA[1] = val;
+          if (slot === "B0") match.teamB[0] = val;
+          if (slot === "B1") match.teamB[1] = val;
+          markMatchDirty(match.id);
+          renderMatches();
+        }
+        return;
+      }
+
+      const nameInput = e.target.closest("[data-player-name]");
+      if (nameInput) {
+        if (!requireAdmin("rename players")) {
+          renderCrew();
+          return;
+        }
+        const player = getPlayer(nameInput.dataset.playerName);
+        if (player && nameInput.value.trim()) {
+          player.name = nameInput.value.trim();
+          await storageProvider.updatePlayer(player.id, player, state);
+          renderAll();
+        }
+        return;
+      }
+
+      const photoInput = e.target.closest("[data-photo-player]");
+      if (photoInput && photoInput.files && photoInput.files[0]) {
+        const player = getPlayer(photoInput.dataset.photoPlayer);
+        const mood = photoInput.dataset.mood;
+        const slotAlreadyFilled =
+          mood === "celebrating" ? Boolean(player.celebratingPhoto) : Boolean(player.sadPhoto);
+
+        // Empty slots are open to everyone; overwriting an existing face requires Admin
+        if (slotAlreadyFilled && !requireAdmin("overwrite an existing player photo")) {
+          photoInput.value = "";
+          return;
+        }
+
+        const compressed = await compressImageFile(photoInput.files[0]);
+        if (mood === "celebrating") player.celebratingPhoto = compressed;
+        if (mood === "sad") player.sadPhoto = compressed;
+        await storageProvider.updatePlayer(player.id, player, state);
+        renderAll();
+        showToast("📸 " + player.name + "'s " + (mood === "celebrating" ? "Winning" : "Crybaby") + " face uploaded!");
+      }
+    });
+
+    // Header Admin Lock / Unlock Toggle
+    document.getElementById("adminLockBtn").addEventListener("click", function () {
+      if (isAdminUnlocked()) {
+        document.getElementById("adminLockModal").classList.add("open");
+      } else {
+        openAdminUnlockModal();
+      }
+    });
+
+    // Unlock Modal Handlers
+    function handlePasswordSubmit() {
+      const input = document.getElementById("adminPasswordInput");
+      const errEl = document.getElementById("adminErrorMsg");
+      const card = document.getElementById("adminUnlockCard");
+      const entered = (input.value || "").trim().toUpperCase();
+
+      if (entered === ADMIN_PASSWORD) {
+        setAdminUnlocked(true);
+        closeAdminUnlockModal();
+        renderAll();
+        showToast("👑 Admin Unlocked! Ready to enter scores & manage Chapter 27.");
+      } else {
+        errEl.textContent = WRONG_PASSWORD_LINES[Math.floor(Math.random() * WRONG_PASSWORD_LINES.length)];
+        errEl.classList.remove("hidden");
+        card.classList.remove("shake");
+        void card.offsetWidth;
+        card.classList.add("shake");
+        input.select();
+      }
+    }
+
+    document.getElementById("submitUnlockBtn").addEventListener("click", handlePasswordSubmit);
+    document.getElementById("adminPasswordInput").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handlePasswordSubmit();
+      }
+    });
+    document.getElementById("cancelUnlockBtn").addEventListener("click", closeAdminUnlockModal);
+    document.getElementById("adminUnlockModal").addEventListener("click", function (e) {
+      if (e.target.id === "adminUnlockModal") closeAdminUnlockModal();
+    });
+
+    document.getElementById("togglePwdVisBtn").addEventListener("click", function () {
+      const input = document.getElementById("adminPasswordInput");
+      input.type = input.type === "password" ? "text" : "password";
+      input.focus();
+    });
+
+    // Lock Confirmation Modal Handlers
+    document.getElementById("stayAdminBtn").addEventListener("click", function () {
+      document.getElementById("adminLockModal").classList.remove("open");
+    });
+    document.getElementById("confirmLockBtn").addEventListener("click", function () {
+      setAdminUnlocked(false);
+      document.getElementById("adminLockModal").classList.remove("open");
+      renderAll();
+      showToast("🔒 Switched back to View-Only mode.");
+    });
+    document.getElementById("adminLockModal").addEventListener("click", function (e) {
+      if (e.target.id === "adminLockModal") {
+        document.getElementById("adminLockModal").classList.remove("open");
+      }
+    });
+
+    // Header & Overlay Buttons
+    document.getElementById("hypeQueenBtn").addEventListener("click", async function () {
+      state.decreeIndex = (state.decreeIndex + 1) % ROYAL_DECREES.length;
+      if (isAdminUnlocked()) {
+        await storageProvider.saveState(state);
+      }
+      renderHeaderProgress();
+      fireGlobalConfettiBurst();
+    });
+
+    document.getElementById("decreeBanner").addEventListener("click", async function () {
+      state.decreeIndex = (state.decreeIndex + 1) % ROYAL_DECREES.length;
+      if (isAdminUnlocked()) {
+        await storageProvider.saveState(state);
+      }
+      renderHeaderProgress();
+    });
+
+    document.getElementById("closeRevealBtn").addEventListener("click", closeSplitReveal);
+
+    document.getElementById("launchFinaleFromRevealBtn").addEventListener("click", function () {
+      closeSplitReveal();
+      runGrandFinaleReveal();
+    });
+
+    document.getElementById("toggleHeadStartsBtn").addEventListener("click", async function () {
+      if (!requireAdmin("toggle starting head-start bonuses")) return;
+      state.headStartsActive = !state.headStartsActive;
+      await storageProvider.saveState(state);
+      renderLeaderboard();
+    });
+
+    document.getElementById("toggleBirthdayRuleBtn").addEventListener("click", async function () {
+      if (!requireAdmin("toggle the Article 27 #1 ranking rule")) return;
+      state.birthdayLawActive = !state.birthdayLawActive;
+      await storageProvider.saveState(state);
+      renderLeaderboard();
+    });
+
+    document.getElementById("playFinaleBtn").addEventListener("click", runGrandFinaleReveal);
+    document.getElementById("closeFinaleBtn").addEventListener("click", function () {
+      document.getElementById("finaleOverlay").classList.remove("open");
+    });
+
+    document.getElementById("addCustomMatchBtn").addEventListener("click", async function () {
+      if (!requireAdmin("add a bonus match")) return;
+      const nextId = state.matches.length + 1;
+      state.matches.push({
+        id: nextId,
+        round: state.activeRound,
+        court: 1,
+        teamA: [0, 1],
+        teamB: [2, 3],
+        scoreA: 8,
+        scoreB: 8,
+        confirmed: false
+      });
+      await storageProvider.saveState(state);
+      renderAll();
+    });
+
+    // Demo 32/33 Matches button (Admin only) — 16-pt games
+    document.getElementById("seedDemoBtn").addEventListener("click", async function () {
+      if (!requireAdmin("load demo tournament scores")) return;
+      dirtyMatches.clear();
+      state.matches.forEach(function (m, idx) {
+        if (idx < state.matches.length - 1) {
+          m.confirmed = true;
+          const aHasMariam = m.teamA.includes(0);
+          m.scoreA = aHasMariam ? 7 : 10;
+          m.scoreB = aHasMariam ? 9 : 6;
+        } else {
+          m.confirmed = false;
+          m.scoreA = 9;
+          m.scoreB = 7;
+        }
+      });
+      state.activeRound = 11;
+      await storageProvider.saveState(state);
+      renderAll();
+      showToast("⚡ Loaded 32/33 demo scores! Confirm Round 11 Match #33 to trigger the Finale!");
+    });
+
+    // Export JSON Backup (always open so anyone can save a copy)
+    document.getElementById("exportJsonBtn").addEventListener("click", function () {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "mariam-27th-birthday-padel-backup.json";
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast("💾 Exported tournament backup JSON!");
+    });
+
+    // Import JSON Backup (Admin only)
+    document.getElementById("importJsonInput").addEventListener("change", async function (e) {
+      if (!requireAdmin("import a backup JSON file")) {
+        e.target.value = "";
+        return;
+      }
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        dirtyMatches.clear();
+        state = Object.assign({}, createDefaultState(), JSON.parse(text));
+        if (Array.isArray(state.matches)) {
+          state.matches.forEach(function (m) {
+            sanitizeMatch16(m);
+          });
+        }
+        await storageProvider.saveState(state);
+        renderAll();
+        showToast("📂 Backup restored!");
+      } catch (err) {
+        showToast("⚠️ Invalid backup JSON file.");
+      }
+    });
+
+    // Reset Scores (Admin only)
+    document.getElementById("resetTournamentBtn").addEventListener("click", async function () {
+      if (!requireAdmin("reset all match scores")) return;
+      dirtyMatches.clear();
+      state.matches = buildBalancedSchedule();
+      state.activeRound = 1;
+      await storageProvider.resetAll(state);
+      renderAll();
+      showToast("🗑️ All 33 matches reset to 0/33!");
+    });
+
+    // Synchronous Immediate Render + Async Storage Hydration
+    renderAll();
+
+    (async function hydrateStorage() {
+      try {
+        state = await storageProvider.init(createDefaultState());
+        renderAll();
+      } catch (err) {
+        renderAll();
+      }
+    })();
+  </script>
+</body>
+</html>
