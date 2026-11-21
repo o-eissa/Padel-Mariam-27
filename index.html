@@ -8,7 +8,7 @@
   <!-- WhatsApp / Open Graph & Mobile Web-App Meta Tags -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Mariam's 27th Birthday Smash — Royal Padel Americano" />
-  <meta property="og:description" content="Live 16-point scores, player selfie uploads, comedy match reveals, and the Article 27 Grand Finale Padel Americano for Mariam's 27th Birthday!" />
+  <meta property="og:description" content="Live 16/24/36-point scores, player selfie uploads, comedy match reveals, and the Article 27 Grand Finale Padel Americano for Mariam's 27th Birthday!" />
   <meta name="twitter:card" content="summary" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -264,6 +264,59 @@
       white-space: nowrap;
     }
 
+    .points-toggle-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--bg-card);
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .points-toggle-label {
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .points-toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .points-chip {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 800;
+      min-height: 44px;
+      min-width: 56px;
+      padding: 0 10px;
+      border-radius: 10px;
+      border: 2px solid var(--ink);
+      background: var(--bg-cream);
+      color: var(--ink);
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.1s ease, background 0.12s ease;
+    }
+
+    .points-chip:active {
+      transform: translateY(1px);
+    }
+
+    .points-chip.active {
+      background: var(--ink);
+      color: var(--lime);
+      box-shadow: var(--shadow-sm);
+    }
+
     .round-pills {
       display: flex;
       gap: 8px;
@@ -438,6 +491,9 @@
     .score-link-bar {
       display: flex;
       justify-content: center;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
       padding: 0 14px 8px;
     }
 
@@ -451,6 +507,23 @@
       border: 1.5px solid var(--ink);
       border-radius: 999px;
       padding: 2px 10px;
+    }
+
+    .convert-pts-btn {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      font-weight: 800;
+      min-height: 44px;
+      padding: 0 10px;
+      border-radius: 999px;
+      border: 1.5px solid var(--ink);
+      background: var(--lime);
+      color: var(--ink);
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .convert-pts-btn:active {
+      transform: translateY(1px);
     }
 
     .score-controls {
@@ -548,10 +621,9 @@
 
     .preset-row {
       padding: 0 14px 12px;
-      display: flex;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
-      flex-wrap: wrap;
-      justify-content: center;
     }
 
     .preset-chip {
@@ -1496,6 +1568,14 @@
             <span id="saveStatusBadge" class="save-pill">✓ Saved</span>
           </div>
         </div>
+        <div id="matchPointsAdminBar" class="points-toggle-bar hidden">
+          <span class="points-toggle-label">🎾 Match Points</span>
+          <div class="points-toggle-group" role="group" aria-label="Match points format">
+            <button class="points-chip active" data-match-points="16" type="button" aria-pressed="true">16 PT</button>
+            <button class="points-chip" data-match-points="24" type="button" aria-pressed="false">24 PT</button>
+            <button class="points-chip" data-match-points="36" type="button" aria-pressed="false">36 PT</button>
+          </div>
+        </div>
         <div class="round-pills" id="roundPills"></div>
       </div>
 
@@ -1805,6 +1885,108 @@
       return false;
     }
 
+    const ALLOWED_MATCH_POINTS = [16, 24, 36];
+    const DEFAULT_MATCH_POINTS = 16;
+
+    const MATCH_SCORE_PRESETS = {
+      16: [
+        [12, 4],
+        [10, 6],
+        [9, 7],
+        [7, 9],
+        [6, 10],
+        [4, 12]
+      ],
+      24: [
+        [18, 6],
+        [15, 9],
+        [13, 11],
+        [11, 13],
+        [9, 15],
+        [6, 18]
+      ],
+      36: [
+        [27, 9],
+        [22, 14],
+        [19, 17],
+        [17, 19],
+        [14, 22],
+        [9, 27]
+      ]
+    };
+
+    function normalizeMatchPoints(val) {
+      const n = Number(val);
+      return ALLOWED_MATCH_POINTS.indexOf(n) !== -1 ? n : DEFAULT_MATCH_POINTS;
+    }
+
+    function getMatchTotalPoints(targetState) {
+      const src = targetState || (typeof state !== "undefined" ? state : null);
+      return normalizeMatchPoints(src && src.matchPoints);
+    }
+
+    function getEffectiveMatchTotal(match, fallbackTotal) {
+      const defaultTotal = normalizeMatchPoints(
+        typeof fallbackTotal === "number" ? fallbackTotal : getMatchTotalPoints()
+      );
+      if (match && match.confirmed) {
+        const a = Number(match.scoreA);
+        const b = Number(match.scoreB);
+        if (
+          Number.isFinite(a) &&
+          Number.isFinite(b) &&
+          a >= 0 &&
+          b >= 0 &&
+          Math.round(a) === a &&
+          Math.round(b) === b &&
+          ALLOWED_MATCH_POINTS.indexOf(a + b) !== -1
+        ) {
+          return a + b;
+        }
+      }
+      return defaultTotal;
+    }
+
+    function sanitizeMatchScore(match, targetTotal, options) {
+      if (!match) return match;
+      const opts = options || {};
+      const total = opts.forceTotal
+        ? normalizeMatchPoints(targetTotal)
+        : getEffectiveMatchTotal(match, targetTotal);
+      const half = total / 2;
+      let a = Number(match.scoreA);
+      let b = Number(match.scoreB);
+
+      if (Number.isFinite(a) && Number.isFinite(b) && a >= 0 && b >= 0) {
+        const ra = Math.round(a);
+        const rb = Math.round(b);
+        if (ra + rb === total) {
+          match.scoreA = ra;
+          match.scoreB = rb;
+          return match;
+        }
+        if (ra === rb) {
+          match.scoreA = half;
+          match.scoreB = half;
+          return match;
+        }
+        if (ALLOWED_MATCH_POINTS.indexOf(ra + rb) !== -1) {
+          const scaledA = Math.max(0, Math.min(total, Math.round((ra / (ra + rb)) * total)));
+          match.scoreA = scaledA;
+          match.scoreB = total - scaledA;
+          return match;
+        }
+      }
+
+      if (!Number.isFinite(a)) {
+        a = Number.isFinite(b) ? total - b : half;
+      }
+      a = Math.max(0, Math.min(total, Math.round(a)));
+      match.scoreA = a;
+      match.scoreB = total - a;
+      return match;
+    }
+
     /**
      * ============================================================================
      * 2. EXTENSIBLE STORAGE PROVIDER ARCHITECTURE (LOCAL + FIREBASE FIRESTORE)
@@ -1843,6 +2025,9 @@
       async updateMeta(fullState) {
         return this.saveState(fullState);
       }
+      async updateMatchPoints(fullState, updatedMatches) {
+        return this.saveState(fullState);
+      }
       async updateMatch(matchId, matchData, fullState) {
         return this.saveState(fullState);
       }
@@ -1877,6 +2062,7 @@
           }
           const parsed = JSON.parse(raw);
           const merged = Object.assign({}, deepClone(defaultState), parsed);
+          merged.matchPoints = normalizeMatchPoints(merged.matchPoints);
           if (Array.isArray(merged.players)) {
             merged.players = merged.players.map(function (p, idx) {
               const base = defaultState.players[idx] || {};
@@ -1892,7 +2078,7 @@
           }
           if (Array.isArray(merged.matches)) {
             merged.matches.forEach(function (m) {
-              sanitizeMatch16(m);
+              sanitizeMatchScore(m, merged.matchPoints);
             });
           }
           return merged;
@@ -1967,6 +2153,7 @@
 
       _serializeMeta(fullState) {
         return {
+          matchPoints: getMatchTotalPoints(fullState),
           headStartsActive: Boolean(fullState.headStartsActive),
           birthdayLawActive: Boolean(fullState.birthdayLawActive),
           decreeIndex: Number(fullState.decreeIndex) || 0,
@@ -1989,8 +2176,8 @@
         return docData;
       }
 
-      _serializeMatch(match, includeAdminKey) {
-        const clean = sanitizeMatch16(deepClone(match));
+      _serializeMatch(match, includeAdminKey, fallbackTotal) {
+        const clean = sanitizeMatchScore(deepClone(match), fallbackTotal);
         const docData = {
           id: Number(clean.id),
           round: Number(clean.round),
@@ -2022,7 +2209,7 @@
         return merged;
       }
 
-      _normalizeMatch(raw) {
+      _normalizeMatch(raw, fallbackTotal) {
         const m = deepClone(raw);
         delete m.adminKey;
         delete m.deleted;
@@ -2032,7 +2219,22 @@
         m.teamA = Array.isArray(m.teamA) ? m.teamA.slice(0, 2).map(Number) : [0, 1];
         m.teamB = Array.isArray(m.teamB) ? m.teamB.slice(0, 2).map(Number) : [2, 3];
         m.confirmed = Boolean(m.confirmed);
-        return sanitizeMatch16(m);
+        const a = Number(m.scoreA);
+        const b = Number(m.scoreB);
+        if (
+          Number.isFinite(a) &&
+          Number.isFinite(b) &&
+          a >= 0 &&
+          b >= 0 &&
+          Math.round(a) === a &&
+          Math.round(b) === b &&
+          ALLOWED_MATCH_POINTS.indexOf(a + b) !== -1
+        ) {
+          m.scoreA = a;
+          m.scoreB = b;
+          return m;
+        }
+        return sanitizeMatchScore(m, fallbackTotal);
       }
 
       _mergeRemoteDocs(defaultState, metaData, playerDocs, matchDocs, localActiveRound) {
@@ -2041,6 +2243,9 @@
           merged.activeRound = localActiveRound;
         }
         if (metaData) {
+          if (typeof metaData.matchPoints === "number") {
+            merged.matchPoints = normalizeMatchPoints(metaData.matchPoints);
+          }
           if (typeof metaData.headStartsActive === "boolean") {
             merged.headStartsActive = metaData.headStartsActive;
           }
@@ -2051,6 +2256,7 @@
             merged.decreeIndex = metaData.decreeIndex;
           }
         }
+        merged.matchPoints = normalizeMatchPoints(merged.matchPoints);
         if (playerDocs && playerDocs.length > 0) {
           const baseById = new Map();
           defaultState.players.forEach(function (bp) {
@@ -2071,11 +2277,14 @@
           }
         }
         if (matchDocs && matchDocs.length > 0) {
+          const self = this;
           const activeMatches = matchDocs
             .filter(function (m) {
               return !m.deleted;
             })
-            .map(this._normalizeMatch.bind(this))
+            .map(function (m) {
+              return self._normalizeMatch(m, merged.matchPoints);
+            })
             .sort(function (a, b) {
               return a.id - b.id;
             });
@@ -2090,6 +2299,7 @@
         const sdk = await this._ensureSdk();
         if (!sdk) return;
         const ops = [];
+        const fallbackTotal = getMatchTotalPoints(fullState);
         ops.push({
           ref: sdk.doc(sdk.db, "meta", "tournament"),
           data: this._serializeMeta(fullState)
@@ -2104,7 +2314,7 @@
         fullState.matches.forEach(function (m) {
           ops.push({
             ref: sdk.doc(sdk.db, "matches", String(m.id)),
-            data: self._serializeMatch(m, true)
+            data: self._serializeMatch(m, true, fallbackTotal)
           });
         });
         if (Array.isArray(softDeleteMatchIds)) {
@@ -2222,6 +2432,43 @@
         this.statusText = "☁️ Live Sync";
       }
 
+      async updateMatchPoints(fullState, updatedMatches) {
+        await this.localCache.saveState(fullState);
+        const sdk = await this._ensureSdk();
+        if (!sdk || !isAdminUnlocked()) return;
+        if (!this.remoteSeeded) {
+          await this.onAdminUnlock(fullState);
+        }
+        const fallbackTotal = getMatchTotalPoints(fullState);
+        const ops = [
+          {
+            ref: sdk.doc(sdk.db, "meta", "tournament"),
+            data: this._serializeMeta(fullState),
+            merge: true
+          }
+        ];
+        const self = this;
+        (updatedMatches || []).forEach(function (m) {
+          ops.push({
+            ref: sdk.doc(sdk.db, "matches", String(m.id)),
+            data: self._serializeMatch(m, true, fallbackTotal),
+            merge: false
+          });
+        });
+        for (let i = 0; i < ops.length; i += 400) {
+          const batch = sdk.writeBatch(sdk.db);
+          ops.slice(i, i + 400).forEach(function (op) {
+            if (op.merge) {
+              batch.set(op.ref, op.data, { merge: true });
+            } else {
+              batch.set(op.ref, op.data);
+            }
+          });
+          await batch.commit();
+        }
+        this.statusText = "☁️ Live Sync";
+      }
+
       async updateMatch(matchId, matchData, fullState) {
         await this.localCache.saveState(fullState);
         const sdk = await this._ensureSdk();
@@ -2231,7 +2478,7 @@
         }
         await sdk.setDoc(
           sdk.doc(sdk.db, "matches", String(matchId)),
-          this._serializeMatch(matchData, true)
+          this._serializeMatch(matchData, true, getMatchTotalPoints(fullState))
         );
         this.statusText = "☁️ Live Sync";
       }
@@ -2333,11 +2580,17 @@
               });
           }
           if (sourceChanged === "matches" && latest.matches) {
+            const fallbackTotal =
+              latest.meta && typeof latest.meta.matchPoints === "number"
+                ? normalizeMatchPoints(latest.meta.matchPoints)
+                : getMatchTotalPoints();
             payload.matches = latest.matches
               .filter(function (m) {
                 return !m.deleted;
               })
-              .map(self._normalizeMatch.bind(self))
+              .map(function (m) {
+                return self._normalizeMatch(m, fallbackTotal);
+              })
               .sort(function (a, b) {
                 return a.id - b.id;
               });
@@ -2412,7 +2665,7 @@
 
     /**
      * ============================================================================
-     * 3. 27TH BIRTHDAY COMEDY POOLS, EXACT 12-PLAYER ROSTER & 16-PT SCHEDULE
+     * 3. 27TH BIRTHDAY COMEDY POOLS, EXACT 12-PLAYER ROSTER & 16/24/36-PT SCHEDULE
      * ============================================================================
      */
     const ROYAL_DECREES = [
@@ -2619,7 +2872,7 @@
         "😵‍💫 DIZZY FROM CHASING ALL THOSE LOBS!",
         "🫠 VIBES: IMMACULATE. SCOREBOARD: TRAGIC.",
         "🚨 MISSING PERSONS REPORT: YOUR FIRST SERVES!",
-        "🎭 TRAGEDY IN 16 POINTS — DIRECTED BY YOU TWO!",
+        "🎭 TRAGEDY IN {PTS} POINTS — DIRECTED BY YOU TWO!",
         "🧊 FROZEN AT THE BASELINE! SEND HELP!",
         "🪫 BATTERY AT 1% — SHUTTING DOWN!",
         "🙈 DON'T LOOK AT THE LEADERBOARD FOR 5 MINUTES!"
@@ -2738,7 +2991,7 @@
     // Balanced Americano schedules:
     // - Default 12 players: exact 11-round, 33-match tournament schedule (every pair partners once)
     // - Optional 13 players: Z_13 (13 rounds, 3 courts/round, 39 matches, 1 bye/round — every pair partners once & opposes twice)
-    function buildBalancedSchedule(playersOrCount) {
+    function buildBalancedSchedule(playersOrCount, totalPoints) {
       const playerIds = Array.isArray(playersOrCount)
         ? playersOrCount.map(function (p) {
             return Number(p.id);
@@ -2746,6 +2999,7 @@
         : Array.from({ length: Number(playersOrCount) || 12 }, function (_, i) {
             return i;
           });
+      const halfScore = normalizeMatchPoints(totalPoints) / 2;
 
       const matches = [];
       let matchId = 1;
@@ -2770,8 +3024,8 @@
               court: p.court,
               teamA: p.teamA,
               teamB: p.teamB,
-              scoreA: 8,
-              scoreB: 8,
+              scoreA: halfScore,
+              scoreB: halfScore,
               confirmed: false
             });
           });
@@ -2858,8 +3112,8 @@
             court: p.court,
             teamA: [ids12[p.teamA[0]], ids12[p.teamA[1]]],
             teamB: [ids12[p.teamB[0]], ids12[p.teamB[1]]],
-            scoreA: 8,
-            scoreB: 8,
+            scoreA: halfScore,
+            scoreB: halfScore,
             confirmed: false
           });
         });
@@ -2868,19 +3122,21 @@
     }
 
     function createDefaultState() {
+      const totalPoints = DEFAULT_MATCH_POINTS;
       return {
         activeRound: 1,
+        matchPoints: totalPoints,
         headStartsActive: true,
         birthdayLawActive: true,
         decreeIndex: 0,
         players: buildDefaultPlayers(),
-        matches: buildBalancedSchedule()
+        matches: buildBalancedSchedule(null, totalPoints)
       };
     }
 
     /**
      * ============================================================================
-     * 4. APPLICATION STATE, STRICT 16-PT ENFORCEMENT & DIRTY TRACKING
+     * 4. APPLICATION STATE, STRICT 16/24/36-PT ENFORCEMENT & DIRTY TRACKING
      * ============================================================================
      */
     let state = createDefaultState();
@@ -2889,20 +3145,6 @@
     let toastTimer = null;
 
     const dirtyMatches = new Set();
-    const MATCH_TOTAL_POINTS = 16;
-
-    function sanitizeMatch16(match) {
-      if (!match) return match;
-      let a = Number(match.scoreA);
-      let b = Number(match.scoreB);
-      if (!Number.isFinite(a)) {
-        a = Number.isFinite(b) ? MATCH_TOTAL_POINTS - b : 8;
-      }
-      a = Math.max(0, Math.min(MATCH_TOTAL_POINTS, Math.round(a)));
-      match.scoreA = a;
-      match.scoreB = MATCH_TOTAL_POINTS - a;
-      return match;
-    }
 
     function markMatchDirty(matchId) {
       dirtyMatches.add(matchId);
@@ -2988,7 +3230,7 @@
 
       state.matches.forEach(function (m) {
         if (!m.confirmed) return;
-        sanitizeMatch16(m);
+        sanitizeMatchScore(m);
         const aWon = m.scoreA > m.scoreB;
         const bWon = m.scoreB > m.scoreA;
 
@@ -3075,6 +3317,17 @@
           lockBtn.classList.remove("btn-lime");
           lockBtn.classList.add("btn-cream");
         }
+      }
+
+      const pointsBar = document.getElementById("matchPointsAdminBar");
+      if (pointsBar) {
+        pointsBar.classList.toggle("hidden", !admin);
+        const currentPts = getMatchTotalPoints();
+        pointsBar.querySelectorAll("[data-match-points]").forEach(function (btn) {
+          const isActive = Number(btn.dataset.matchPoints) === currentPts;
+          btn.classList.toggle("active", isActive);
+          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
       }
 
       const bonusBar = document.getElementById("bonusMatchBar");
@@ -3187,7 +3440,7 @@
       ).size;
       const formatPill = document.getElementById("formatPill");
       if (formatPill) {
-        formatPill.textContent = "16-PT GAMES • " + roundCount + " ROUNDS";
+        formatPill.textContent = getMatchTotalPoints() + "-PT GAMES • " + roundCount + " ROUNDS";
       }
       document.getElementById("decreeText").textContent = getLiveDecreeText(state.decreeIndex);
       updateSaveBadge();
@@ -3240,6 +3493,7 @@
 
     function renderMatches() {
       const admin = isAdminUnlocked();
+      const globalTotal = getMatchTotalPoints();
       const container = document.getElementById("matchesContainer");
       const roundMatches = state.matches.filter(function (m) {
         return m.round === state.activeRound;
@@ -3268,7 +3522,8 @@
         byeBannerHtml +
         roundMatches
         .map(function (m) {
-          sanitizeMatch16(m);
+          const matchTotal = getEffectiveMatchTotal(m, globalTotal);
+          sanitizeMatchScore(m, matchTotal);
           const pA1 = getPlayer(m.teamA[0]);
           const pA2 = getPlayer(m.teamA[1]);
           const pB1 = getPlayer(m.teamB[0]);
@@ -3280,15 +3535,8 @@
           const isDirty = dirtyMatches.has(m.id);
 
           const atMinA = m.scoreA <= 0;
-          const atMaxA = m.scoreA >= MATCH_TOTAL_POINTS;
-          const presets = [
-            [12, 4],
-            [10, 6],
-            [9, 7],
-            [7, 9],
-            [6, 10],
-            [4, 12]
-          ];
+          const atMaxA = m.scoreA >= matchTotal;
+          const presets = MATCH_SCORE_PRESETS[matchTotal] || MATCH_SCORE_PRESETS[DEFAULT_MATCH_POINTS];
           const presetChipsHtml = presets
             .map(function (pair) {
               const pA = pair[0];
@@ -3323,8 +3571,12 @@
 
           let scoreSectionHtml = "";
           if (admin) {
+            const convertBtnHtml =
+              m.confirmed && matchTotal !== globalTotal
+                ? '<button class="convert-pts-btn" data-action="convertPoints" data-id="' + m.id + '" type="button">→ Switch to ' + globalTotal + "-PT</button>"
+                : "";
             scoreSectionHtml =
-              '<div class="score-link-bar"><span class="score-link-pill">16-PT MATCH</span></div>' +
+              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span>" + convertBtnHtml + "</div>" +
               '<div class="score-controls">' +
                 '<div class="stepper-box">' +
                   '<button class="step-btn" data-action="decA" data-id="' + m.id + '" type="button"' + (atMinA ? " disabled" : "") + ">−</button>" +
@@ -3350,7 +3602,7 @@
               "</div>";
           } else {
             scoreSectionHtml =
-              '<div class="score-link-bar"><span class="score-link-pill">16-PT MATCH</span></div>' +
+              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span></div>" +
               '<div class="readonly-scoreboard">' +
                 (m.confirmed
                   ? '<span class="ro-score ' + (m.scoreA > m.scoreB ? "winner" : "") + '">' + m.scoreA + "</span>" +
@@ -3594,7 +3846,8 @@
      * ============================================================================
      */
     function openSplitReveal(match) {
-      sanitizeMatch16(match);
+      const matchTotal = getEffectiveMatchTotal(match);
+      sanitizeMatchScore(match, matchTotal);
       const aWon = match.scoreA >= match.scoreB;
       const winIds = aWon ? match.teamA : match.teamB;
       const loseIds = aWon ? match.teamB : match.teamA;
@@ -3604,6 +3857,8 @@
       const winners = winIds.map(getPlayer);
       const losers = loseIds.map(getPlayer);
       const margin = Math.abs(winScore - loseScore);
+      const blowoutMargin = Math.max(7, Math.round(matchTotal * 0.4));
+      const nailbiterMargin = matchTotal >= 36 ? 4 : 2;
 
       let headline = "";
       let hypeLine = "";
@@ -3619,16 +3874,16 @@
       if (queenWon) {
         headline = pickFreshLine("queenWinHeadlines");
         hypeLine = pickFreshLine("queenWinHype");
-        loserHeadline = margin >= 7 ? pickFreshLine("blowoutLoserHeadlines") : pickFreshLine("loserHeadlines");
+        loserHeadline = margin >= blowoutMargin ? pickFreshLine("blowoutLoserHeadlines") : pickFreshLine("loserHeadlines");
       } else if (queenLost) {
         headline = pickFreshLine("queenLossHeadlines");
         hypeLine = pickFreshLine("queenLossHype");
         loserHeadline = pickFreshLine("queenLoserHeadlines");
-      } else if (margin >= 7) {
+      } else if (margin >= blowoutMargin) {
         headline = pickFreshLine("blowoutHeadlines");
         hypeLine = pickFreshLine("standardWinHype");
         loserHeadline = pickFreshLine("blowoutLoserHeadlines");
-      } else if (margin <= 2) {
+      } else if (margin <= nailbiterMargin) {
         headline = pickFreshLine("nailbiterHeadlines");
         hypeLine = pickFreshLine("standardWinHype");
         loserHeadline = pickFreshLine("loserHeadlines");
@@ -3641,7 +3896,7 @@
       document.getElementById("winnerHeadline").textContent = headline;
       document.getElementById("winnerHypeLine").textContent = hypeLine;
       document.getElementById("winnerNames").textContent = winners[0].name + " & " + winners[1].name;
-      document.getElementById("loserHeadline").textContent = loserHeadline;
+      document.getElementById("loserHeadline").textContent = loserHeadline.replace("{PTS}", String(matchTotal));
       document.getElementById("loserNames").textContent = losers[0].name + " & " + losers[1].name;
       document.getElementById("revealScorePill").textContent = winScore + " — " + loseScore;
       document.getElementById("loserRoast").textContent = pickFreshLine("loserRoasts");
@@ -3986,6 +4241,43 @@
         return;
       }
 
+      // Match Points Format Toggle (16 / 24 / 36 — Admin only)
+      const pointsToggleBtn = e.target.closest("[data-match-points]");
+      if (pointsToggleBtn) {
+        if (!requireAdmin("change match points format")) return;
+        const nextPoints = normalizeMatchPoints(pointsToggleBtn.dataset.matchPoints);
+        if (nextPoints === getMatchTotalPoints()) return;
+
+        state.matchPoints = nextPoints;
+        const nextHalf = nextPoints / 2;
+        const updatedUnconfirmed = [];
+        let preservedConfirmed = 0;
+
+        state.matches.forEach(function (m) {
+          if (m.confirmed) {
+            preservedConfirmed++;
+          } else {
+            m.scoreA = nextHalf;
+            m.scoreB = nextHalf;
+            dirtyMatches.delete(m.id);
+            updatedUnconfirmed.push(m);
+          }
+        });
+
+        renderAll();
+        if (preservedConfirmed > 0) {
+          showToast(
+            "🎾 Switched upcoming matches to " + nextPoints + "-PT! (" + preservedConfirmed + " confirmed kept as-is)"
+          );
+        } else {
+          showToast("🎾 Switched all matches to " + nextPoints + "-PT games!");
+        }
+        await persistSafely(function () {
+          return storageProvider.updateMatchPoints(state, updatedUnconfirmed);
+        }, "match points");
+        return;
+      }
+
       // Locked Photo Slot Guard in View-Only Mode (empty slots remain open for guests!)
       const lockedSlot = e.target.closest('[data-slot-guard="locked"]');
       if (lockedSlot) {
@@ -4009,7 +4301,7 @@
         });
         if (!anyConfirmed && (state.players.length === 12 || state.players.length === 13)) {
           dirtyMatches.clear();
-          state.matches = buildBalancedSchedule(state.players);
+          state.matches = buildBalancedSchedule(state.players, getMatchTotalPoints());
           state.activeRound = 1;
           renderAll();
           showToast(
@@ -4065,9 +4357,10 @@
         });
         if (match) {
           const parts = presetBtn.dataset.preset.split(",").map(Number);
+          const presetTotal = normalizeMatchPoints(parts[0] + parts[1]);
           match.scoreA = parts[0];
           match.scoreB = parts[1];
-          sanitizeMatch16(match);
+          sanitizeMatchScore(match, presetTotal, { forceTotal: true });
           markMatchDirty(match.id);
           renderMatches();
         }
@@ -4091,30 +4384,45 @@
 
         if (!requireAdmin("edit or confirm match scores")) return;
 
+        const matchTotal = getEffectiveMatchTotal(match);
+
+        if (action === "convertPoints") {
+          const nextTotal = getMatchTotalPoints();
+          const nextHalf = nextTotal / 2;
+          match.scoreA = nextHalf;
+          match.scoreB = nextHalf;
+          markMatchDirty(match.id);
+          renderMatches();
+          showToast(
+            "🔄 Match #" + match.id + " switched to " + nextTotal + "-PT (" + nextHalf + "–" + nextHalf + "). Tap Re-Confirm to save!"
+          );
+          return;
+        }
+
         if (action === "incA") {
-          match.scoreA = Math.min(MATCH_TOTAL_POINTS, match.scoreA + 1);
-          match.scoreB = MATCH_TOTAL_POINTS - match.scoreA;
+          match.scoreA = Math.min(matchTotal, match.scoreA + 1);
+          match.scoreB = matchTotal - match.scoreA;
           markMatchDirty(match.id);
           renderMatches();
           return;
         }
         if (action === "decA") {
           match.scoreA = Math.max(0, match.scoreA - 1);
-          match.scoreB = MATCH_TOTAL_POINTS - match.scoreA;
+          match.scoreB = matchTotal - match.scoreA;
           markMatchDirty(match.id);
           renderMatches();
           return;
         }
         if (action === "incB") {
-          match.scoreB = Math.min(MATCH_TOTAL_POINTS, match.scoreB + 1);
-          match.scoreA = MATCH_TOTAL_POINTS - match.scoreB;
+          match.scoreB = Math.min(matchTotal, match.scoreB + 1);
+          match.scoreA = matchTotal - match.scoreB;
           markMatchDirty(match.id);
           renderMatches();
           return;
         }
         if (action === "decB") {
           match.scoreB = Math.max(0, match.scoreB - 1);
-          match.scoreA = MATCH_TOTAL_POINTS - match.scoreB;
+          match.scoreA = matchTotal - match.scoreB;
           markMatchDirty(match.id);
           renderMatches();
           return;
@@ -4128,7 +4436,7 @@
 
         // ONLY 'Confirm Result' persists the match via storageProvider.updateMatch()
         if (action === "confirm") {
-          sanitizeMatch16(match);
+          sanitizeMatchScore(match, matchTotal, { forceTotal: true });
           match.confirmed = true;
           clearMatchDirty(match.id);
           renderAll();
@@ -4326,14 +4634,15 @@
         state.matches.reduce(function (maxId, m) {
           return Math.max(maxId, Number(m.id) || 0);
         }, 0) + 1;
+      const half = getMatchTotalPoints() / 2;
       const newMatch = {
         id: nextId,
         round: state.activeRound,
         court: 1,
         teamA: [0, 1],
         teamB: [2, 3],
-        scoreA: 8,
-        scoreB: 8,
+        scoreA: half,
+        scoreB: half,
         confirmed: false
       };
       state.matches.push(newMatch);
@@ -4343,25 +4652,47 @@
       }, "bonus match");
     });
 
-    // Demo 32/33 Matches button (Admin only) — 16-pt games
+    // Demo Matches button (Admin only) — scales to active 16 / 24 / 36-pt format
     document.getElementById("seedDemoBtn").addEventListener("click", async function () {
       if (!requireAdmin("load demo tournament scores")) return;
       dirtyMatches.clear();
+      const total = getMatchTotalPoints();
+      const half = total / 2;
+      const mariamLossA = half - 1;
+      const mariamLossB = total - mariamLossA;
+      const normalWinA = total === 36 ? 22 : Math.round(total * 0.625);
+      const normalWinB = total - normalWinA;
+      const lastA = half + 1;
+      const lastB = total - lastA;
+
       state.matches.forEach(function (m, idx) {
         if (idx < state.matches.length - 1) {
           m.confirmed = true;
           const aHasMariam = m.teamA.includes(0);
-          m.scoreA = aHasMariam ? 7 : 10;
-          m.scoreB = aHasMariam ? 9 : 6;
+          m.scoreA = aHasMariam ? mariamLossA : normalWinA;
+          m.scoreB = aHasMariam ? mariamLossB : normalWinB;
         } else {
           m.confirmed = false;
-          m.scoreA = 9;
-          m.scoreB = 7;
+          m.scoreA = lastA;
+          m.scoreB = lastB;
         }
       });
-      state.activeRound = 11;
+      const lastMatch = state.matches[state.matches.length - 1];
+      state.activeRound = lastMatch ? lastMatch.round : 11;
       renderAll();
-      showToast("⚡ Loaded 32/33 demo scores! Confirm Round 11 Match #33 to trigger the Finale!");
+      showToast(
+        "⚡ Loaded " +
+          (state.matches.length - 1) +
+          "/" +
+          state.matches.length +
+          " (" +
+          total +
+          "-PT) demo scores! Confirm Round " +
+          state.activeRound +
+          " Match #" +
+          (lastMatch ? lastMatch.id : state.matches.length) +
+          " to trigger the Finale!"
+      );
       await persistSafely(function () {
         return storageProvider.saveState(state);
       }, "demo seed");
@@ -4373,17 +4704,20 @@
      * ============================================================================
      */
     function serializeTournamentText(currentState) {
+      const totalPts = getMatchTotalPoints(currentState);
+      const halfPts = totalPts / 2;
       const lines = [];
       lines.push("# PADEL TOURNAMENT FORMAT v1");
       lines.push("# Rules for editing or generating with another AI agent:");
-      lines.push("# - [SETTINGS]: headStarts: ON|OFF, birthdayLaw: ON|OFF");
+      lines.push("# - [SETTINGS]: matchPoints: 16|24|36, headStarts: ON|OFF, birthdayLaw: ON|OFF");
       lines.push("# - [PLAYERS]: <1-based id>. <Name> | +<bonus> (add '| queen' for Birthday Queen)");
       lines.push("# - [SCHEDULE]: R<round> C<court>: <PlayerA1> & <PlayerA2> vs <PlayerB1> & <PlayerB2> | <scoreA>-<scoreB> | <confirmed|pending>");
-      lines.push("# - Scores must add up to 16 (or omit score/status to default to 8-8 pending).");
+      lines.push("# - Scores must add up to " + totalPts + " (or omit score/status to default to " + halfPts + "-" + halfPts + " pending).");
       lines.push("# - Players in [SCHEDULE] can use exact Name or 1-based #id (e.g. '1 & 2 vs 3 & 4').");
       lines.push("# - Existing uploaded player photos are preserved automatically on import.");
       lines.push("");
       lines.push("[SETTINGS]");
+      lines.push("matchPoints: " + totalPts);
       lines.push("headStarts: " + (currentState.headStartsActive ? "ON" : "OFF"));
       lines.push("birthdayLaw: " + (currentState.birthdayLawActive ? "ON" : "OFF"));
       lines.push("");
@@ -4406,7 +4740,7 @@
         nameById.set(p.id, p.name);
       });
       sortedMatches.forEach(function (m) {
-        const clean = sanitizeMatch16(deepClone(m));
+        const clean = sanitizeMatchScore(deepClone(m), totalPts);
         const a0 = nameById.get(clean.teamA[0]) || String(clean.teamA[0] + 1);
         const a1 = nameById.get(clean.teamA[1]) || String(clean.teamA[1] + 1);
         const b0 = nameById.get(clean.teamB[0]) || String(clean.teamB[0] + 1);
@@ -4474,6 +4808,7 @@
       const parsedPlayerEntries = [];
       const parsedMatches = [];
 
+      let nextMatchPoints = getMatchTotalPoints(currentState);
       let nextHeadStarts = currentState.headStartsActive;
       let nextBirthdayLaw = currentState.birthdayLawActive;
       let nextDecreeIndex = currentState.decreeIndex;
@@ -4501,7 +4836,7 @@
         // Auto-detect section if header omitted
         if (!section) {
           if (/^(?:R|Round)\s*\d+/i.test(trimmed)) section = "SCHEDULE";
-          else if (/^(?:headStarts|birthdayLaw|decreeIndex)\s*[:=]/i.test(trimmed)) section = "SETTINGS";
+          else if (/^(?:matchPoints|match_points|points|headStarts|birthdayLaw|decreeIndex)\s*[:=]/i.test(trimmed)) section = "SETTINGS";
           else section = "PLAYERS";
         }
 
@@ -4514,7 +4849,14 @@
           const val = kv[2].trim().toLowerCase();
           const isOn = val === "on" || val === "true" || val === "yes" || val === "1";
           const isOff = val === "off" || val === "false" || val === "no" || val === "0";
-          if (key === "headstarts" || key === "head_starts") {
+          if (key === "matchpoints" || key === "match_points" || key === "points") {
+            const num = Number(val.replace(/\s*(?:pts?|points?)$/i, ""));
+            if (ALLOWED_MATCH_POINTS.indexOf(num) === -1) {
+              throw new Error("Line " + lineNo + ": matchPoints must be 16, 24, or 36.");
+            }
+            nextMatchPoints = num;
+            parsedSettingsCount++;
+          } else if (key === "headstarts" || key === "head_starts") {
             if (!isOn && !isOff) throw new Error("Line " + lineNo + ": headStarts must be ON or OFF.");
             nextHeadStarts = isOn;
             parsedSettingsCount++;
@@ -4659,6 +5001,7 @@
       }
 
       // Pass 2: parse [SCHEDULE] lines using resolved nextPlayers
+      const defaultHalf = nextMatchPoints / 2;
       rawScheduleLines.forEach(function (item, idx) {
         const lineNo = item.lineNo;
         const parts = item.text.split("|").map(function (s) {
@@ -4696,8 +5039,9 @@
           resolvePlayerToken(teamBTokens[1], nextPlayers, lineNo)
         ];
 
-        let scoreA = 8;
-        let scoreB = 8;
+        let scoreA = defaultHalf;
+        let scoreB = defaultHalf;
+        let hasExplicitScore = false;
         let confirmed = false;
 
         for (let pIdx = 1; pIdx < parts.length; pIdx++) {
@@ -4707,11 +5051,7 @@
           if (scoreMatch) {
             scoreA = Number(scoreMatch[1]);
             scoreB = Number(scoreMatch[2]);
-            if (scoreA + scoreB !== MATCH_TOTAL_POINTS) {
-              throw new Error(
-                "Line " + lineNo + ": Match scores must add up to " + MATCH_TOTAL_POINTS + " (got " + scoreA + "-" + scoreB + ")."
-              );
-            }
+            hasExplicitScore = true;
           } else if (/^(?:confirmed|done|final|yes|true)$/i.test(seg)) {
             confirmed = true;
           } else if (/^(?:pending|open|upcoming|unplayed|no|false)$/i.test(seg)) {
@@ -4721,17 +5061,32 @@
           }
         }
 
+        if (hasExplicitScore) {
+          const scoreSum = scoreA + scoreB;
+          const isValidSum =
+            scoreSum === nextMatchPoints ||
+            (confirmed && ALLOWED_MATCH_POINTS.indexOf(scoreSum) !== -1);
+          if (!isValidSum) {
+            throw new Error(
+              "Line " + lineNo + ": Match scores must add up to " + nextMatchPoints + " (got " + scoreA + "-" + scoreB + ")."
+            );
+          }
+        }
+
         parsedMatches.push(
-          sanitizeMatch16({
-            id: idx + 1,
-            round: roundNum,
-            court: courtNum,
-            teamA: teamA,
-            teamB: teamB,
-            scoreA: scoreA,
-            scoreB: scoreB,
-            confirmed: confirmed
-          })
+          sanitizeMatchScore(
+            {
+              id: idx + 1,
+              round: roundNum,
+              court: courtNum,
+              teamA: teamA,
+              teamB: teamB,
+              scoreA: scoreA,
+              scoreB: scoreB,
+              confirmed: confirmed
+            },
+            nextMatchPoints
+          )
         );
       });
 
@@ -4740,6 +5095,14 @@
       }
 
       const nextMatches = parsedMatches.length > 0 ? parsedMatches : deepClone(currentState.matches);
+      if (parsedMatches.length === 0 && nextMatchPoints !== getMatchTotalPoints(currentState)) {
+        nextMatches.forEach(function (m) {
+          if (!m.confirmed) {
+            m.scoreA = defaultHalf;
+            m.scoreB = defaultHalf;
+          }
+        });
+      }
       const firstRound = nextMatches.reduce(function (minR, m) {
         return Math.min(minR, m.round);
       }, Infinity);
@@ -4747,6 +5110,7 @@
       return {
         nextState: {
           activeRound: Number.isFinite(firstRound) ? firstRound : currentState.activeRound,
+          matchPoints: nextMatchPoints,
           headStartsActive: nextHeadStarts,
           birthdayLawActive: nextBirthdayLaw,
           decreeIndex: nextDecreeIndex,
@@ -4913,7 +5277,7 @@
       });
       if (!anyConfirmed && state.players.length === 13) {
         dirtyMatches.clear();
-        state.matches = buildBalancedSchedule(state.players);
+        state.matches = buildBalancedSchedule(state.players, getMatchTotalPoints());
         state.activeRound = 1;
         renderAll();
         showToast("➕ Added Player #13 & generated balanced 13-round schedule (39 matches)!");
@@ -4929,17 +5293,19 @@
       }
     });
 
-    // Reset Scores (Admin only — resets scores to 8-8 pending while keeping all current matchups intact)
+    // Reset Scores (Admin only — resets scores to tied half-points pending while keeping all current matchups intact)
     document.getElementById("resetTournamentBtn").addEventListener("click", async function () {
       if (!requireAdmin("reset all match scores")) return;
       dirtyMatches.clear();
+      const total = getMatchTotalPoints();
+      const half = total / 2;
       state.matches.forEach(function (m) {
-        m.scoreA = 8;
-        m.scoreB = 8;
+        m.scoreA = half;
+        m.scoreB = half;
         m.confirmed = false;
       });
       renderAll();
-      showToast("🗑️ Reset scores to 0/" + state.matches.length + " (current matchups kept)!");
+      showToast("🗑️ Reset scores to 0/" + state.matches.length + " (" + half + "–" + half + ", current matchups kept)!");
       await persistSafely(function () {
         return storageProvider.resetAll(state);
       }, "reset scores");
@@ -4957,6 +5323,17 @@
           if (!remotePatch) return;
 
           if (remotePatch.meta) {
+            if (typeof remotePatch.meta.matchPoints === "number") {
+              const nextPts = normalizeMatchPoints(remotePatch.meta.matchPoints);
+              if (nextPts !== state.matchPoints) {
+                state.matchPoints = nextPts;
+                state.matches.forEach(function (m) {
+                  if (!m.confirmed && !dirtyMatches.has(m.id)) {
+                    sanitizeMatchScore(m, nextPts, { forceTotal: true });
+                  }
+                });
+              }
+            }
             if (typeof remotePatch.meta.headStartsActive === "boolean") {
               state.headStartsActive = remotePatch.meta.headStartsActive;
             }
@@ -4982,9 +5359,19 @@
               }
             });
 
+            const fallbackTotal = getMatchTotalPoints();
             const mergedMatches = remotePatch.matches.map(function (rm) {
-              sanitizeMatch16(rm);
-              return localDirtyById.has(rm.id) ? localDirtyById.get(rm.id) : rm;
+              if (localDirtyById.has(rm.id)) return localDirtyById.get(rm.id);
+              const rawSum = Number(rm.scoreA) + Number(rm.scoreB);
+              if (
+                !Number.isFinite(rawSum) ||
+                rm.scoreA < 0 ||
+                rm.scoreB < 0 ||
+                ALLOWED_MATCH_POINTS.indexOf(rawSum) === -1
+              ) {
+                sanitizeMatchScore(rm, fallbackTotal, { forceTotal: true });
+              }
+              return rm;
             });
 
             localDirtyById.forEach(function (dirtyMatch, id) {
