@@ -3315,7 +3315,75 @@
               matchDocs,
               cached.activeRound
             );
+
+            // Preserve & auto-restore any locally cached selfies if remote slots are empty
+            const rescueOps = [];
+            if (cached && Array.isArray(cached.players) && Array.isArray(merged.players)) {
+              const cachedById = new Map();
+              const cachedByName = new Map();
+              cached.players.forEach(function (cp) {
+                if (!cp) return;
+                cachedById.set(Number(cp.id), cp);
+                if (cp.name) {
+                  cachedByName.set(String(cp.name).trim().toLowerCase(), cp);
+                }
+              });
+              merged.players.forEach(function (mp) {
+                const cp =
+                  cachedById.get(Number(mp.id)) ||
+                  (mp.name ? cachedByName.get(String(mp.name).trim().toLowerCase()) : null);
+                if (!cp) return;
+                if (
+                  !mp.celebratingPhoto &&
+                  typeof cp.celebratingPhoto === "string" &&
+                  cp.celebratingPhoto.indexOf("data:image/") === 0
+                ) {
+                  mp.celebratingPhoto = cp.celebratingPhoto;
+                  rescueOps.push({
+                    playerId: mp.id,
+                    field: "celebratingPhoto",
+                    value: cp.celebratingPhoto
+                  });
+                }
+                if (
+                  !mp.sadPhoto &&
+                  typeof cp.sadPhoto === "string" &&
+                  cp.sadPhoto.indexOf("data:image/") === 0
+                ) {
+                  mp.sadPhoto = cp.sadPhoto;
+                  rescueOps.push({
+                    playerId: mp.id,
+                    field: "sadPhoto",
+                    value: cp.sadPhoto
+                  });
+                }
+              });
+            }
+
             await this.localCache.saveState(merged);
+
+            if (rescueOps.length > 0) {
+              Promise.all(
+                rescueOps.map(function (job) {
+                  const patch = {};
+                  patch[job.field] = job.value;
+                  return sdk
+                    .updateDoc(sdk.doc(sdk.db, "players", String(job.playerId)), patch)
+                    .then(function () {
+                      return true;
+                    })
+                    .catch(function () {
+                      return false;
+                    });
+                })
+              ).then(function (results) {
+                const okCount = results.filter(Boolean).length;
+                if (okCount > 0) {
+                  showToast("📸 Restored " + okCount + " cached player photo" + (okCount === 1 ? "" : "s") + " to cloud sync!");
+                }
+              });
+            }
+
             return merged;
           }
 
@@ -3499,12 +3567,29 @@
             return String(p.id);
           })
         );
+        const remotePhotosById = new Map();
         const toSoftDeletePlayers = [];
         playersSnap.forEach(function (d) {
+          const data = d.data() || {};
+          remotePhotosById.set(String(d.id), {
+            celebratingPhoto: typeof data.celebratingPhoto === "string" ? data.celebratingPhoto : "",
+            sadPhoto: typeof data.sadPhoto === "string" ? data.sadPhoto : ""
+          });
           if (!keepPlayerIds.has(d.id)) {
             toSoftDeletePlayers.push(Number(d.id));
           }
         });
+        fullState.players.forEach(function (p) {
+          const remote = remotePhotosById.get(String(p.id));
+          if (!remote) return;
+          if (!p.celebratingPhoto && remote.celebratingPhoto) {
+            p.celebratingPhoto = remote.celebratingPhoto;
+          }
+          if (!p.sadPhoto && remote.sadPhoto) {
+            p.sadPhoto = remote.sadPhoto;
+          }
+        });
+        await this.localCache.saveState(fullState);
         await this._writeFullState(fullState, toSoftDeleteMatches, toSoftDeletePlayers);
       }
 
@@ -6991,7 +7076,7 @@
           " to trigger the Finale!"
       );
       await persistSafely(function () {
-        return storageProvider.saveState(state);
+        return storageProvider.updateMatchPoints(state, state.matches);
       }, "demo seed");
     });
 
@@ -7703,9 +7788,27 @@
           }
 
           if (Array.isArray(remotePatch.players) && remotePatch.players.length > 0) {
-            state.players = remotePatch.players.slice().sort(function (a, b) {
-              return a.id - b.id;
+            const localPlayersById = new Map();
+            state.players.forEach(function (lp) {
+              localPlayersById.set(Number(lp.id), lp);
             });
+            state.players = remotePatch.players
+              .slice()
+              .map(function (rp) {
+                const lp = localPlayersById.get(Number(rp.id));
+                if (lp) {
+                  if (!rp.celebratingPhoto && lp.celebratingPhoto) {
+                    rp.celebratingPhoto = lp.celebratingPhoto;
+                  }
+                  if (!rp.sadPhoto && lp.sadPhoto) {
+                    rp.sadPhoto = lp.sadPhoto;
+                  }
+                }
+                return rp;
+              })
+              .sort(function (a, b) {
+                return a.id - b.id;
+              });
           }
 
           if (Array.isArray(remotePatch.matches) && remotePatch.matches.length > 0) {
