@@ -1626,43 +1626,613 @@
     /* ==========================================================================
        10. GRAND FINALE TAKEOVER OVERLAY & INLINE TOAST BANNER
        ========================================================================== */
+    .global-confetti-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 150;
+    }
+
     .finale-overlay {
       position: fixed;
       inset: 0;
       z-index: 120;
-      background: var(--bg-cream);
+      background-color: var(--bg-cream);
+      background-image:
+        radial-gradient(circle at 14% 18%, rgba(255, 77, 141, 0.12) 4px, transparent 5px),
+        radial-gradient(circle at 86% 14%, rgba(200, 245, 66, 0.30) 5px, transparent 6px),
+        radial-gradient(circle at 76% 64%, rgba(255, 210, 63, 0.25) 4px, transparent 5px),
+        radial-gradient(circle at 24% 82%, rgba(56, 189, 248, 0.14) 4px, transparent 5px);
+      background-size: 136px 136px;
       display: none;
       pointer-events: none;
       flex-direction: column;
       overflow-y: auto;
-      padding: 18px 16px 32px;
+      overflow-x: hidden;
+      padding: 0 10px calc(28px + env(safe-area-inset-bottom));
     }
     .finale-overlay.open {
       display: flex;
       pointer-events: auto;
     }
 
+    /* Warm comic sunburst halo behind top of finale stage during takeover */
+    .finale-sunburst {
+      position: fixed;
+      top: -180px;
+      left: 50%;
+      width: 820px;
+      height: 820px;
+      margin-left: -410px;
+      border-radius: 50%;
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(255, 210, 63, 0.24) 0deg 10deg,
+        rgba(255, 77, 141, 0.08) 10deg 20deg
+      );
+      mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 68%);
+      -webkit-mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 68%);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      transform: scale(0.75) rotate(0deg);
+      transition: opacity 0.6s ease, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .finale-sunburst.active {
+      opacity: 1;
+      animation: finaleSunburstSpin 18s linear infinite;
+    }
+    @keyframes finaleSunburstSpin {
+      from { transform: scale(1) rotate(0deg); }
+      to { transform: scale(1) rotate(360deg); }
+    }
+
+    /* Crisp comic flash overlay on dramatic beats */
+    .finale-flash {
+      position: fixed;
+      inset: 0;
+      z-index: 140;
+      pointer-events: none;
+      opacity: 0;
+      background: radial-gradient(circle at 50% 30%, #FFFFFF 0%, #FFF5CC 55%, rgba(255, 77, 141, 0.35) 100%);
+    }
+    .finale-flash.pop {
+      animation: finaleFlashPop 0.38s ease-out forwards;
+    }
+    @keyframes finaleFlashPop {
+      0% { opacity: 0.78; }
+      100% { opacity: 0; }
+    }
+
+    .finale-stage {
+      width: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .finale-stage.shake-sm {
+      animation: finaleShakeSm 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+    .finale-stage.shake-lg {
+      animation: finaleShakeLg 0.52s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+    @keyframes finaleShakeSm {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      20% { transform: translate3d(-5px, 3px, 0) rotate(-0.5deg); }
+      40% { transform: translate3d(5px, -3px, 0) rotate(0.5deg); }
+      60% { transform: translate3d(-3px, 2px, 0); }
+      80% { transform: translate3d(2px, -1px, 0); }
+    }
+    @keyframes finaleShakeLg {
+      0%, 100% { transform: translate3d(0, 0, 0); }
+      15% { transform: translate3d(-7px, 5px, 0) rotate(-0.9deg); }
+      30% { transform: translate3d(7px, -4px, 0) rotate(0.9deg); }
+      45% { transform: translate3d(-5px, 4px, 0) rotate(-0.5deg); }
+      65% { transform: translate3d(4px, -2px, 0) rotate(0.4deg); }
+      82% { transform: translate3d(-2px, 1px, 0); }
+    }
+
+    .finale-top-sticky {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      margin: 0 -10px 6px;
+      padding: calc(12px + env(safe-area-inset-top)) 14px 8px;
+      background: rgba(255, 253, 245, 0.96);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-bottom: 2px solid rgba(28, 25, 23, 0.1);
+    }
+
+    .finale-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+    .finale-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .finale-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .btn-icon-sq {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 10px;
+      font-size: 1rem;
+    }
+
+    .finale-subtitle {
+      margin: 6px 0 4px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--ink-muted);
+      min-height: 20px;
+      line-height: 1.28;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+    .finale-subtitle.alert {
+      color: var(--pink);
+    }
+    .finale-subtitle.royal {
+      color: var(--ink);
+    }
+
+    /* Royal Alert Comic Caution Tape Ticker */
+    .royal-alert-tape {
+      display: none;
+      margin: 4px 0 2px;
+      overflow: hidden;
+      background: var(--gold);
+      border: var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-sm);
+      padding: 4px 0;
+      transform: rotate(-0.6deg);
+    }
+    .royal-alert-tape.visible {
+      display: block;
+      animation: tapeSlideIn 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    @keyframes tapeSlideIn {
+      from { opacity: 0; transform: translateY(-10px) scaleY(0.4) rotate(-0.6deg); }
+      to { opacity: 1; transform: translateY(0) scaleY(1) rotate(-0.6deg); }
+    }
+    .royal-alert-track {
+      display: flex;
+      width: max-content;
+      white-space: nowrap;
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: var(--ink);
+      animation: royalTickerScroll 11s linear infinite;
+    }
+    .royal-alert-track span {
+      padding-right: 22px;
+    }
+    @keyframes royalTickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* Full-Drama Center-Screen Article 27 Rubber Stamp Takeover (Act 3) */
+    .finale-center-slam {
+      position: fixed;
+      inset: 0;
+      z-index: 135;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      pointer-events: none;
+      background: rgba(255, 253, 245, 0.42);
+    }
+    .finale-center-slam.visible {
+      display: flex;
+    }
+    .finale-center-slam-card {
+      width: 100%;
+      max-width: 356px;
+      padding: 18px 18px 16px;
+      background: var(--pink);
+      color: #FFFFFF;
+      border: 4px solid var(--ink);
+      border-radius: 18px;
+      box-shadow: 0 0 0 5px var(--gold), 10px 10px 0px #1C1917;
+      text-align: center;
+      transform: rotate(-3deg);
+      animation: centerStampSlam 0.48s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    }
+    .finale-center-slam.closing .finale-center-slam-card {
+      animation: centerStampExit 0.32s ease-in forwards;
+    }
+    .finale-center-slam-eyebrow {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--gold);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 3px 11px;
+      margin-bottom: 8px;
+      box-shadow: 2px 2px 0px #1C1917;
+    }
+    .finale-center-slam-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.28rem;
+      line-height: 1.18;
+      margin: 0;
+      text-shadow: 2px 2px 0px rgba(28, 25, 23, 0.45);
+    }
+    .finale-center-slam-sub {
+      margin-top: 7px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #FFF5CC;
+      letter-spacing: 0.04em;
+    }
+    @keyframes centerStampSlam {
+      0% { opacity: 0; transform: scale(2.8) rotate(-18deg); }
+      55% { opacity: 1; transform: scale(0.92) rotate(1deg); }
+      78% { transform: scale(1.05) rotate(-4deg); }
+      100% { opacity: 1; transform: scale(1) rotate(-3deg); }
+    }
+    @keyframes centerStampExit {
+      from { opacity: 1; transform: scale(1) rotate(-3deg) translateY(0); }
+      to { opacity: 0; transform: scale(0.65) rotate(-1deg) translateY(-90px); }
+    }
+
+    /* Enhanced Article 27 Executive Override Rubber Stamp (docked banner) */
     .override-stamp {
       display: none;
-      margin: 10px auto;
+      position: relative;
+      margin: 6px 4px 8px;
       padding: 10px 14px;
       background: var(--pink);
       color: #FFFFFF;
       border: 3px solid var(--ink);
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--shadow-lg), inset 0 0 0 2px rgba(255, 255, 255, 0.35);
       border-radius: 12px;
       font-family: var(--font-display);
       font-weight: 900;
-      font-size: 0.98rem;
+      font-size: 0.94rem;
+      line-height: 1.24;
       text-align: center;
-      transform: rotate(-2deg);
-      animation: stampSlam 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+      transform: rotate(-1.4deg);
+      animation: stampSlam 0.44s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     }
     .override-stamp.visible { display: block; }
+    .override-stamp.override-stamp--natural {
+      background: var(--lime);
+      color: var(--ink);
+      box-shadow: var(--shadow-lg), inset 0 0 0 2px rgba(28, 25, 23, 0.14);
+      transform: rotate(1deg);
+    }
 
     @keyframes stampSlam {
-      from { opacity: 0; transform: scale(2.2) rotate(-12deg); }
-      to { opacity: 1; transform: scale(1) rotate(-2deg); }
+      0% { opacity: 0; transform: scale(2.4) rotate(-12deg); }
+      58% { opacity: 1; transform: scale(0.94) rotate(-0.5deg); }
+      78% { transform: scale(1.03) rotate(-2deg); }
+      100% { opacity: 1; transform: scale(1) rotate(-1.4deg); }
+    }
+
+    /* Grand Champion Coronation Banner (unfurls after #1 touchdown) */
+    .finale-champion-card {
+      display: none;
+      margin: 6px 4px 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, var(--gold) 0%, #FFF7D6 58%, var(--pink-soft) 100%);
+      border: 3px solid var(--ink);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      align-items: center;
+      gap: 12px;
+    }
+    .finale-champion-card.visible {
+      display: flex;
+      animation: championCardPop 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.24);
+    }
+    .finale-champion-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 25%, rgba(255, 255, 255, 0.65) 50%, transparent 75%);
+      transform: translateX(-120%);
+      animation: royalSheen 2.4s ease-in-out 0.35s infinite;
+      pointer-events: none;
+    }
+    @keyframes championCardPop {
+      0% { opacity: 0; transform: scale(0.84) translateY(-10px); }
+      65% { opacity: 1; transform: scale(1.03) translateY(2px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes royalSheen {
+      0% { transform: translateX(-120%); }
+      55%, 100% { transform: translateX(130%); }
+    }
+
+    .champion-portrait-wrap {
+      position: relative;
+      flex-shrink: 0;
+      width: 64px;
+      height: 64px;
+    }
+    .champion-portrait {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-sm);
+      object-fit: cover;
+      background: #FFFFFF;
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.32rem;
+      color: var(--ink);
+    }
+    .champion-floating-crown {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-8deg);
+      font-size: 1.5rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 0 #1C1917);
+      animation: crownBob 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes crownBob {
+      from { transform: translateX(-50%) translateY(0px) rotate(-10deg) scale(1); }
+      to { transform: translateX(-50%) translateY(-4px) rotate(6deg) scale(1.08); }
+    }
+
+    .champion-copy {
+      min-width: 0;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+    .champion-eyebrow {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: var(--ink);
+      color: var(--gold);
+      padding: 2px 7px;
+      border-radius: 6px;
+      margin-bottom: 3px;
+    }
+    .champion-headline {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.14rem;
+      line-height: 1.12;
+      color: var(--ink);
+      margin: 0;
+    }
+    .champion-receipt {
+      display: inline-block;
+      margin-top: 5px;
+      font-family: var(--font-mono);
+      font-size: 0.64rem;
+      font-weight: 800;
+      background: #FFFFFF;
+      color: var(--pink);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 2px 8px;
+      box-shadow: 1.5px 1.5px 0px #1C1917;
+      line-height: 1.25;
+    }
+
+    /* Finale Leaderboard List & Dramatic Row States */
+    .finale-list {
+      gap: 7px;
+      padding: 16px 10px 16px;
+      position: relative;
+    }
+    .finale-row {
+      padding: 8px 11px;
+      position: relative;
+      overflow: visible;
+      transition: opacity 0.35s ease, filter 0.35s ease, box-shadow 0.25s ease, background-color 0.25s ease, border-color 0.25s ease, margin-bottom 0.35s ease;
+    }
+    .finale-list.spotlight-mode .finale-row:not(.queen-row) {
+      opacity: 0.42;
+      filter: grayscale(0.42);
+    }
+    .finale-list.spotlight-mode .finale-row.overtaken-flash {
+      opacity: 0.92;
+      filter: none;
+    }
+
+    .finale-row.leader-fake {
+      background: linear-gradient(90deg, #FFFDF5 0%, var(--gold-soft) 100%);
+      box-shadow: var(--shadow-md);
+    }
+    .finale-row.leader-panic {
+      opacity: 0.96 !important;
+      filter: none !important;
+      background: #FEF2F2;
+      border-color: var(--pink);
+      animation: leaderPanicWobble 0.28s ease-in-out infinite alternate;
+    }
+    @keyframes leaderPanicWobble {
+      from { transform: translateX(-2px) rotate(-0.8deg); }
+      to { transform: translateX(2px) rotate(0.8deg); }
+    }
+
+    .finale-row.row-dethroned {
+      z-index: 18;
+    }
+
+    .finale-row.queen-spotlight {
+      z-index: 20;
+      background: linear-gradient(90deg, var(--gold) 0%, #FFF7D6 65%, var(--gold-soft) 100%);
+      border: 3px solid var(--ink);
+      box-shadow: 0 0 0 4px var(--pink), var(--shadow-lg);
+      animation: queenSpotlightPulse 0.72s ease-in-out infinite alternate;
+    }
+    @keyframes queenSpotlightPulse {
+      from { box-shadow: 0 0 0 3px var(--pink), 5px 5px 0px #1C1917; }
+      to { box-shadow: 0 0 0 7px var(--pink), 8px 8px 0px #1C1917; }
+    }
+
+    .finale-row.queen-ascending {
+      z-index: 35 !important;
+      background: linear-gradient(90deg, var(--gold) 0%, #FFF7D6 55%, var(--pink-soft) 100%);
+      border: 3px solid var(--ink);
+      box-shadow: 0 0 0 4px var(--pink), 10px 12px 0px #1C1917;
+    }
+
+    .finale-row.queen-crowned {
+      z-index: 15;
+      margin-bottom: 12px;
+      background: linear-gradient(95deg, var(--gold) 0%, #FFF8D6 55%, var(--lime-bright) 100%);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-lg);
+      overflow: visible;
+    }
+    .queen-sheen-layer {
+      position: absolute;
+      inset: 0;
+      border-radius: 11px;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .queen-sheen-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 20%, rgba(255, 255, 255, 0.72) 50%, transparent 80%);
+      transform: translateX(-120%);
+      animation: royalSheen 2.1s ease-in-out 0.15s infinite;
+    }
+    .finale-row > *:not(.queen-sheen-layer):not(.finale-status-chip) {
+      position: relative;
+      z-index: 1;
+    }
+
+    .finale-rank {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 28px;
+    }
+    .finale-rank.rank-pop {
+      animation: rankNumberPop 0.34s cubic-bezier(0.18, 0.89, 0.32, 1.35);
+    }
+    @keyframes rankNumberPop {
+      0% { transform: scale(1.65); color: var(--pink); }
+      100% { transform: scale(1); }
+    }
+
+    .finale-rank.crown-drop {
+      font-size: 1.38rem;
+      animation: crownDropSlam 0.65s cubic-bezier(0.18, 0.89, 0.32, 1.32);
+    }
+    @keyframes crownDropSlam {
+      0% { opacity: 0; transform: translateY(-34px) scale(2.3) rotate(-22deg); }
+      55% { opacity: 1; transform: translateY(4px) scale(0.88) rotate(8deg); }
+      78% { transform: translateY(-4px) scale(1.16) rotate(-4deg); }
+      100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+    }
+
+    .crown-shockwave {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 24px;
+      height: 24px;
+      margin: -12px 0 0 -12px;
+      border-radius: 50%;
+      border: 4px solid var(--pink);
+      box-shadow: 0 0 0 3px var(--gold);
+      pointer-events: none;
+      animation: shockwaveExpand 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes shockwaveExpand {
+      0% { opacity: 1; transform: scale(0.4); }
+      100% { opacity: 0; transform: scale(5.4); }
+    }
+
+    /* Tilted comic status sticker pills attached to rows during drama beats */
+    .finale-status-chip {
+      position: absolute;
+      top: -11px;
+      right: 10px;
+      z-index: 40;
+      font-family: var(--font-mono);
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0px #1C1917;
+      transform: rotate(-2.5deg);
+      white-space: nowrap;
+      pointer-events: none;
+      animation: chipPopIn 0.28s cubic-bezier(0.18, 0.89, 0.32, 1.35);
+    }
+    .finale-status-chip--gold { background: var(--gold); color: var(--ink); }
+    .finale-status-chip--pink { background: var(--pink); color: #FFFFFF; }
+    .finale-status-chip--panic { background: #FFFFFF; color: var(--pink); }
+    .finale-status-chip--dethroned { background: var(--slate-cry); color: #FFFFFF; }
+    .finale-status-chip--lime { background: var(--lime); color: var(--ink); }
+
+    @keyframes chipPopIn {
+      from { opacity: 0; transform: scale(0.4) translateY(6px) rotate(-10deg); }
+      to { opacity: 1; transform: scale(1) translateY(0) rotate(-2.5deg); }
+    }
+
+    .finale-footer-actions {
+      display: none;
+      gap: 10px;
+      justify-content: center;
+      padding: 6px 4px 12px;
+      margin-top: 2px;
+    }
+    .finale-footer-actions.visible {
+      display: flex;
+      animation: championCardPop 0.4s ease-out;
+    }
+    .finale-footer-actions .btn {
+      flex: 1;
     }
 
     .toast-banner {
@@ -1705,7 +2275,7 @@
   </style>
 </head>
 <body>
-  <canvas id="globalConfettiCanvas" class="reveal-canvas" style="z-index:150;"></canvas>
+  <canvas id="globalConfettiCanvas" class="global-confetti-canvas"></canvas>
   <div id="toastBanner" class="toast-banner" role="status" aria-live="polite"></div>
 
   <div class="app-shell">
@@ -2009,20 +2579,70 @@
   </div>
 
   <!-- GRAND FINALE "MARIAM ALWAYS #1" FLIP TAKEOVER OVERLAY -->
-  <div class="finale-overlay" id="finaleOverlay">
-    <div style="display:flex; justify-content:space-between; align-items:center;">
-      <h2 style="font-family:var(--font-display); margin:0; font-size:1.42rem;">🏆 Chapter 27 Grand Finale</h2>
-      <button class="btn btn-sm" id="closeFinaleBtn" type="button">✕ Close</button>
-    </div>
-    <p id="finaleSubtitle" style="margin:4px 0 8px; font-size:0.84rem; font-weight:700; color:var(--ink-muted);">
-      Counting down from 12th place...
-    </p>
+  <div class="finale-overlay" id="finaleOverlay" role="dialog" aria-modal="true" aria-label="Chapter 27 Grand Finale">
+    <div class="finale-sunburst" id="finaleSunburst" aria-hidden="true"></div>
+    <div class="finale-flash" id="finaleFlash" aria-hidden="true"></div>
 
-    <div class="override-stamp" id="overrideStamp">
-      🚨 ARTICLE 27 INVOKED: BIRTHDAY QUEEN EXECUTIVE OVERRIDE! 🚨
+    <div class="finale-center-slam" id="finaleCenterSlam" aria-hidden="true">
+      <div class="finale-center-slam-card">
+        <div class="finale-center-slam-eyebrow">⚖️ Royal Veto • Article 27</div>
+        <div class="finale-center-slam-title">
+          🚨 ARTICLE 27 INVOKED: BIRTHDAY QUEEN EXECUTIVE OVERRIDE! 🚨
+        </div>
+        <div class="finale-center-slam-sub" id="finaleCenterSlamSub">
+          STAND BACK — ROYAL TAKEOVER INCOMING!
+        </div>
+      </div>
     </div>
 
-    <div class="standings-list" id="finaleList" style="margin-top:8px;"></div>
+    <div class="finale-stage" id="finaleStage">
+      <div class="finale-top-sticky">
+        <div class="finale-header">
+          <h2 class="finale-title">🏆 Chapter 27 Finale</h2>
+          <div class="finale-header-actions">
+            <button
+              class="btn btn-sm btn-icon-sq btn-pink hidden"
+              id="headerReplayFinaleBtn"
+              type="button"
+              aria-label="Replay finale animation"
+              title="Replay finale animation"
+            >🔁</button>
+            <button
+              class="btn btn-sm btn-icon-sq btn-cream"
+              id="toggleFinaleSoundBtn"
+              type="button"
+              aria-label="Toggle finale sound effects"
+              title="Toggle finale sound effects"
+            >🔊</button>
+            <button class="btn btn-sm" id="closeFinaleBtn" type="button">✕ Close</button>
+          </div>
+        </div>
+
+        <p id="finaleSubtitle" class="finale-subtitle">
+          Counting down from 12th place...
+        </p>
+
+        <div class="royal-alert-tape" id="royalAlertTape" aria-hidden="true">
+          <div class="royal-alert-track">
+            <span>🚨 ARTICLE 27 ALERT • STOP THE COUNT • BIRTHDAY QUEEN REVIEW • ROYAL VETO TRIGGERED •</span>
+            <span>🚨 ARTICLE 27 ALERT • STOP THE COUNT • BIRTHDAY QUEEN REVIEW • ROYAL VETO TRIGGERED •</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="override-stamp" id="overrideStamp">
+        🚨 ARTICLE 27 INVOKED: BIRTHDAY QUEEN EXECUTIVE OVERRIDE! 🚨
+      </div>
+
+      <div class="finale-champion-card" id="finaleChampionCard" aria-live="polite"></div>
+
+      <div class="standings-list finale-list" id="finaleList"></div>
+
+      <div class="finale-footer-actions" id="finaleFooterActions">
+        <button class="btn btn-pink" id="replayFinaleBtn" type="button">🔁 Replay Takeover</button>
+        <button class="btn btn-lime" id="doneFinaleBtn" type="button">Back to Podium 🏆</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -4661,27 +5281,532 @@
 
     /**
      * ============================================================================
-     * 7. GRAND FINALE "MARIAM ALWAYS #1" FLIP ANIMATION
+     * 7. GRAND FINALE "MARIAM ALWAYS #1" DRAMATIC MULTI-ACT FLIP TAKEOVER
      * ============================================================================
      */
-    async function runGrandFinaleReveal() {
-      const overlay = document.getElementById("finaleOverlay");
-      const listEl = document.getElementById("finaleList");
-      const stampEl = document.getElementById("overrideStamp");
-      const subEl = document.getElementById("finaleSubtitle");
+    let finaleSoundEnabled = true;
+    let finaleAudioCtx = null;
+    let finaleRunToken = 0;
+    let finaleRafId = null;
+    const finaleTimeouts = new Set();
+    let finaleActiveAnims = [];
 
-      stampEl.classList.remove("visible");
+    function getFinaleAudioCtx() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return null;
+        if (!finaleAudioCtx) {
+          finaleAudioCtx = new AudioCtx();
+        }
+        if (finaleAudioCtx.state === "suspended") {
+          finaleAudioCtx.resume();
+        }
+        return finaleAudioCtx;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function triggerHaptic(pattern) {
+      try {
+        if (navigator && typeof navigator.vibrate === "function") {
+          navigator.vibrate(pattern);
+        }
+      } catch (e) {
+        // Ignore haptics on unsupported devices
+      }
+    }
+
+    const FinaleSFX = {
+      playTick: function (stepIdx, totalSteps) {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const ratio = totalSteps > 1 ? stepIdx / (totalSteps - 1) : 1;
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(300 + ratio * 280, now);
+          gain.gain.setValueAtTime(0.06, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.075);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.08);
+        } catch (e) {}
+      },
+
+      playDrumHit: function (rankNum) {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          const baseFreq = rankNum === 1 ? 210 : rankNum === 2 ? 165 : 138;
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(baseFreq, now);
+          osc.frequency.exponentialRampToValueAtTime(52, now + 0.22);
+          gain.gain.setValueAtTime(0.14, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.25);
+
+          if (rankNum === 1) {
+            const bell = ctx.createOscillator();
+            const bGain = ctx.createGain();
+            bell.type = "triangle";
+            bell.frequency.setValueAtTime(659.25, now);
+            bGain.gain.setValueAtTime(0.08, now);
+            bGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            bell.connect(bGain);
+            bGain.connect(ctx.destination);
+            bell.start(now);
+            bell.stop(now + 0.36);
+          }
+        } catch (e) {}
+      },
+
+      playRecordScratch: function () {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const filter = ctx.createBiquadFilter();
+          const gain = ctx.createGain();
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(640, now);
+          osc.frequency.exponentialRampToValueAtTime(125, now + 0.14);
+          osc.frequency.exponentialRampToValueAtTime(290, now + 0.23);
+          osc.frequency.exponentialRampToValueAtTime(88, now + 0.38);
+          filter.type = "bandpass";
+          filter.frequency.setValueAtTime(900, now);
+          filter.Q.setValueAtTime(2.5, now);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+          osc.connect(filter);
+          filter.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.42);
+        } catch (e) {}
+      },
+
+      playStampSlam: function () {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(155, now);
+          osc.frequency.exponentialRampToValueAtTime(34, now + 0.26);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.3);
+
+          const snap = ctx.createOscillator();
+          const sGain = ctx.createGain();
+          snap.type = "square";
+          snap.frequency.setValueAtTime(260, now);
+          snap.frequency.exponentialRampToValueAtTime(75, now + 0.08);
+          sGain.gain.setValueAtTime(0.07, now);
+          sGain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+          snap.connect(sGain);
+          sGain.connect(ctx.destination);
+          snap.start(now);
+          snap.stop(now + 0.1);
+        } catch (e) {}
+      },
+
+      playOvertakeNote: function (stepIndex) {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const scale = [523.25, 587.33, 659.25, 698.46, 783.99, 880.0, 987.77, 1046.5, 1174.66, 1318.51, 1396.91];
+          const freq = scale[Math.min(stepIndex, scale.length - 1)];
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = "triangle";
+          osc.frequency.setValueAtTime(freq, now);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.03, now + 0.13);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.16);
+        } catch (e) {}
+      },
+
+      playDethroneBump: function () {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const down = ctx.createOscillator();
+          const dGain = ctx.createGain();
+          down.type = "sawtooth";
+          down.frequency.setValueAtTime(380, now);
+          down.frequency.exponentialRampToValueAtTime(155, now + 0.24);
+          dGain.gain.setValueAtTime(0.075, now);
+          dGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+          down.connect(dGain);
+          dGain.connect(ctx.destination);
+          down.start(now);
+          down.stop(now + 0.27);
+
+          const ping = ctx.createOscillator();
+          const pGain = ctx.createGain();
+          ping.type = "triangle";
+          ping.frequency.setValueAtTime(1046.5, now + 0.04);
+          pGain.gain.setValueAtTime(0.1, now + 0.04);
+          pGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26);
+          ping.connect(pGain);
+          pGain.connect(ctx.destination);
+          ping.start(now + 0.04);
+          ping.stop(now + 0.28);
+        } catch (e) {}
+      },
+
+      playCoronationFanfare: function () {
+        if (!finaleSoundEnabled) return;
+        try {
+          const ctx = getFinaleAudioCtx();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const notes = [
+            { f: 523.25, t: 0.0, d: 0.18, v: 0.09 },
+            { f: 659.25, t: 0.11, d: 0.18, v: 0.09 },
+            { f: 783.99, t: 0.22, d: 0.2, v: 0.1 },
+            { f: 1046.5, t: 0.34, d: 0.72, v: 0.11 },
+            { f: 523.25, t: 0.34, d: 0.72, v: 0.06 },
+            { f: 659.25, t: 0.34, d: 0.72, v: 0.06 },
+            { f: 783.99, t: 0.34, d: 0.72, v: 0.06 },
+            { f: 1318.51, t: 0.48, d: 0.62, v: 0.075 }
+          ];
+          notes.forEach(function (n) {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(n.f, now + n.t);
+            gain.gain.setValueAtTime(0.001, now + n.t);
+            gain.gain.linearRampToValueAtTime(n.v, now + n.t + 0.025);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + n.t);
+            osc.stop(now + n.t + n.d + 0.02);
+          });
+        } catch (e) {}
+      }
+    };
+
+    function waitFinale(ms, token) {
+      return new Promise(function (resolve) {
+        if (token !== finaleRunToken) {
+          resolve(false);
+          return;
+        }
+        const id = setTimeout(function () {
+          finaleTimeouts.delete(id);
+          resolve(token === finaleRunToken);
+        }, ms);
+        finaleTimeouts.add(id);
+      });
+    }
+
+    function cancelFinaleInFlight() {
+      finaleRunToken += 1;
+      if (finaleRafId) {
+        cancelAnimationFrame(finaleRafId);
+        finaleRafId = null;
+      }
+      finaleTimeouts.forEach(function (id) {
+        clearTimeout(id);
+      });
+      finaleTimeouts.clear();
+      finaleActiveAnims.forEach(function (anim) {
+        try {
+          anim.cancel();
+        } catch (e) {}
+      });
+      finaleActiveAnims = [];
+      stopGlobalConfetti();
+    }
+
+    function closeGrandFinale() {
+      cancelFinaleInFlight();
+      const overlay = document.getElementById("finaleOverlay");
+      const sunburst = document.getElementById("finaleSunburst");
+      const stage = document.getElementById("finaleStage");
+      const centerSlam = document.getElementById("finaleCenterSlam");
+      const headerReplay = document.getElementById("headerReplayFinaleBtn");
+      if (overlay) overlay.classList.remove("open");
+      if (sunburst) sunburst.classList.remove("active");
+      if (stage) stage.classList.remove("shake-sm", "shake-lg");
+      if (centerSlam) centerSlam.classList.remove("visible", "closing");
+      if (headerReplay) headerReplay.classList.add("hidden");
+    }
+
+    function triggerFinaleFlash() {
+      const flashEl = document.getElementById("finaleFlash");
+      if (!flashEl) return;
+      flashEl.classList.remove("pop");
+      void flashEl.offsetWidth;
+      flashEl.classList.add("pop");
+    }
+
+    function triggerFinaleShake(size) {
+      const stage = document.getElementById("finaleStage");
+      if (!stage) return;
+      const cls = size === "lg" ? "shake-lg" : "shake-sm";
+      stage.classList.remove("shake-sm", "shake-lg");
+      void stage.offsetWidth;
+      stage.classList.add(cls);
+    }
+
+    function setFinaleSubtitle(text, mode) {
+      const subEl = document.getElementById("finaleSubtitle");
+      if (!subEl) return;
+      subEl.textContent = text;
+      subEl.classList.remove("alert", "royal");
+      if (mode) subEl.classList.add(mode);
+    }
+
+    function setRowChip(row, text, variant) {
+      if (!row) return;
+      const existing = row.querySelector(".finale-status-chip");
+      if (existing) existing.remove();
+      if (!text) return;
+      const chip = document.createElement("span");
+      chip.className = "finale-status-chip finale-status-chip--" + (variant || "gold");
+      chip.textContent = text;
+      row.appendChild(chip);
+    }
+
+    function setFinaleRankBadge(row, text, effect) {
+      if (!row) return;
+      const badge = row.querySelector(".finale-rank");
+      if (!badge) return;
+      badge.classList.remove("rank-pop", "crown-drop");
+      badge.textContent = text;
+      void badge.offsetWidth;
+      if (effect === "pop") {
+        badge.classList.add("rank-pop");
+      } else if (effect === "crown") {
+        badge.classList.add("crown-drop");
+        const ring = document.createElement("span");
+        ring.className = "crown-shockwave";
+        badge.appendChild(ring);
+        setTimeout(function () {
+          if (ring.parentNode) ring.parentNode.removeChild(ring);
+        }, 800);
+      }
+    }
+
+    function renderChampionBanner(queen, movedSpots, oldRank) {
+      const card = document.getElementById("finaleChampionCard");
+      if (!card || !queen) return;
+      const safeName = escapeAttr(queen.name);
+      const avatarHtml = queen.celebratingPhoto
+        ? '<img class="champion-portrait" src="' + queen.celebratingPhoto + '" alt="' + safeName + '" />'
+        : '<div class="champion-portrait">' + initials(queen.name) + "</div>";
+      const receiptText =
+        movedSpots > 0
+          ? "🚀 #" + oldRank + " → #1 (+" + movedSpots + " via Article 27)"
+          : "🏆 Pure Points #1 + Article 27 Law";
+
+      card.innerHTML =
+        '<div class="champion-portrait-wrap">' +
+          '<span class="champion-floating-crown" aria-hidden="true">👑</span>' +
+          avatarHtml +
+        "</div>" +
+        '<div class="champion-copy">' +
+          '<div class="champion-eyebrow">Chapter 27 • Official Crown</div>' +
+          '<h3 class="champion-headline">ALL HAIL ' + safeName.toUpperCase() + "!</h3>" +
+          '<div class="champion-receipt">' + receiptText + "</div>" +
+        "</div>";
+      card.classList.add("visible");
+    }
+
+    function easeDramaticClimb(t) {
+      const sine = 0.5 - 0.5 * Math.cos(Math.PI * t);
+      const cubic = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      return 0.55 * sine + 0.45 * cubic;
+    }
+
+    function animateFinaleRaf(durationMs, token, onFrame) {
+      return new Promise(function (resolve) {
+        if (token !== finaleRunToken) {
+          resolve(false);
+          return;
+        }
+        const start = performance.now();
+        function step(now) {
+          if (token !== finaleRunToken) {
+            finaleRafId = null;
+            resolve(false);
+            return;
+          }
+          const raw = durationMs > 0 ? Math.min(1, (now - start) / durationMs) : 1;
+          onFrame(raw, now);
+          if (raw < 1) {
+            finaleRafId = requestAnimationFrame(step);
+          } else {
+            finaleRafId = null;
+            resolve(true);
+          }
+        }
+        finaleRafId = requestAnimationFrame(step);
+      });
+    }
+
+    function bumpOvertakenRival(rival, rivalIdx, queenRow, totalDisplaced, token) {
+      if (rival.overtaken || token !== finaleRunToken) return;
+      rival.overtaken = true;
+
+      const el = rival.el;
+      const rivalName = el.dataset.playerName || "Rival";
+      const isFormerLeader = rivalIdx === 0;
+      const dir = rivalIdx % 2 === 0 ? 1 : -1;
+      const bumpX = dir * (isFormerLeader ? 17 : 11);
+      const bumpRot = dir * (isFormerLeader ? 4.2 : 2.3);
+
+      el.classList.add("overtaken-flash");
+      el.style.transform = "";
+
+      if (el.animate) {
+        const anim = el.animate(
+          [
+            { transform: "translate3d(0px, " + rival.dy + "px, 0) rotate(0deg) scale(0.99)" },
+            {
+              transform:
+                "translate3d(" +
+                bumpX +
+                "px, " +
+                (rival.dy * 0.55).toFixed(1) +
+                "px, 0) rotate(" +
+                bumpRot +
+                "deg) scale(0.96)",
+              offset: 0.3
+            },
+            {
+              transform:
+                "translate3d(" + (-dir * 3) + "px, 4px, 0) rotate(" + (-dir * 0.7) + "deg) scale(0.99)",
+              offset: 0.74
+            },
+            { transform: "translate3d(0px, 0px, 0) rotate(0deg) scale(1)" }
+          ],
+          {
+            duration: isFormerLeader ? 720 : 540,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "none"
+          }
+        );
+        finaleActiveAnims.push(anim);
+      }
+
+      setFinaleRankBadge(el, "#" + (rivalIdx + 2), "pop");
+      setFinaleRankBadge(queenRow, rivalIdx === 0 ? "#1" : "#" + (rivalIdx + 1), "pop");
+
+      if (isFormerLeader) {
+        el.classList.remove("leader-fake", "leader-panic");
+        el.classList.add("row-dethroned");
+        setRowChip(el, "😵 DETHRONED!", "dethroned");
+        setFinaleSubtitle("💥 DETHRONING " + rivalName.toUpperCase() + " FOR #1!!", "alert");
+        FinaleSFX.playDethroneBump();
+        triggerHaptic(28);
+      } else {
+        setFinaleSubtitle("💨 PASSING " + rivalName.toUpperCase() + "... NOW #" + (rivalIdx + 1) + "!", "royal");
+        FinaleSFX.playOvertakeNote(totalDisplaced - 1 - rivalIdx);
+      }
+
+      const clearFlashId = setTimeout(function () {
+        finaleTimeouts.delete(clearFlashId);
+        el.classList.remove("overtaken-flash");
+      }, 560);
+      finaleTimeouts.add(clearFlashId);
+    }
+
+    async function runGrandFinaleReveal() {
+      cancelFinaleInFlight();
+      const token = finaleRunToken;
+
+      const overlay = document.getElementById("finaleOverlay");
+      const stage = document.getElementById("finaleStage");
+      const sunburst = document.getElementById("finaleSunburst");
+      const centerSlam = document.getElementById("finaleCenterSlam");
+      const centerSlamSub = document.getElementById("finaleCenterSlamSub");
+      const headerReplay = document.getElementById("headerReplayFinaleBtn");
+      const listEl = document.getElementById("finaleList");
+      const tapeEl = document.getElementById("royalAlertTape");
+      const stampEl = document.getElementById("overrideStamp");
+      const championCard = document.getElementById("finaleChampionCard");
+      const footerActions = document.getElementById("finaleFooterActions");
+
+      stage.classList.remove("shake-sm", "shake-lg");
+      sunburst.classList.remove("active");
+      if (centerSlam) centerSlam.classList.remove("visible", "closing");
+      if (headerReplay) headerReplay.classList.add("hidden");
+      tapeEl.classList.remove("visible");
+      stampEl.classList.remove("visible", "override-stamp--natural");
+      stampEl.textContent = "🚨 ARTICLE 27 INVOKED: BIRTHDAY QUEEN EXECUTIVE OVERRIDE! 🚨";
+      championCard.classList.remove("visible");
+      championCard.innerHTML = "";
+      footerActions.classList.remove("visible");
+      listEl.classList.remove("spotlight-mode");
       listEl.innerHTML = "";
+      overlay.scrollTop = 0;
       overlay.classList.add("open");
 
       const mathStandings = computeStandings(false);
-      subEl.textContent = "Revealing Chapter 27 standings from #12 to #1...";
+      const queenPlayer =
+        mathStandings.find(function (p) {
+          return p.isBirthdayQueen;
+        }) ||
+        mathStandings.find(function (p) {
+          return Number(p.id) === 0;
+        }) ||
+        mathStandings[0];
+      const queenName = queenPlayer ? queenPlayer.name : "Mariam";
+      const totalPlayers = mathStandings.length;
 
-      for (let i = mathStandings.length - 1; i >= 0; i--) {
+      setFinaleSubtitle("Revealing Chapter 27 standings from #" + totalPlayers + " to #1...", "");
+
+      // ACT 1: Countdown from #12 up to #1 with dramatic Top-3 drumroll
+      for (let i = totalPlayers - 1; i >= 0; i--) {
+        if (token !== finaleRunToken) return;
         const p = mathStandings[i];
+        const rankNum = i + 1;
+
+        if (rankNum === 3) {
+          setFinaleSubtitle("🥁 Drumroll please... entering the Top 3!", "");
+        } else if (rankNum === 2) {
+          setFinaleSubtitle("🥈 Second place on the board...", "");
+        } else if (rankNum === 1) {
+          setFinaleSubtitle("🥇 And your #1 on points is... " + p.name + "!", "royal");
+        }
+
         const row = document.createElement("div");
-        row.className = "rank-row " + (p.isBirthdayQueen ? "queen-row" : "");
+        row.className = "rank-row finale-row " + (p.isBirthdayQueen ? "queen-row" : "");
         row.dataset.playerId = p.id;
+        row.dataset.playerName = p.name;
         const diff = p.matchPoints - p.pointsAgainst;
         const subText =
           state.headStartsActive && p.appliedBonus > 0
@@ -4692,8 +5817,8 @@
           '<div class="rank-num finale-rank">#' + p.rank + "</div>" +
           renderMiniAvatar(p, "celebrating") +
           "<div>" +
-            '<div style="font-weight:800; font-size:0.9rem;">' + p.name + renderBonusBadge(p) + "</div>" +
-            '<div style="font-size:0.72rem; color:var(--ink-muted); font-weight:700;">' + subText + "</div>" +
+            '<div style="font-weight:800; font-size:0.89rem;">' + escapeAttr(p.name) + renderBonusBadge(p) + "</div>" +
+            '<div style="font-size:0.71rem; color:var(--ink-muted); font-weight:700;">' + subText + "</div>" +
           "</div>" +
           '<div class="rank-stats">' +
             '<div class="rank-pts">' + p.points + "</div>" +
@@ -4705,110 +5830,572 @@
         listEl.prepend(row);
 
         if (row.animate) {
-          row.animate(
+          const enterAnim = row.animate(
             [
-              { opacity: 0, transform: "translateY(14px) scale(0.96)" },
+              { opacity: 0, transform: "translateY(16px) scale(0.95)" },
               { opacity: 1, transform: "translateY(0) scale(1)" }
             ],
-            { duration: 220, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
+            { duration: rankNum <= 3 ? 320 : 210, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "forwards" }
           );
+          finaleActiveAnims.push(enterAnim);
         } else {
           row.style.opacity = "1";
           row.style.transform = "none";
         }
 
-        await new Promise(function (r) {
-          setTimeout(r, i < 3 ? 340 : 140);
-        });
+        if (rankNum <= 3) {
+          FinaleSFX.playDrumHit(rankNum);
+        } else {
+          FinaleSFX.playTick(totalPlayers - 1 - i, totalPlayers);
+        }
+
+        if (rankNum === 1 && !p.isBirthdayQueen) {
+          row.classList.add("leader-fake");
+          setRowChip(row, "🥇 #1 ON POINTS", "gold");
+        }
+
+        const pauseMs = rankNum === 1 ? 1400 : rankNum === 2 ? 640 : rankNum === 3 ? 520 : 145;
+        if (!(await waitFinale(pauseMs, token))) return;
       }
 
-      const queenRow = listEl.querySelector('[data-player-id="0"]');
+      const queenRow = queenPlayer
+        ? listEl.querySelector('[data-player-id="' + queenPlayer.id + '"]')
+        : listEl.querySelector('[data-player-id="0"]');
       const firstRow = listEl.firstElementChild;
 
-      if (queenRow && firstRow && queenRow !== firstRow) {
-        await new Promise(function (r) {
-          setTimeout(r, 650);
-        });
-        subEl.textContent = "Wait a second... checking Article 27 of the Birthday Constitution...";
-        stampEl.classList.add("visible");
-        await new Promise(function (r) {
-          setTimeout(r, 700);
-        });
+      // Clear entrance WAAPI animations cleanly so layout rects are exact & untransformed
+      Array.from(listEl.children).forEach(function (el) {
+        if (el.getAnimations) {
+          el.getAnimations().forEach(function (a) {
+            a.cancel();
+          });
+        }
+        el.style.opacity = "";
+        el.style.transform = "";
+      });
 
-        const rows = Array.from(listEl.children);
+      if (queenRow && firstRow && queenRow !== firstRow) {
+        // ACT 2A: Record-Scratch Interruption & Spotlight Lock!
+        triggerFinaleFlash();
+        triggerFinaleShake("sm");
+        FinaleSFX.playRecordScratch();
+        triggerHaptic([35, 30, 35]);
+
+        setFinaleSubtitle("✋ HOLD EVERYTHING! STOP THE MUSIC!", "alert");
+        tapeEl.classList.add("visible");
+        listEl.classList.add("spotlight-mode");
+        firstRow.classList.add("leader-panic");
+        setRowChip(firstRow, "😰 UH OH...", "panic");
+
+        if (!(await waitFinale(1100, token))) return;
+
+        // ACT 2B: Article 27 Constitutional Audit & Spotlight on Mariam
+        setFinaleSubtitle("📜 Checking Article 27 of the Birthday Constitution...", "alert");
+        sunburst.classList.add("active");
+        queenRow.classList.add("queen-spotlight");
+        setRowChip(queenRow, "👀 EXCUSE ME?!", "pink");
+
+        try {
+          queenRow.scrollIntoView({ behavior: "smooth", block: "center" });
+        } catch (e) {}
+
+        if (!(await waitFinale(1400, token))) return;
+
+        // ACT 3: Full-Drama Center-Screen Article 27 Executive Override Stamp Slam!
+        if (centerSlamSub) {
+          centerSlamSub.textContent = "STAND BACK — " + queenName.toUpperCase() + " TAKING OVER #1!";
+        }
+        if (centerSlam) {
+          centerSlam.classList.remove("closing");
+          centerSlam.classList.add("visible");
+        }
+        triggerFinaleFlash();
+        triggerFinaleShake("lg");
+        FinaleSFX.playStampSlam();
+        triggerHaptic(60);
+        setFinaleSubtitle("⚖️ OVERRULED! " + queenName.toUpperCase() + " IS CLAIMING HER RIGHTFUL THRONE!", "royal");
+
+        if (!(await waitFinale(1550, token))) return;
+
+        // Hand off center stamp cleanly into docked top stamp banner BEFORE measuring FLIP rects
+        if (centerSlam) {
+          centerSlam.classList.add("closing");
+        }
+        stampEl.classList.add("visible");
+        if (!(await waitFinale(300, token))) return;
+        if (centerSlam) {
+          centerSlam.classList.remove("visible", "closing");
+        }
+
+        // ACT 4: Choreographed Royal Lift-Off, Slow Passing-Lane Overtake & Domino Knockdowns!
+        firstRow.classList.remove("leader-panic");
+        queenRow.classList.remove("queen-spotlight");
+
+        const rowsBefore = Array.from(listEl.children);
+        const oldIndex = rowsBefore.indexOf(queenRow);
+        const oldRank = oldIndex + 1;
+        const movedSpots = oldIndex;
+
+        const listRectBefore = listEl.getBoundingClientRect();
         const firstRects = new Map(
-          rows.map(function (el) {
+          rowsBefore.map(function (el) {
             return [el, el.getBoundingClientRect()];
           })
         );
 
         listEl.prepend(queenRow);
 
-        Array.from(listEl.children).forEach(function (el, idx) {
-          const badge = el.querySelector(".finale-rank");
-          badge.textContent = idx === 0 ? "👑" : "#" + (idx + 1);
+        const listRectAfter = listEl.getBoundingClientRect();
+        const newRects = new Map(
+          Array.from(listEl.children).map(function (el) {
+            return [el, el.getBoundingClientRect()];
+          })
+        );
+
+        const queenStartLocalY = firstRects.get(queenRow).top - listRectBefore.top;
+        const queenEndLocalY = newRects.get(queenRow).top - listRectAfter.top;
+        const queenDy = queenStartLocalY - queenEndLocalY;
+
+        const displacedRivals = rowsBefore.slice(0, oldIndex).map(function (el) {
+          const oldR = firstRects.get(el);
+          const newR = newRects.get(el);
+          const dy = oldR.top - newR.top;
+          el.style.transform = "translate3d(0px, " + dy + "px, 0)";
+          return {
+            el: el,
+            dy: dy,
+            visualMidLocalY: oldR.top - listRectBefore.top + oldR.height * 0.54,
+            overtaken: false
+          };
         });
 
-        Array.from(listEl.children).forEach(function (el) {
-          const oldRect = firstRects.get(el);
-          const newRect = el.getBoundingClientRect();
-          const dy = oldRect.top - newRect.top;
-          if (dy !== 0 && el.animate) {
-            el.animate(
-              [
-                { transform: "translateY(" + dy + "px) scale(" + (el === queenRow ? 1.04 : 1) + ")" },
-                { transform: "translateY(0px) scale(1)" }
-              ],
-              { duration: 750, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+        queenRow.style.transform = "translate3d(0px, " + queenDy + "px, 0)";
+        queenRow.classList.add("queen-ascending");
+        setRowChip(queenRow, "👑 COMING THROUGH!", "pink");
+        setFinaleSubtitle("🚀 ROYAL TAKEOVER LAUNCHING FROM #" + oldRank + "...", "royal");
+
+        // Phase 4A: Anticipation crouch & heroic lift-off (760ms)
+        let liftSparkled = false;
+        const liftOk = await animateFinaleRaf(760, token, function (p) {
+          let yOffset;
+          let scale;
+          let rot;
+          if (p < 0.32) {
+            const k = p / 0.32;
+            yOffset = queenDy + 10 * Math.sin(k * Math.PI * 0.5);
+            scale = 1 - 0.025 * k;
+            rot = 0.7 * k;
+          } else {
+            const k = (p - 0.32) / 0.68;
+            const eased = 1 - Math.pow(1 - k, 3);
+            yOffset = queenDy + 10 - 16 * eased;
+            scale = 0.975 + 0.09 * eased;
+            rot = 0.7 - 2.4 * eased;
+            if (!liftSparkled && k > 0.25) {
+              liftSparkled = true;
+              const qr = queenRow.getBoundingClientRect();
+              emitFinaleTrailSparkles(qr.left + qr.width * 0.5, qr.top + qr.height * 0.5, 18);
+              FinaleSFX.playTick(totalPlayers - 1, totalPlayers);
+            }
+          }
+          queenRow.style.transform =
+            "translate3d(0px, " + yOffset.toFixed(2) + "px, 0) scale(" + scale.toFixed(4) + ") rotate(" + rot.toFixed(2) + "deg)";
+        });
+        if (!liftOk) return;
+
+        // Phase 4B: Extended Slow Dramatic Passing-Lane Climb with Live Announcer & Domino Knockdowns
+        const climbDuration = Math.min(4400, Math.max(2400, 1950 + movedSpots * 270));
+        const startScrollTop = overlay.scrollTop;
+        let lastTrailTime = 0;
+
+        const climbOk = await animateFinaleRaf(climbDuration, token, function (raw, now) {
+          const eased = easeDramaticClimb(raw);
+          const curY = (queenDy - 6) * (1 - eased) - 10 * eased;
+          const arcX = -Math.sin(eased * Math.PI) * (movedSpots === 1 ? 11 : 7.5);
+          const curScale = 1.065 + Math.sin(eased * Math.PI) * 0.032;
+          const curTilt = -1.7 - Math.sin(eased * Math.PI) * 1.1;
+
+          queenRow.style.transform =
+            "translate3d(" +
+            arcX.toFixed(2) +
+            "px, " +
+            curY.toFixed(2) +
+            "px, 0) scale(" +
+            curScale.toFixed(4) +
+            ") rotate(" +
+            curTilt.toFixed(2) +
+            "deg)";
+
+          if (startScrollTop > 0) {
+            overlay.scrollTop = Math.max(0, startScrollTop * (1 - eased));
+          }
+
+          const currentQueenLocalY = queenEndLocalY + Math.max(0, curY);
+          for (let idx = displacedRivals.length - 1; idx >= 0; idx--) {
+            const rival = displacedRivals[idx];
+            if (!rival.overtaken && currentQueenLocalY <= rival.visualMidLocalY) {
+              bumpOvertakenRival(rival, idx, queenRow, displacedRivals.length, token);
+            }
+          }
+
+          if (now - lastTrailTime > 44) {
+            lastTrailTime = now;
+            const qr = queenRow.getBoundingClientRect();
+            emitFinaleTrailSparkles(
+              qr.left + qr.width * (0.15 + Math.random() * 0.7),
+              qr.top + qr.height * 0.75,
+              3
             );
           }
         });
+        if (!climbOk) return;
 
-        subEl.textContent = "👑 ALL HAIL MARIAM — CHAPTER 27 UNDEFEATED CHAMPION!";
-        fireGlobalConfettiBurst();
+        // Safety net: ensure every displaced rival settled cleanly
+        for (let idx = displacedRivals.length - 1; idx >= 0; idx--) {
+          if (!displacedRivals[idx].overtaken) {
+            bumpOvertakenRival(displacedRivals[idx], idx, queenRow, displacedRivals.length, token);
+          }
+        }
+        overlay.scrollTop = 0;
+
+        // Phase 4C: Suspenseful Apex Hover Peak + Royal Touchdown Slam!
+        if (!(await waitFinale(320, token))) return;
+
+        queenRow.style.transform = "";
+        if (queenRow.animate) {
+          const slamAnim = queenRow.animate(
+            [
+              { transform: "translate3d(0px, -10px, 0) scale(1.095) rotate(-1.2deg)" },
+              { transform: "translate3d(0px, 4px, 0) scale(0.96) rotate(0.7deg)", offset: 0.45 },
+              { transform: "translate3d(0px, -3px, 0) scale(1.03) rotate(-0.3deg)", offset: 0.74 },
+              { transform: "translate3d(0px, 0px, 0) scale(1) rotate(0deg)" }
+            ],
+            { duration: 600, easing: "cubic-bezier(0.22, 1, 0.36, 1)", fill: "none" }
+          );
+          finaleActiveAnims.push(slamAnim);
+        }
+
+        // Coronation Impact!
+        triggerFinaleFlash();
+        triggerFinaleShake("lg");
+        FinaleSFX.playStampSlam();
+        triggerHaptic([35, 35, 70]);
+
+        listEl.classList.remove("spotlight-mode");
+        queenRow.classList.remove("queen-ascending");
+        queenRow.classList.add("queen-crowned");
+        if (!queenRow.querySelector(".queen-sheen-layer")) {
+          const sheen = document.createElement("div");
+          sheen.className = "queen-sheen-layer";
+          sheen.setAttribute("aria-hidden", "true");
+          queenRow.prepend(sheen);
+        }
+
+        setFinaleRankBadge(queenRow, "👑", "crown");
+        setRowChip(queenRow, "👑 ARTICLE 27 #1", "pink");
+
+        const qrFinal = queenRow.getBoundingClientRect();
+        emitFinaleTrailSparkles(qrFinal.left + qrFinal.width * 0.5, qrFinal.top + qrFinal.height * 0.5, 30);
+
+        if (!(await waitFinale(340, token))) return;
+
+        // ACT 5: Champion Coronation Banner + Multi-Wave Confetti Cannons + Fanfare!
+        setFinaleSubtitle("👑 ALL HAIL " + queenName.toUpperCase() + " — CHAPTER 27 UNDEFEATED CHAMPION!", "royal");
+        renderChampionBanner(queenPlayer, movedSpots, oldRank);
+        FinaleSFX.playCoronationFanfare();
+        fireFinaleConfettiShow(token);
+
+        if (!(await waitFinale(480, token))) return;
+        if (headerReplay) headerReplay.classList.remove("hidden");
+        footerActions.classList.add("visible");
+      } else if (queenRow) {
+        // NATURAL #1 CORONATION PATH (Mariam already won #1 on pure points!)
+        setFinaleSubtitle("⚖️ Checking Article 27... WAIT A SECOND!", "alert");
+        sunburst.classList.add("active");
+        queenRow.classList.add("queen-spotlight");
+        setRowChip(queenRow, "👑 PURE POINTS #1!", "lime");
+
+        if (!(await waitFinale(1050, token))) return;
+
+        stampEl.textContent = "✨ NO OVERRIDE NEEDED — QUEEN WON #1 ON PURE POINTS! ✨";
+        stampEl.classList.add("override-stamp--natural", "visible");
+        triggerFinaleFlash();
+        triggerFinaleShake("lg");
+        FinaleSFX.playStampSlam();
+        triggerHaptic([35, 35, 70]);
+
+        queenRow.classList.remove("queen-spotlight");
+        queenRow.classList.add("queen-crowned");
+        if (!queenRow.querySelector(".queen-sheen-layer")) {
+          const sheen = document.createElement("div");
+          sheen.className = "queen-sheen-layer";
+          sheen.setAttribute("aria-hidden", "true");
+          queenRow.prepend(sheen);
+        }
+        if (queenRow.animate) {
+          const bounceAnim = queenRow.animate(
+            [
+              { transform: "scale(1)" },
+              { transform: "scale(1.07) translateY(-6px)", offset: 0.4 },
+              { transform: "scale(0.98) translateY(2px)", offset: 0.72 },
+              { transform: "scale(1) translateY(0)" }
+            ],
+            { duration: 640, easing: "cubic-bezier(0.22, 1, 0.36, 1)" }
+          );
+          finaleActiveAnims.push(bounceAnim);
+        }
+
+        setFinaleRankBadge(queenRow, "👑", "crown");
+        setRowChip(queenRow, "👑 UNDISPUTED #1", "pink");
+
+        if (!(await waitFinale(400, token))) return;
+
+        setFinaleSubtitle("👑 " + queenName + " won #1 both on points AND by Article 27 Birthday Law!", "royal");
+        renderChampionBanner(queenPlayer, 0, 1);
+        FinaleSFX.playCoronationFanfare();
+        fireFinaleConfettiShow(token);
+
+        if (!(await waitFinale(480, token))) return;
+        if (headerReplay) headerReplay.classList.remove("hidden");
+        footerActions.classList.add("visible");
       } else {
-        subEl.textContent = "👑 Mariam won #1 both on points AND by Article 27 Birthday Law!";
+        setFinaleSubtitle("👑 ALL HAIL " + queenName.toUpperCase() + " — CHAPTER 27 CHAMPION!", "royal");
         fireGlobalConfettiBurst();
+        if (headerReplay) headerReplay.classList.remove("hidden");
+        footerActions.classList.add("visible");
       }
     }
 
-    function fireGlobalConfettiBurst() {
+    // Unified Multi-Shape Global Confetti & Royal Sparkle Engine
+    let globalParticles = [];
+    let globalConfettiRaf = null;
+    const CONFETTI_PALETTE = ["#C8F542", "#FF4D8D", "#FFD23F", "#38BDF8", "#FFFFFF"];
+
+    function sizeGlobalConfettiCanvas() {
       const canvas = document.getElementById("globalConfettiCanvas");
+      if (!canvas) return null;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) {
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+      }
       const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { canvas: canvas, ctx: ctx, w: w, h: h };
+    }
 
-      const colors = ["#C8F542", "#FF4D8D", "#FFD23F", "#38BDF8"];
-      const particles = Array.from({ length: 75 }, function () {
-        return {
-          x: canvas.width / 2,
-          y: canvas.height * 0.35,
-          vx: (Math.random() - 0.5) * 14,
-          vy: -4 - Math.random() * 10,
-          g: 0.35,
-          size: 6 + Math.random() * 6,
-          color: colors[Math.floor(Math.random() * colors.length)]
-        };
-      });
+    function drawStarPath(ctx, points, outerR, innerR) {
+      ctx.beginPath();
+      for (let i = 0; i < points * 2; i++) {
+        const r = i % 2 === 0 ? outerR : innerR;
+        const angle = (i * Math.PI) / points - Math.PI / 2;
+        const px = Math.cos(angle) * r;
+        const py = Math.sin(angle) * r;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+    }
 
-      let frames = 0;
+    function ensureGlobalConfettiLoop() {
+      if (globalConfettiRaf) return;
       function tick() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(function (p) {
+        const env = sizeGlobalConfettiCanvas();
+        if (!env) {
+          globalConfettiRaf = null;
+          return;
+        }
+        const ctx = env.ctx;
+        ctx.clearRect(0, 0, env.w, env.h);
+
+        for (let i = globalParticles.length - 1; i >= 0; i--) {
+          const p = globalParticles[i];
           p.x += p.vx;
           p.y += p.vy;
+          p.vx *= p.drag;
           p.vy += p.g;
+          p.rot += p.vRot;
+          p.life += 1;
+
+          const alpha = p.life > p.maxLife * 0.72
+            ? Math.max(0, 1 - (p.life - p.maxLife * 0.72) / (p.maxLife * 0.28))
+            : 1;
+
+          if (p.life >= p.maxLife || p.y > env.h + 40) {
+            globalParticles.splice(i, 1);
+            continue;
+          }
+
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
           ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size * 0.7);
-        });
-        frames++;
-        if (frames < 95) {
-          requestAnimationFrame(tick);
+
+          if (p.shape === "sparkle") {
+            drawStarPath(ctx, 4, p.size, p.size * 0.34);
+            ctx.fill();
+            ctx.strokeStyle = "#1C1917";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          } else if (p.shape === "star") {
+            drawStarPath(ctx, 5, p.size, p.size * 0.45);
+            ctx.fill();
+            ctx.strokeStyle = "#1C1917";
+            ctx.lineWidth = 1.1;
+            ctx.stroke();
+          } else if (p.shape === "circle") {
+            ctx.beginPath();
+            ctx.arc(0, 0, p.size * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            const flipScale = Math.cos(p.life * 0.18 + p.phase);
+            ctx.scale(1, Math.max(0.25, Math.abs(flipScale)));
+            ctx.fillRect(-p.size * 0.5, -p.size * 0.34, p.size, p.size * 0.68);
+          }
+          ctx.restore();
+        }
+
+        if (globalParticles.length > 0) {
+          globalConfettiRaf = requestAnimationFrame(tick);
         } else {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.clearRect(0, 0, env.w, env.h);
+          globalConfettiRaf = null;
         }
       }
-      tick();
+      globalConfettiRaf = requestAnimationFrame(tick);
+    }
+
+    function stopGlobalConfetti() {
+      globalParticles = [];
+      if (globalConfettiRaf) {
+        cancelAnimationFrame(globalConfettiRaf);
+        globalConfettiRaf = null;
+      }
+      const canvas = document.getElementById("globalConfettiCanvas");
+      if (canvas) {
+        const ctx = canvas.getContext("2d");
+        if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function emitFinaleTrailSparkles(x, y, count) {
+      const colors = ["#FFD23F", "#FF4D8D", "#C8F542", "#FFFFFF"];
+      for (let i = 0; i < count; i++) {
+        globalParticles.push({
+          x: x + (Math.random() - 0.5) * 30,
+          y: y + (Math.random() - 0.5) * 14,
+          vx: (Math.random() - 0.5) * 4.2,
+          vy: 0.6 + Math.random() * 2.8,
+          drag: 0.96,
+          g: 0.08,
+          size: 5 + Math.random() * 5,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.22,
+          phase: Math.random() * 6,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          shape: Math.random() < 0.65 ? "sparkle" : "star",
+          life: 0,
+          maxLife: 34 + Math.floor(Math.random() * 22)
+        });
+      }
+      ensureGlobalConfettiLoop();
+    }
+
+    function spawnConfettiCannon(originX, originY, count, spreadVx, baseVy, gravity) {
+      for (let i = 0; i < count; i++) {
+        const r = Math.random();
+        const shape = r < 0.58 ? "rect" : r < 0.78 ? "star" : r < 0.9 ? "circle" : "sparkle";
+        globalParticles.push({
+          x: originX + (Math.random() - 0.5) * 24,
+          y: originY + (Math.random() - 0.5) * 18,
+          vx: (Math.random() - 0.5) * spreadVx,
+          vy: baseVy - Math.random() * 9,
+          drag: 0.985,
+          g: gravity,
+          size: shape === "star" ? 6 + Math.random() * 5 : 6 + Math.random() * 6,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.24,
+          phase: Math.random() * 6,
+          color: CONFETTI_PALETTE[Math.floor(Math.random() * CONFETTI_PALETTE.length)],
+          shape: shape,
+          life: 0,
+          maxLife: 95 + Math.floor(Math.random() * 55)
+        });
+      }
+      ensureGlobalConfettiLoop();
+    }
+
+    function fireGlobalConfettiBurst() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      spawnConfettiCannon(w * 0.5, h * 0.35, 78, 15, -5, 0.32);
+    }
+
+    function fireFinaleConfettiShow(token) {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+
+      // Wave 1: Dual corner cannons + center crown burst
+      spawnConfettiCannon(w * 0.5, h * 0.26, 65, 16, -6, 0.26);
+      for (let i = 0; i < 42; i++) {
+        const fromLeft = i % 2 === 0;
+        globalParticles.push({
+          x: fromLeft ? 10 : w - 10,
+          y: h * 0.78,
+          vx: (fromLeft ? 1 : -1) * (4.5 + Math.random() * 8.5),
+          vy: -11 - Math.random() * 9,
+          drag: 0.985,
+          g: 0.3,
+          size: 6 + Math.random() * 6,
+          rot: Math.random() * Math.PI * 2,
+          vRot: (Math.random() - 0.5) * 0.26,
+          phase: Math.random() * 6,
+          color: CONFETTI_PALETTE[Math.floor(Math.random() * CONFETTI_PALETTE.length)],
+          shape: Math.random() < 0.32 ? "star" : "rect",
+          life: 0,
+          maxLife: 120 + Math.floor(Math.random() * 45)
+        });
+      }
+      ensureGlobalConfettiLoop();
+
+      // Wave 2: Celebratory second volley
+      const w2 = setTimeout(function () {
+        finaleTimeouts.delete(w2);
+        if (token !== finaleRunToken) return;
+        spawnConfettiCannon(window.innerWidth * 0.28, window.innerHeight * 0.32, 42, 13, -5, 0.24);
+        spawnConfettiCannon(window.innerWidth * 0.72, window.innerHeight * 0.32, 42, 13, -5, 0.24);
+      }, 520);
+      finaleTimeouts.add(w2);
+
+      // Wave 3: Golden top-edge celebratory shower
+      const w3 = setTimeout(function () {
+        finaleTimeouts.delete(w3);
+        if (token !== finaleRunToken) return;
+        const curW = window.innerWidth;
+        for (let i = 0; i < 55; i++) {
+          globalParticles.push({
+            x: Math.random() * curW,
+            y: -14 - Math.random() * 80,
+            vx: (Math.random() - 0.5) * 2.4,
+            vy: 1.8 + Math.random() * 3.0,
+            drag: 0.992,
+            g: 0.05,
+            size: 6 + Math.random() * 5,
+            rot: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.14,
+            phase: Math.random() * 6,
+            color: CONFETTI_PALETTE[Math.floor(Math.random() * CONFETTI_PALETTE.length)],
+            shape: Math.random() < 0.4 ? "star" : "rect",
+            life: 0,
+            maxLife: 150 + Math.floor(Math.random() * 45)
+          });
+        }
+        ensureGlobalConfettiLoop();
+      }, 1100);
+      finaleTimeouts.add(w3);
     }
 
     /**
@@ -5322,8 +6909,20 @@
     });
 
     document.getElementById("playFinaleBtn").addEventListener("click", runGrandFinaleReveal);
-    document.getElementById("closeFinaleBtn").addEventListener("click", function () {
-      document.getElementById("finaleOverlay").classList.remove("open");
+    document.getElementById("closeFinaleBtn").addEventListener("click", closeGrandFinale);
+    document.getElementById("doneFinaleBtn").addEventListener("click", closeGrandFinale);
+    document.getElementById("replayFinaleBtn").addEventListener("click", runGrandFinaleReveal);
+    document.getElementById("headerReplayFinaleBtn").addEventListener("click", runGrandFinaleReveal);
+    document.getElementById("toggleFinaleSoundBtn").addEventListener("click", function () {
+      finaleSoundEnabled = !finaleSoundEnabled;
+      const btn = document.getElementById("toggleFinaleSoundBtn");
+      if (btn) {
+        btn.textContent = finaleSoundEnabled ? "🔊" : "🔇";
+        btn.setAttribute("aria-pressed", finaleSoundEnabled ? "true" : "false");
+      }
+      if (finaleSoundEnabled) {
+        FinaleSFX.playTick(8, 12);
+      }
     });
 
     document.getElementById("addCustomMatchBtn").addEventListener("click", async function () {
