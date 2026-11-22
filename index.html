@@ -601,6 +601,23 @@
       border: 1.5px solid var(--ink);
     }
 
+    .ro-score.draw {
+      background: var(--gold-soft);
+      border: 1.5px solid var(--ink);
+    }
+
+    .draw-link-pill {
+      font-family: var(--font-mono);
+      font-size: 0.67rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: var(--gold);
+      color: var(--ink);
+      border: 1.5px solid var(--ink);
+      border-radius: 999px;
+      padding: 2px 10px;
+    }
+
     .ro-dash {
       font-size: 1.25rem;
       font-weight: 800;
@@ -1334,6 +1351,15 @@
       to { opacity: 1; transform: scale(1); }
     }
 
+    .split-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     .reveal-canvas {
       position: absolute;
       inset: 0;
@@ -1354,7 +1380,6 @@
       justify-content: center;
       text-align: center;
       position: relative;
-      z-index: 3;
     }
 
     .split-bottom {
@@ -1368,7 +1393,45 @@
       justify-content: center;
       text-align: center;
       position: relative;
+    }
+
+    .split-top > *,
+    .split-bottom > * {
+      position: relative;
       z-index: 3;
+    }
+
+    .reveal-top-badge {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: #FFFFFF;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+
+    .reveal-bottom-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #93C5FD;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .reveal-names {
+      font-weight: 900;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .reveal-loser-names {
+      color: #E2E8F0;
     }
 
     .reveal-headline {
@@ -1462,6 +1525,29 @@
       50% { transform: rotate(3deg) translateY(4px); }
     }
 
+    .draw-face {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 3.5px solid var(--ink);
+      box-shadow: 0 5px 0 var(--ink);
+      object-fit: cover;
+      background: #FFFFFF;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      font-size: 1.38rem;
+      color: var(--ink);
+      animation: drawRock 1.15s ease-in-out infinite alternate;
+    }
+
+    .draw-face:nth-child(2) { animation-delay: 0.22s; }
+
+    @keyframes drawRock {
+      from { transform: translateY(0px) rotate(-5deg) scale(1); }
+      to { transform: translateY(-5px) rotate(5deg) scale(1.03); }
+    }
+
     .reveal-score-pill {
       position: absolute;
       top: 50%;
@@ -1478,6 +1564,53 @@
       font-weight: 800;
       font-size: 1.35rem;
       white-space: nowrap;
+      max-width: calc(100vw - 24px);
+    }
+
+    /* Draw / Tie Mode — Balanced Party Zine Aesthetic (No Winners / No Losers) */
+    .reveal-overlay.draw-mode .split-top {
+      background: radial-gradient(circle at 50% 30%, #FFF7D6 0%, var(--gold) 82%);
+      color: var(--ink);
+    }
+
+    .reveal-overlay.draw-mode .split-bottom {
+      background: radial-gradient(circle at 50% 70%, #FFF0F6 0%, #FFB5D0 85%);
+      color: var(--ink);
+    }
+
+    .reveal-overlay.draw-mode .reveal-bottom-badge {
+      background: #FFFFFF;
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+
+    .reveal-overlay.draw-mode .cry-cloud-icon {
+      display: none;
+    }
+
+    .reveal-overlay.draw-mode .loser-headline {
+      color: var(--ink);
+      text-shadow: none;
+    }
+
+    .reveal-overlay.draw-mode .reveal-loser-names {
+      color: var(--ink);
+    }
+
+    .reveal-overlay.draw-mode .loser-roast-line {
+      color: var(--ink);
+      background: rgba(255, 255, 255, 0.88);
+      border: 1.5px solid var(--ink);
+    }
+
+    .reveal-overlay.draw-mode .reveal-score-pill {
+      background: var(--lime);
+      color: var(--ink);
+      font-size: 1.15rem;
+      padding: 6px 16px;
+      transform: translate(-50%, -50%) rotate(0deg);
     }
 
     .reveal-close-bar {
@@ -1835,36 +1968,38 @@
 
   <!-- 50/50 SPLIT-SCREEN MATCH REVEAL OVERLAY -->
   <div class="reveal-overlay" id="revealOverlay">
-    <canvas id="revealCanvas" class="reveal-canvas"></canvas>
+    <div class="split-stage" id="revealStage">
+      <canvas id="revealCanvas" class="reveal-canvas"></canvas>
 
-    <div class="split-top">
-      <div style="font-size:0.74rem; font-weight:800; text-transform:uppercase; letter-spacing:0.06em; background:#FFFFFF; border:2px solid var(--ink); padding:3px 10px; border-radius:99px;">
-        Winners' VIP #27 Lounge
+      <div class="split-top">
+        <div id="revealTopBadge" class="reveal-top-badge">
+          Winners' VIP #27 Lounge
+        </div>
+        <h2 id="winnerHeadline" class="reveal-headline">
+          ABSOLUTE PADEL ROYALTY!
+        </h2>
+        <div class="reveal-faces" id="winnerFaces"></div>
+        <div id="winnerNames" class="reveal-names"></div>
+        <p id="winnerHypeLine" class="winner-hype-line"></p>
       </div>
-      <h2 id="winnerHeadline" class="reveal-headline">
-        ABSOLUTE PADEL ROYALTY!
-      </h2>
-      <div class="reveal-faces" id="winnerFaces"></div>
-      <div id="winnerNames" style="font-weight:900; font-size:1rem;"></div>
-      <p id="winnerHypeLine" class="winner-hype-line"></p>
-    </div>
 
-    <div class="reveal-score-pill" id="revealScorePill">10 — 6</div>
+      <div class="reveal-score-pill" id="revealScorePill">10 — 6</div>
 
-    <div class="split-bottom">
-      <div style="display:flex; align-items:center; gap:6px; font-size:0.74rem; font-weight:800; color:#93C5FD; text-transform:uppercase; letter-spacing:0.06em;">
-        <svg width="24" height="17" viewBox="0 0 32 22" fill="none">
-          <path d="M8 18H24C27.3 18 30 15.3 30 12C30 8.9 27.6 6.4 24.6 6.1C23.5 2.6 20.2 0 16.3 0C11.6 0 7.8 3.7 7.6 8.3C4.5 8.8 2 11.5 2 14.8C2 16.6 4.7 18 8 18Z" fill="#64748B"/>
-          <path d="M12 13L15 15M20 13L17 15" stroke="#1E293B" stroke-width="1.8" stroke-linecap="round"/>
-        </svg>
-        <span>Losers' Crybaby Corner</span>
+      <div class="split-bottom">
+        <div id="revealBottomBadge" class="reveal-bottom-badge">
+          <svg id="revealCryCloud" class="cry-cloud-icon" width="24" height="17" viewBox="0 0 32 22" fill="none">
+            <path d="M8 18H24C27.3 18 30 15.3 30 12C30 8.9 27.6 6.4 24.6 6.1C23.5 2.6 20.2 0 16.3 0C11.6 0 7.8 3.7 7.6 8.3C4.5 8.8 2 11.5 2 14.8C2 16.6 4.7 18 8 18Z" fill="#64748B"/>
+            <path d="M12 13L15 15M20 13L17 15" stroke="#1E293B" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span id="revealBottomBadgeText">Losers' Crybaby Corner</span>
+        </div>
+        <h2 id="loserHeadline" class="reveal-headline loser-headline">
+          🌧️ SEND TISSUES TO COURT!
+        </h2>
+        <div class="reveal-faces" id="loserFaces"></div>
+        <div id="loserNames" class="reveal-names reveal-loser-names"></div>
+        <p id="loserRoast" class="loser-roast-line"></p>
       </div>
-      <h2 id="loserHeadline" class="reveal-headline loser-headline">
-        🌧️ SEND TISSUES TO COURT!
-      </h2>
-      <div class="reveal-faces" id="loserFaces"></div>
-      <div id="loserNames" style="font-weight:900; font-size:1rem; color:#E2E8F0;"></div>
-      <p id="loserRoast" class="loser-roast-line"></p>
     </div>
 
     <div class="reveal-close-bar">
@@ -3158,20 +3293,129 @@
         "You played 'keep away' — mostly keeping the ball away from the court.",
         "Recommendation: switch to bowling, the bumpers might help.",
         "Drink water, shake it off, and definitely don't check the scoreboard."
+      ],
+      drawHeadlines: [
+        "🤝 DEADLOCK ON COURT! NOBODY BLINKED!",
+        "⚖️ PERFECTLY BALANCED — ZERO BRAGGING RIGHTS!",
+        "🪢 ALL TIED UP! SPLIT THE GLORY!",
+        "🎭 {HALF}–{HALF} THRILLER! NOBODY WOULD BUDGE!",
+        "🪙 CALL IT EVEN! EVEN THE SCOREBOARD IS CONFUSED!",
+        "🤝 PEACE TREATY SIGNED AT THE NET!",
+        "⚡ PHOTO FINISH... AND IT'S STILL A TIE!",
+        "🔥 {PTS} POINTS OF CHAOS FOR A DEAD HEAT!",
+        "🎂 SPLIT THE POINTS, SPLIT THE BIRTHDAY CAKE!",
+        "⚖️ HONORABLE DRAW! EVERYBODY LEAVES UNDEFEATED!",
+        "🤷‍♂️ NO WINNERS, NO CRYBABIES — JUST VIBES!",
+        "🎾 POINT-FOR-POINT MADNESS! TOTAL STANDOFF!",
+        "🧊 ICE-COLD STALEMATE ON THE BLUE TURF!",
+        "🤝 HANDSHAKES ALL AROUND — CO-OWNERS OF THIS COURT!",
+        "🎢 ROLLERCOASTER RIDE STRAIGHT BACK TO EVEN!",
+        "⚖️ UNABLE TO SEPARATE THESE TWO DUOS!",
+        "🥳 HALF A VICTORY EACH — DOUBLE THE PARTY!",
+        "🔎 EVEN A MICROSCOPE COULDN'T FIND A WINNER!",
+        "💥 BACK-AND-FORTH BATTLE ENDS ALL SQUARE!",
+        "🤝 TRUCE DECLARED! SETTLE IT AT THE SNACK TABLE!"
+      ],
+      drawQuotes: [
+        "Neither team gets Crybaby Corner — both teams get birthday cake!",
+        "Both duos are already claiming they 'basically won' that last rally.",
+        "Dead even after {PTS} points — the padel gods demanded pure symmetry.",
+        "Zero bragging rights unlocked, 100% cardio achieved.",
+        "Not a single millimeter separated these four at the net.",
+        "The rain cloud packed its bags — nobody cried on this court today.",
+        "Every banger volley was answered by an equally ridiculous glass save.",
+        "Official verdict: too close to call, too dramatic to forget.",
+        "Split the scoreboard down the middle and call it an instant classic.",
+        "You both played well enough to avoid the sad photo — congrats!",
+        "A mathematical masterpiece: {HALF} for you, {HALF} for them, chaos for all.",
+        "Good news: you didn't lose. Bad news: you can't trash-talk them either.",
+        "Both sides earned equal points and equal rights to the water cooler.",
+        "That match had more momentum swings than a Chapter 27 dance floor.",
+        "No tissues needed, no broom needed — just pure Americano parity.",
+        "Rock-paper-scissors for who gets the first slice of cake?",
+        "They traded lobs, smashes, and laughs straight to a dead heat.",
+        "Honestly? Fair result — nobody deserved to sit in Crybaby Corner.",
+        "The net tape worked overtime keeping this match dead even.",
+        "Four players walked in, zero losers walked out. Iconic.",
+        "Same points, same sweat, zero excuses — see you in the next round!",
+        "Certified nail-biter with no heartbreak at the buzzer."
+      ],
+      queenDrawHeadlines: [
+        "👑 ROYAL STALEMATE! QUEEN MARIAM SHARES THE COURT!",
+        "🎂 {HALF}–{HALF} DRAW — MARIAM GRANTS MERCY!",
+        "⚖️ DEADLOCK WITH ROYALTY! NOBODY COULD TOPPLE HER!",
+        "👑 UNDEFEATED ON HER 27TH! SHARED THRONE THIS ROUND!",
+        "🤝 DIPLOMATIC DRAW! APPROVED BY THE BIRTHDAY QUEEN!",
+        "✨ {PTS}-POINT STANDOFF — CROWN STILL UNTOUCHED!",
+        "🥂 CHEERS TO A ROYAL TIE! SPLIT THE CAKE!",
+        "👑 ARTICLE 27 REVIEW: A TIE STILL KEEPS HER UNBEATEN!",
+        "🎉 ALL SQUARE! THE BIRTHDAY GIRL REFUSES TO LOSE!",
+        "⚖️ ROYAL TRUCE DECLARED ON CENTER COURT!",
+        "💅 EVEN STEVEN! MARIAM KEPT IT POLITE FOR THE GUESTS!",
+        "👑 NO LOSS ON THE RECORD — CHAPTER 27 ROLLS ON!"
+      ],
+      queenDrawQuotes: [
+        "Technically {HALF}–{HALF}, spiritually a Birthday Queen victory under Article 27.",
+        "Mariam kindly allowed a draw so everyone stays in a good mood before cake.",
+        "No Crybaby Corner for the Birthday Girl — the crown stays shiny and dry.",
+        "Dead even on court, still comfortably #1 in our hearts and the constitution.",
+        "A generous 27th-birthday truce — Mariam kept her undefeated aura intact.",
+        "Her partner just survived a royal thriller without upsetting the Birthday Committee.",
+        "Half the match points, 100% of the birthday main-character energy.",
+        "Sources confirm Mariam held back her secret smash to keep the party friendly.",
+        "Splitting {PTS} points keeps the drama alive for the Grand Finale takeover.",
+        "Zero tears, full vibes — the Birthday Queen doesn't do losses.",
+        "Even a stalemate looks glamorous when it's your 27th birthday.",
+        "Mariam calls it a tie; Article 27 calls it a 'tactical warm-up.'"
+      ],
+      queenDrawOppHeadlines: [
+        "🤝 SURVIVED THE BIRTHDAY QUEEN! HONORABLE DRAW!",
+        "⚖️ HELD ROYALTY TO {HALF}–{HALF}! BRAVE STUFF!",
+        "🎂 ESCAPED WITH A TIE — CAKE PRIVILEGES INTACT!",
+        "🛡️ STOOD THEIR GROUND AGAINST QUEEN MARIAM!",
+        "🤝 PEACEFUL TRUCE WITH THE HOST! SMART MOVE!",
+        "✨ MATCHED THE BIRTHDAY BUFF POINT FOR POINT!",
+        "⚖️ DIDN'T BEAT THE HOST, DIDN'T LOSE — GENIUS!",
+        "🥂 SHARED THE COURT WITH ROYALTY! RESPECT!",
+        "🔥 WENT TOE-TO-TOE WITH CHAPTER 27 AND TIED!",
+        "🤝 DIPLOMATIC MASTERCLASS! ZERO CAKE PENALTIES!",
+        "⚖️ EVEN WITH THE QUEEN! NO VAR REQUIRED!",
+        "🎉 CO-STARS OF A ROYAL {PTS}-POINT CLASSIC!"
+      ],
+      queenDrawOppQuotes: [
+        "Smart diplomacy: never beat the birthday girl, just split the points politely.",
+        "You matched Mariam point for point and STILL get a full slice of birthday cake!",
+        "No treason charges filed — the Birthday Committee approves this respectful draw.",
+        "Walking away tied against the Birthday Queen is basically a badge of honor.",
+        "Article 27 spares your cake privileges since you kept it civil at {HALF}–{HALF}.",
+        "Bold enough to hang with Mariam, wise enough not to steal her thunder.",
+        "Zero Crybaby rain, zero royal wrath — peak birthday party strategy.",
+        "You went rally-for-rally with the guest of honor and earned a handshake.",
+        "The Birthday Committee rates this performance: 10/10 sportsmanship.",
+        "Splitting {PTS} points with the Queen keeps you right on the VIP invite list.",
+        "No VAR needed — both sides walk off grinning.",
+        "Respect! Holding the 27-year-old Queen to a tie is no small feat."
       ]
     };
 
     const usedLinesByPool = {};
-    function pickFreshLine(poolKey) {
+    function pickFreshLine(poolKey, excludeLine) {
       const pool = COMEDY_POOLS[poolKey] || [];
       if (!pool.length) return "";
       if (!usedLinesByPool[poolKey]) usedLinesByPool[poolKey] = new Set();
       const used = usedLinesByPool[poolKey];
       if (used.size >= pool.length) used.clear();
-      const available = [];
+      let available = [];
       for (let i = 0; i < pool.length; i++) {
-        if (!used.has(i)) available.push(i);
+        if (!used.has(i) && pool[i] !== excludeLine) available.push(i);
       }
+      if (!available.length) {
+        used.clear();
+        for (let i = 0; i < pool.length; i++) {
+          if (pool[i] !== excludeLine) available.push(i);
+        }
+      }
+      if (!available.length) available = [0];
       const chosenIdx = available[Math.floor(Math.random() * available.length)];
       used.add(chosenIdx);
       return pool[chosenIdx];
@@ -3793,6 +4037,9 @@
             statusChipHtml = '<span class="status-chip pending">UPCOMING</span>';
           }
 
+          const isDraw = m.scoreA === m.scoreB;
+          const drawPillHtml =
+            m.confirmed && isDraw ? '<span class="draw-link-pill">🤝 DRAW</span>' : "";
           let scoreSectionHtml = "";
           if (admin) {
             const convertBtnHtml =
@@ -3800,7 +4047,7 @@
                 ? '<button class="convert-pts-btn" data-action="convertPoints" data-id="' + m.id + '" type="button">→ Switch to ' + globalTotal + "-PT</button>"
                 : "";
             scoreSectionHtml =
-              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span>" + convertBtnHtml + "</div>" +
+              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span>" + drawPillHtml + convertBtnHtml + "</div>" +
               '<div class="score-controls">' +
                 '<div class="stepper-box">' +
                   '<button class="step-btn" data-action="decA" data-id="' + m.id + '" type="button"' + (atMinA ? " disabled" : "") + ">−</button>" +
@@ -3826,12 +4073,12 @@
               "</div>";
           } else {
             scoreSectionHtml =
-              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span></div>" +
+              '<div class="score-link-bar"><span class="score-link-pill">' + matchTotal + "-PT MATCH</span>" + drawPillHtml + "</div>" +
               '<div class="readonly-scoreboard">' +
                 (m.confirmed
-                  ? '<span class="ro-score ' + (m.scoreA > m.scoreB ? "winner" : "") + '">' + m.scoreA + "</span>" +
+                  ? '<span class="ro-score ' + (isDraw ? "draw" : m.scoreA > m.scoreB ? "winner" : "") + '">' + m.scoreA + "</span>" +
                     '<span class="ro-dash">—</span>' +
-                    '<span class="ro-score ' + (m.scoreB > m.scoreA ? "winner" : "") + '">' + m.scoreB + "</span>"
+                    '<span class="ro-score ' + (isDraw ? "draw" : m.scoreB > m.scoreA ? "winner" : "") + '">' + m.scoreB + "</span>"
                   : '<div class="readonly-pending-bar">🔒 Admin Only — Score Pending</div>') +
               "</div>" +
               (m.confirmed
@@ -4101,75 +4348,161 @@
     function openSplitReveal(match) {
       const matchTotal = getEffectiveMatchTotal(match);
       sanitizeMatchScore(match, matchTotal);
-      const aWon = match.scoreA >= match.scoreB;
-      const winIds = aWon ? match.teamA : match.teamB;
-      const loseIds = aWon ? match.teamB : match.teamA;
-      const winScore = aWon ? match.scoreA : match.scoreB;
-      const loseScore = aWon ? match.scoreB : match.scoreA;
-
-      const winners = winIds.map(getPlayer);
-      const losers = loseIds.map(getPlayer);
-      const margin = Math.abs(winScore - loseScore);
-      const blowoutMargin = Math.max(7, Math.round(matchTotal * 0.4));
-      const nailbiterMargin = matchTotal >= 36 ? 4 : 2;
-
-      let headline = "";
-      let hypeLine = "";
-      let loserHeadline = "";
-
-      const queenWon = winners.some(function (p) {
-        return p.isBirthdayQueen;
-      });
-      const queenLost = losers.some(function (p) {
-        return p.isBirthdayQueen;
-      });
-
-      if (queenWon) {
-        headline = pickFreshLine("queenWinHeadlines");
-        hypeLine = pickFreshLine("queenWinHype");
-        loserHeadline = margin >= blowoutMargin ? pickFreshLine("blowoutLoserHeadlines") : pickFreshLine("loserHeadlines");
-      } else if (queenLost) {
-        headline = pickFreshLine("queenLossHeadlines");
-        hypeLine = pickFreshLine("queenLossHype");
-        loserHeadline = pickFreshLine("queenLoserHeadlines");
-      } else if (margin >= blowoutMargin) {
-        headline = pickFreshLine("blowoutHeadlines");
-        hypeLine = pickFreshLine("standardWinHype");
-        loserHeadline = pickFreshLine("blowoutLoserHeadlines");
-      } else if (margin <= nailbiterMargin) {
-        headline = pickFreshLine("nailbiterHeadlines");
-        hypeLine = pickFreshLine("standardWinHype");
-        loserHeadline = pickFreshLine("loserHeadlines");
-      } else {
-        headline = pickFreshLine("standardWinHeadlines");
-        hypeLine = pickFreshLine("standardWinHype");
-        loserHeadline = pickFreshLine("loserHeadlines");
-      }
-
+      const isDraw = match.scoreA === match.scoreB;
+      const halfScore = Math.round(matchTotal / 2);
       const queenBonusLive = getLiveHeadStartsMeta().queenBonus;
-      document.getElementById("winnerHeadline").textContent = headline;
-      document.getElementById("winnerHypeLine").textContent = hypeLine.replace("{QUEEN_BONUS}", String(queenBonusLive));
-      document.getElementById("winnerNames").textContent = winners[0].name + " & " + winners[1].name;
-      document.getElementById("loserHeadline").textContent = loserHeadline.replace("{PTS}", String(matchTotal));
-      document.getElementById("loserNames").textContent = losers[0].name + " & " + losers[1].name;
-      document.getElementById("revealScorePill").textContent = winScore + " — " + loseScore;
-      document.getElementById("loserRoast").textContent = pickFreshLine("loserRoasts");
+      const formatRevealText = function (str) {
+        return String(str || "")
+          .replace(/\{QUEEN_BONUS\}/g, String(queenBonusLive))
+          .replace(/\{PTS\}/g, String(matchTotal))
+          .replace(/\{HALF\}/g, String(halfScore));
+      };
 
-      document.getElementById("winnerFaces").innerHTML = winners
-        .map(function (p) {
-          return p.celebratingPhoto
-            ? '<img class="winner-face" src="' + p.celebratingPhoto + '" alt="' + escapeAttr(p.name) + '" />'
-            : '<div class="winner-face">' + initials(p.name) + "</div>";
-        })
-        .join("");
+      const overlay = document.getElementById("revealOverlay");
+      overlay.classList.toggle("draw-mode", isDraw);
 
-      document.getElementById("loserFaces").innerHTML = losers
-        .map(function (p) {
-          return p.sadPhoto
-            ? '<img class="loser-face" src="' + p.sadPhoto + '" alt="' + escapeAttr(p.name) + '" />'
-            : '<div class="loser-face">' + initials(p.name) + "</div>";
-        })
-        .join("");
+      const topBadgeEl = document.getElementById("revealTopBadge");
+      const bottomBadgeTextEl = document.getElementById("revealBottomBadgeText");
+      const cryCloudEl = document.getElementById("revealCryCloud");
+      if (cryCloudEl) cryCloudEl.classList.toggle("hidden", isDraw);
+
+      if (isDraw) {
+        const teamAPlayers = match.teamA.map(getPlayer);
+        const teamBPlayers = match.teamB.map(getPlayer);
+        const teamAHasQueen = teamAPlayers.some(function (p) {
+          return p.isBirthdayQueen;
+        });
+        const teamBHasQueen = teamBPlayers.some(function (p) {
+          return p.isBirthdayQueen;
+        });
+
+        let topHeadline = "";
+        let topQuote = "";
+        let bottomHeadline = "";
+        let bottomQuote = "";
+
+        if (teamAHasQueen && teamBHasQueen) {
+          topHeadline = pickFreshLine("queenDrawHeadlines");
+          topQuote = pickFreshLine("queenDrawQuotes");
+          bottomHeadline = pickFreshLine("queenDrawHeadlines", topHeadline);
+          bottomQuote = pickFreshLine("queenDrawQuotes", topQuote);
+        } else if (teamAHasQueen) {
+          topHeadline = pickFreshLine("queenDrawHeadlines");
+          topQuote = pickFreshLine("queenDrawQuotes");
+          bottomHeadline = pickFreshLine("queenDrawOppHeadlines");
+          bottomQuote = pickFreshLine("queenDrawOppQuotes");
+        } else if (teamBHasQueen) {
+          topHeadline = pickFreshLine("queenDrawOppHeadlines");
+          topQuote = pickFreshLine("queenDrawOppQuotes");
+          bottomHeadline = pickFreshLine("queenDrawHeadlines");
+          bottomQuote = pickFreshLine("queenDrawQuotes");
+        } else {
+          topHeadline = pickFreshLine("drawHeadlines");
+          topQuote = pickFreshLine("drawQuotes");
+          bottomHeadline = pickFreshLine("drawHeadlines", topHeadline);
+          bottomQuote = pickFreshLine("drawQuotes", topQuote);
+        }
+
+        if (topBadgeEl) {
+          topBadgeEl.textContent = teamAHasQueen ? "👑 Royal Draw • Team A" : "🤝 All Square • Team A";
+        }
+        if (bottomBadgeTextEl) {
+          bottomBadgeTextEl.textContent = teamBHasQueen ? "👑 Royal Draw • Team B" : "🤝 All Square • Team B";
+        }
+
+        document.getElementById("winnerHeadline").textContent = formatRevealText(topHeadline);
+        document.getElementById("winnerHypeLine").textContent = formatRevealText(topQuote);
+        document.getElementById("winnerNames").textContent = teamAPlayers[0].name + " & " + teamAPlayers[1].name;
+        document.getElementById("loserHeadline").textContent = formatRevealText(bottomHeadline);
+        document.getElementById("loserNames").textContent = teamBPlayers[0].name + " & " + teamBPlayers[1].name;
+        document.getElementById("revealScorePill").textContent = "🤝 DRAW • " + match.scoreA + " — " + match.scoreB;
+        document.getElementById("loserRoast").textContent = formatRevealText(bottomQuote);
+
+        const renderDrawFaces = function (playersList) {
+          return playersList
+            .map(function (p) {
+              return p.celebratingPhoto
+                ? '<img class="draw-face" src="' + p.celebratingPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+                : '<div class="draw-face">' + initials(p.name) + "</div>";
+            })
+            .join("");
+        };
+
+        document.getElementById("winnerFaces").innerHTML = renderDrawFaces(teamAPlayers);
+        document.getElementById("loserFaces").innerHTML = renderDrawFaces(teamBPlayers);
+      } else {
+        const aWon = match.scoreA > match.scoreB;
+        const winIds = aWon ? match.teamA : match.teamB;
+        const loseIds = aWon ? match.teamB : match.teamA;
+        const winScore = aWon ? match.scoreA : match.scoreB;
+        const loseScore = aWon ? match.scoreB : match.scoreA;
+
+        const winners = winIds.map(getPlayer);
+        const losers = loseIds.map(getPlayer);
+        const margin = Math.abs(winScore - loseScore);
+        const blowoutMargin = Math.max(7, Math.round(matchTotal * 0.4));
+        const nailbiterMargin = matchTotal >= 36 ? 4 : 2;
+
+        let headline = "";
+        let hypeLine = "";
+        let loserHeadline = "";
+
+        const queenWon = winners.some(function (p) {
+          return p.isBirthdayQueen;
+        });
+        const queenLost = losers.some(function (p) {
+          return p.isBirthdayQueen;
+        });
+
+        if (queenWon) {
+          headline = pickFreshLine("queenWinHeadlines");
+          hypeLine = pickFreshLine("queenWinHype");
+          loserHeadline = margin >= blowoutMargin ? pickFreshLine("blowoutLoserHeadlines") : pickFreshLine("loserHeadlines");
+        } else if (queenLost) {
+          headline = pickFreshLine("queenLossHeadlines");
+          hypeLine = pickFreshLine("queenLossHype");
+          loserHeadline = pickFreshLine("queenLoserHeadlines");
+        } else if (margin >= blowoutMargin) {
+          headline = pickFreshLine("blowoutHeadlines");
+          hypeLine = pickFreshLine("standardWinHype");
+          loserHeadline = pickFreshLine("blowoutLoserHeadlines");
+        } else if (margin <= nailbiterMargin) {
+          headline = pickFreshLine("nailbiterHeadlines");
+          hypeLine = pickFreshLine("standardWinHype");
+          loserHeadline = pickFreshLine("loserHeadlines");
+        } else {
+          headline = pickFreshLine("standardWinHeadlines");
+          hypeLine = pickFreshLine("standardWinHype");
+          loserHeadline = pickFreshLine("loserHeadlines");
+        }
+
+        if (topBadgeEl) topBadgeEl.textContent = "Winners' VIP #27 Lounge";
+        if (bottomBadgeTextEl) bottomBadgeTextEl.textContent = "Losers' Crybaby Corner";
+
+        document.getElementById("winnerHeadline").textContent = formatRevealText(headline);
+        document.getElementById("winnerHypeLine").textContent = formatRevealText(hypeLine);
+        document.getElementById("winnerNames").textContent = winners[0].name + " & " + winners[1].name;
+        document.getElementById("loserHeadline").textContent = formatRevealText(loserHeadline);
+        document.getElementById("loserNames").textContent = losers[0].name + " & " + losers[1].name;
+        document.getElementById("revealScorePill").textContent = winScore + " — " + loseScore;
+        document.getElementById("loserRoast").textContent = formatRevealText(pickFreshLine("loserRoasts"));
+
+        document.getElementById("winnerFaces").innerHTML = winners
+          .map(function (p) {
+            return p.celebratingPhoto
+              ? '<img class="winner-face" src="' + p.celebratingPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+              : '<div class="winner-face">' + initials(p.name) + "</div>";
+          })
+          .join("");
+
+        document.getElementById("loserFaces").innerHTML = losers
+          .map(function (p) {
+            return p.sadPhoto
+              ? '<img class="loser-face" src="' + p.sadPhoto + '" alt="' + escapeAttr(p.name) + '" />'
+              : '<div class="loser-face">' + initials(p.name) + "</div>";
+          })
+          .join("");
+      }
 
       const allConfirmed = state.matches.every(function (m) {
         return m.confirmed;
@@ -4177,16 +4510,72 @@
       const finaleCta = document.getElementById("launchFinaleFromRevealBtn");
       finaleCta.classList.toggle("hidden", !allConfirmed);
 
-      const overlay = document.getElementById("revealOverlay");
       overlay.classList.add("open");
-      startSplitCanvasAnimation();
+      startSplitCanvasAnimation(isDraw ? "draw" : "split");
     }
 
-    function startSplitCanvasAnimation() {
+    function startSplitCanvasAnimation(mode) {
       const canvas = document.getElementById("revealCanvas");
+      const stage = document.getElementById("revealStage");
       const ctx = canvas.getContext("2d");
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+      canvas.width = (stage && stage.clientWidth) || window.innerWidth;
+      canvas.height = (stage && stage.clientHeight) || window.innerHeight;
+
+      if (mode === "draw") {
+        const drawPalette = ["#FF4D8D", "#C8F542", "#FFD23F", "#FFFFFF", "#1C1917", "#38BDF8"];
+        const sparkles = Array.from({ length: 56 }, function () {
+          return {
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: 5 + Math.random() * 6,
+            vy: 1.0 + Math.random() * 1.8,
+            vx: (Math.random() - 0.5) * 1.4,
+            rot: Math.random() * Math.PI * 2,
+            vrot: (Math.random() - 0.5) * 0.1,
+            shape: Math.random() < 0.45 ? "diamond" : "rect",
+            color: drawPalette[Math.floor(Math.random() * drawPalette.length)]
+          };
+        });
+
+        function drawFrame() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.save();
+          ctx.globalAlpha = 0.78;
+          sparkles.forEach(function (s) {
+            s.x += s.vx;
+            s.y += s.vy;
+            s.rot += s.vrot;
+            if (s.y > canvas.height + 12) {
+              s.y = -12;
+              s.x = Math.random() * canvas.width;
+            }
+            if (s.x < -12) s.x = canvas.width + 12;
+            if (s.x > canvas.width + 12) s.x = -12;
+            ctx.save();
+            ctx.translate(s.x, s.y);
+            ctx.rotate(s.rot);
+            ctx.fillStyle = s.color;
+            if (s.shape === "diamond") {
+              ctx.beginPath();
+              ctx.moveTo(0, -s.size * 0.65);
+              ctx.lineTo(s.size * 0.5, 0);
+              ctx.lineTo(0, s.size * 0.65);
+              ctx.lineTo(-s.size * 0.5, 0);
+              ctx.closePath();
+              ctx.fill();
+            } else {
+              ctx.fillRect(-s.size / 2, -s.size / 2, s.size, s.size * 0.62);
+            }
+            ctx.restore();
+          });
+          ctx.restore();
+          revealAnimFrame = requestAnimationFrame(drawFrame);
+        }
+
+        if (revealAnimFrame) cancelAnimationFrame(revealAnimFrame);
+        drawFrame();
+        return;
+      }
 
       const palette = ["#FF4D8D", "#FFD23F", "#FFFFFF", "#1C1917"];
       const confetti = Array.from({ length: 48 }, function () {
